@@ -1,0 +1,177 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+
+.topicHeader {
+  @include card-base;
+  padding: $spacing-8;
+  margin-bottom: $spacing-8;
+
+  @include mobile-only {
+    padding: $spacing-6;
+    margin-bottom: $spacing-6;
+  }
+}
+
+.content {
+  display: flex;
+  align-items: center;
+  gap: $spacing-6;
+
+  @include mobile-only {
+    flex-direction: column;
+    text-align: center;
+    gap: $spacing-4;
+  }
+}
+
+.iconContainer {
+  width: 80px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background-color: $primary-50;
+  flex-shrink: 0;
+
+  @include mobile-only {
+    width: 64px;
+    height: 64px;
+  }
+}
+
+.emoji {
+  font-size: $text-4xl;
+  line-height: 1;
+
+  @include mobile-only {
+    font-size: $text-3xl;
+  }
+}
+
+.image {
+  width: 48px;
+  height: 48px;
+  object-fit: cover;
+  border-radius: 50%;
+
+  @include mobile-only {
+    width: 40px;
+    height: 40px;
+  }
+}
+
+.info {
+  flex: 1;
+  min-width: 0;
+}
+
+.title {
+  @include heading-1;
+  margin: 0 0 $spacing-3 0;
+  color: $text-primary;
+
+  @include mobile-only {
+    font-size: $text-3xl;
+    margin-bottom: $spacing-2;
+  }
+}
+
+.description {
+  @include body-large;
+  color: $text-secondary;
+  margin: 0 0 $spacing-4 0;
+  line-height: $leading-relaxed;
+
+  @include mobile-only {
+    font-size: $text-base;
+    margin-bottom: $spacing-3;
+  }
+}
+
+.meta {
+  display: flex;
+  align-items: center;
+  gap: $spacing-4;
+
+  @include mobile-only {
+    justify-content: center;
+    gap: $spacing-3;
+  }
+}
+
+.created {
+  @include body-small;
+  color: $text-muted;
+}
+
+// Loading skeleton
+.skeleton {
+  display: flex;
+  align-items: center;
+  gap: $spacing-6;
+
+  @include mobile-only {
+    flex-direction: column;
+    gap: $spacing-4;
+  }
+}
+
+.skeletonIcon {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background-color: $bg-muted;
+  flex-shrink: 0;
+
+  @include mobile-only {
+    width: 64px;
+    height: 64px;
+  }
+}
+
+.skeletonContent {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-3;
+
+  @include mobile-only {
+    align-items: center;
+    width: 100%;
+  }
+}
+
+.skeletonTitle {
+  height: 32px;
+  width: 240px;
+  background-color: $bg-muted;
+  border-radius: $radius-md;
+
+  @include mobile-only {
+    width: 200px;
+    height: 28px;
+  }
+}
+
+.skeletonDescription {
+  height: 20px;
+  width: 320px;
+  background-color: $bg-muted;
+  border-radius: $radius-md;
+
+  @include mobile-only {
+    width: 280px;
+  }
+}
+
+.skeletonMeta {
+  height: 24px;
+  width: 120px;
+  background-color: $bg-muted;
+  border-radius: $radius-md;
+
+  @include mobile-only {
+    width: 100px;
+  }
+}

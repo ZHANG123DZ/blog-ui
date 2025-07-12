@@ -1,0 +1,59 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+
+.featuredPosts {
+  width: 100%;
+}
+
+.title {
+  @include heading-2;
+  margin-bottom: $spacing-8;
+  text-align: center;
+  color: $text-primary;
+
+  @include mobile-only {
+    margin-bottom: $spacing-6;
+    font-size: $text-2xl;
+  }
+}
+
+.postsGrid {
+  display: grid;
+  gap: $spacing-6;
+  
+  // Default: Single column
+  grid-template-columns: 1fr;
+
+  @include tablet-up {
+    // Tablet: 2 columns
+    grid-template-columns: repeat(2, 1fr);
+    
+    // Special layout for featured post
+    .featured {
+      grid-column: 1 / -1;
+    }
+  }
+
+  @include desktop-up {
+    // Desktop: 3 columns
+    grid-template-columns: repeat(3, 1fr);
+    
+    // Reset featured post on desktop
+    .featured {
+      grid-column: auto;
+    }
+  }
+
+  @include mobile-only {
+    gap: $spacing-4;
+  }
+}
+
+.postItem {
+  width: 100%;
+  
+  &.featured {
+    // Featured post styling can be added here
+    // For now it just takes more space on tablet
+  }
+}

@@ -1,0 +1,51 @@
+@use "../../styles/variables" as *;
+@use "../../styles/mixins" as *;
+
+.layout {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    overflow: hidden;
+    background-color: $bg-primary;
+}
+
+.header {
+    flex-shrink: 0;
+    position: relative;
+    z-index: 1000;
+
+    // Make header more compact for fullscreen experience
+    :global {
+        .header-container {
+            padding-top: 0.75rem;
+            padding-bottom: 0.75rem;
+        }
+    }
+
+    // Add subtle shadow to separate from content
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.main {
+    flex: 1;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+
+    // Ensure content can be scrollable within the main area
+    > * {
+        flex: 1;
+        overflow: auto;
+    }
+}
+
+// Dark mode support
+@media (prefers-color-scheme: dark) {
+    .layout {
+        background-color: $bg-primary;
+    }
+
+    .header {
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+    }
+}

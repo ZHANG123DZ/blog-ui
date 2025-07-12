@@ -1,0 +1,391 @@
+@use "../../styles/variables" as *;
+@use "../../styles/mixins" as *;
+
+.notificationDropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.trigger {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border: none;
+    background-color: transparent;
+    color: $text-muted;
+    border-radius: $radius-md;
+    cursor: pointer;
+    transition: all $transition-base;
+
+    &:hover {
+        background-color: $bg-secondary;
+        color: $text-primary;
+    }
+
+    &.active {
+        background-color: $primary-50;
+        color: $primary-600;
+    }
+
+    svg {
+        flex-shrink: 0;
+    }
+}
+
+.badge {
+    position: absolute;
+    top: -2px;
+    right: -2px;
+    min-width: 18px;
+    height: 18px;
+    font-size: $text-xs;
+    font-weight: $font-bold;
+    line-height: 1;
+    z-index: 1;
+}
+
+.dropdown {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    width: 400px;
+    max-height: 500px;
+    background-color: $surface-primary;
+    border: 1px solid $border-light;
+    border-radius: $radius-lg;
+    box-shadow: $shadow-lg;
+    z-index: 1000;
+    overflow: hidden;
+
+    @include mobile-only {
+        width: 320px;
+        right: -40px;
+    }
+
+    @include mobile-only {
+        position: fixed;
+        top: 70px;
+        left: 50%;
+        right: auto;
+        transform: translateX(-50%);
+        width: calc(100vw - 32px);
+        max-width: 400px;
+    }
+}
+
+.header {
+    @include flex-between;
+    align-items: center;
+    padding: $spacing-4 $spacing-6;
+    border-bottom: 1px solid $border-light;
+    background-color: $bg-secondary;
+
+    @include mobile-only {
+        padding: $spacing-3 $spacing-4;
+    }
+}
+
+.title {
+    @include heading-4;
+    margin: 0;
+    color: $text-primary;
+}
+
+.markAllRead {
+    background: none;
+    border: none;
+    color: $primary-600;
+    font-size: $text-sm;
+    font-weight: $font-medium;
+    cursor: pointer;
+    padding: $spacing-1 $spacing-2;
+    border-radius: $radius-sm;
+    transition: all $transition-base;
+
+    &:hover {
+        background-color: $primary-50;
+        color: $primary-700;
+    }
+}
+
+.content {
+    max-height: 400px;
+    overflow-y: auto;
+
+    &::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    &::-webkit-scrollbar-track {
+        background: $bg-secondary;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background: $border-medium;
+        border-radius: $radius-sm;
+    }
+}
+
+.empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: $spacing-12;
+    color: $text-muted;
+
+    svg {
+        margin-bottom: $spacing-4;
+        opacity: 0.5;
+    }
+
+    p {
+        @include body-base;
+        margin: 0;
+        text-align: center;
+    }
+}
+
+.list {
+    padding: $spacing-2 0;
+}
+
+.item {
+    display: flex;
+    align-items: flex-start;
+    gap: $spacing-3;
+    padding: $spacing-3 $spacing-6;
+    transition: all $transition-base;
+    cursor: pointer;
+    border-left: 3px solid transparent;
+    color: $text-primary;
+    text-decoration: none;
+    position: relative;
+
+    @include mobile-only {
+        padding: $spacing-3 $spacing-4;
+    }
+
+    &:hover {
+        background-color: $bg-secondary;
+        text-decoration: none;
+        color: $text-primary;
+
+        .message {
+            color: $primary-600;
+        }
+    }
+
+    &:focus-visible {
+        outline: 2px solid $primary-500;
+        outline-offset: 2px;
+        border-radius: $radius-sm;
+    }
+
+    &.unread {
+        background-color: $primary-50;
+        border-left-color: $primary-500;
+
+        &:hover {
+            background-color: $primary-100;
+        }
+    }
+
+    &.likeNotification {
+        .icon {
+            color: $error-500;
+        }
+    }
+
+    &.commentNotification {
+        .icon {
+            color: $success-500;
+        }
+    }
+
+    &.followNotification {
+        .icon {
+            color: $primary-500;
+        }
+    }
+
+    &.defaultNotification {
+        .icon {
+            color: $text-muted;
+        }
+    }
+}
+
+.icon {
+    flex-shrink: 0;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: $bg-secondary;
+    border-radius: 50%;
+    margin-top: $spacing-1;
+
+    svg {
+        width: 16px;
+        height: 16px;
+    }
+}
+
+.itemContent {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-1;
+    padding-right: $spacing-8;
+
+    @include mobile-only {
+        padding-right: $spacing-6;
+    }
+}
+
+.message {
+    @include body-base;
+    line-height: $leading-normal;
+    transition: color $transition-base;
+}
+
+.messageLink {
+    @include body-base;
+    color: $text-primary;
+    text-decoration: none;
+    display: block;
+    line-height: $leading-normal;
+
+    &:hover {
+        text-decoration: none;
+        color: $primary-600;
+    }
+}
+
+.time {
+    @include body-small;
+    color: $text-muted;
+    font-weight: $font-medium;
+}
+
+.markRead {
+    position: absolute;
+    top: $spacing-3;
+    right: $spacing-6;
+    background: none;
+    border: none;
+    padding: $spacing-1;
+    cursor: pointer;
+    border-radius: $radius-sm;
+    transition: all $transition-base;
+    z-index: 1;
+
+    @include mobile-only {
+        right: $spacing-4;
+    }
+
+    &:hover {
+        background-color: $bg-secondary;
+    }
+
+    &:focus-visible {
+        outline: 2px solid $primary-500;
+        outline-offset: 2px;
+    }
+
+    &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+}
+
+.unreadDot {
+    width: 8px;
+    height: 8px;
+    background-color: $primary-500;
+    border-radius: 50%;
+}
+
+.footer {
+    padding: $spacing-4 $spacing-6;
+    border-top: 1px solid $border-light;
+    background-color: $bg-secondary;
+    text-align: center;
+
+    @include mobile-only {
+        padding: $spacing-3 $spacing-4;
+    }
+}
+
+.viewAll {
+    @include body-base;
+    color: $primary-600;
+    text-decoration: none;
+    font-weight: $font-medium;
+    transition: color $transition-base;
+
+    &:hover {
+        color: $primary-700;
+        text-decoration: underline;
+    }
+}
+
+// Animations
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.dropdown {
+    animation: slideDown 0.2s ease-out;
+}
+
+// Focus states
+.trigger:focus-visible,
+.markAllRead:focus-visible,
+.viewAll:focus-visible {
+    outline: 2px solid $primary-500;
+    outline-offset: 2px;
+}
+
+// High contrast support
+@media (prefers-contrast: high) {
+    .item {
+        border-bottom: 1px solid $border-light;
+
+        &.unread {
+            border-left-width: 4px;
+        }
+    }
+
+    .icon {
+        border: 1px solid $border-medium;
+    }
+}
+
+// Reduced motion support
+@media (prefers-reduced-motion: reduce) {
+    .dropdown {
+        animation: none;
+    }
+
+    .trigger,
+    .markAllRead,
+    .messageLink,
+    .markRead,
+    .viewAll {
+        transition: none;
+    }
+}

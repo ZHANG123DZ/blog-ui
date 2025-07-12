@@ -1,0 +1,19 @@
+@use "../../styles/variables" as *;
+@use "../../styles/mixins" as *;
+
+.topicPage {
+    min-height: calc(100vh - 200px);
+    padding: $spacing-8 0;
+
+    @include mobile-only {
+        padding: $spacing-6 0;
+    }
+}
+
+.postsList {
+    margin-top: $spacing-8;
+
+    @include mobile-only {
+        margin-top: $spacing-6;
+    }
+}

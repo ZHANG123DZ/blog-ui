@@ -1,0 +1,34 @@
+@use "../../styles/variables" as *;
+@use "../../styles/mixins" as *;
+
+.layout {
+    min-height: 100vh;
+    background-color: $bg-secondary;
+    @include flex-center;
+    padding: $spacing-4;
+}
+
+.container {
+    width: 100%;
+    max-width: 500px;
+    background-color: $bg-primary;
+    border-radius: $radius-xl;
+    box-shadow: $shadow-lg;
+    padding: $spacing-8;
+
+    @include mobile-only {
+        padding: $spacing-6;
+        border-radius: $radius-lg;
+        max-width: 100%;
+    }
+}
+
+.content {
+    margin-bottom: $spacing-6;
+}
+
+.footer {
+    margin-top: $spacing-6;
+    padding-top: $spacing-4;
+    border-top: 1px solid $border-light;
+}

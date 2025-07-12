@@ -1,0 +1,88 @@
+@use "../../styles/variables" as *;
+@use "../../styles/mixins" as *;
+
+.pagination {
+    @include flex-center;
+    margin: $spacing-4 0;
+}
+
+.pageList {
+    @include flex-center;
+    gap: $spacing-1;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    flex-wrap: wrap;
+}
+
+.pageItem {
+    // No specific styles needed
+}
+
+.pageLink {
+    @include flex-center;
+    min-width: 40px;
+    height: 40px;
+    padding: $spacing-2 $spacing-3;
+    border: 1px solid $border-medium;
+    border-radius: $radius-md;
+    background-color: $bg-primary;
+    color: $text-secondary;
+    font-size: $text-sm;
+    font-weight: $font-medium;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all $transition-base;
+
+    &:hover:not(:disabled) {
+        background-color: $primary-50;
+        border-color: $primary-200;
+        color: $primary-600;
+    }
+
+    &:focus-visible {
+        outline: 2px solid $primary-500;
+        outline-offset: 2px;
+    }
+
+    &.active {
+        background-color: $primary-600;
+        border-color: $primary-600;
+        color: $text-white;
+
+        &:hover {
+            background-color: $primary-700;
+            border-color: $primary-700;
+        }
+    }
+
+    &.disabled,
+    &:disabled {
+        background-color: $bg-muted;
+        border-color: $border-light;
+        color: $text-muted;
+        cursor: not-allowed;
+        pointer-events: none;
+    }
+
+    @include mobile-only {
+        min-width: 36px;
+        height: 36px;
+        padding: $spacing-1 $spacing-2;
+        font-size: $text-xs;
+    }
+}
+
+.ellipsis {
+    @include flex-center;
+    min-width: 40px;
+    height: 40px;
+    color: $text-muted;
+    font-weight: $font-bold;
+    user-select: none;
+
+    @include mobile-only {
+        min-width: 36px;
+        height: 36px;
+    }
+}

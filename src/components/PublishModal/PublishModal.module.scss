@@ -1,0 +1,441 @@
+@use "../../styles/variables" as *;
+@use "../../styles/mixins" as *;
+
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    padding: $spacing-4;
+}
+
+.modal {
+    background-color: $surface-primary;
+    border-radius: $radius-lg;
+    box-shadow: $shadow-xl;
+    width: 100%;
+    max-width: 800px;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+
+    @include tablet-down {
+        max-width: 700px;
+    }
+
+    @include mobile-only {
+        max-width: 100%;
+        max-height: 95vh;
+        margin: $spacing-2;
+    }
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: $spacing-6;
+    border-bottom: 1px solid $border-light;
+    flex-shrink: 0;
+
+    @include mobile-only {
+        padding: $spacing-4;
+    }
+}
+
+.title {
+    @include heading-2;
+    color: $text-primary;
+    margin: 0;
+}
+
+.closeButton {
+    background: none;
+    border: none;
+    font-size: $text-2xl;
+    color: $text-muted;
+    cursor: pointer;
+    padding: $spacing-1;
+    border-radius: $radius-sm;
+    transition: all $transition-base;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &:hover {
+        background-color: $bg-muted;
+        color: $text-primary;
+    }
+}
+
+.content {
+    flex: 1;
+    overflow-y: auto;
+    padding: $spacing-6;
+
+    @include mobile-only {
+        padding: $spacing-4;
+    }
+}
+
+.section {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-4;
+    margin-bottom: $spacing-4;
+
+    &:last-child {
+        margin-bottom: 0;
+    }
+
+    @include mobile-only {
+        margin-bottom: $spacing-6;
+    }
+}
+
+.sectionTitle {
+    @include heading-4;
+    color: $text-primary;
+    padding-bottom: $spacing-2;
+    border-bottom: 1px solid $border-light;
+}
+
+// Image Upload Styles
+.imagePreview {
+    position: relative;
+    border-radius: $radius-md;
+    overflow: hidden;
+    box-shadow: $shadow-base;
+    margin-bottom: $spacing-4;
+}
+
+.coverImage {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    display: block;
+
+    @include tablet-up {
+        height: 250px;
+    }
+}
+
+.imageActions {
+    position: absolute;
+    top: $spacing-3;
+    right: $spacing-3;
+    display: flex;
+    gap: $spacing-2;
+    opacity: 0;
+    transition: opacity $transition-base;
+
+    .imagePreview:hover & {
+        opacity: 1;
+    }
+}
+
+.changeImageButton,
+.removeImageButton {
+    padding: $spacing-2 $spacing-3;
+    border: none;
+    border-radius: $radius-md;
+    font-size: $text-xs;
+    font-weight: $font-medium;
+    cursor: pointer;
+    transition: all $transition-base;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.changeImageButton {
+    background-color: $primary-600;
+    color: $text-white;
+
+    &:hover {
+        background-color: $primary-700;
+    }
+}
+
+.removeImageButton {
+    background-color: $error-600;
+    color: $text-white;
+
+    &:hover {
+        background-color: $error-700;
+    }
+}
+
+.uploadArea {
+    border: 2px dashed $border-medium;
+    border-radius: $radius-lg;
+    padding: $spacing-8;
+    text-align: center;
+    transition: all $transition-base;
+
+    &:hover {
+        border-color: $primary-500;
+        background-color: $primary-50;
+    }
+
+    @include mobile-only {
+        padding: $spacing-6;
+    }
+}
+
+.uploadButton {
+    @include button-primary;
+    padding: $spacing-3 $spacing-6;
+    cursor: pointer;
+    display: inline-block;
+    text-decoration: none;
+    border: none;
+    transition: all $transition-base;
+}
+
+.fileInput {
+    display: none;
+}
+
+// Topics Styles
+.topicsInput {
+    position: relative;
+    margin-bottom: $spacing-4;
+}
+
+.topicInput {
+    width: 100%;
+    padding: $spacing-3;
+    border: 1px solid $border-medium;
+    border-radius: $radius-md;
+    font-size: $text-sm;
+    background-color: $bg-primary;
+    color: $text-primary;
+    transition: all $transition-base;
+
+    &:focus {
+        outline: none;
+        border-color: $primary-500;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+
+    &::placeholder {
+        color: $text-muted;
+    }
+}
+
+.topicSuggestions {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background-color: $surface-primary;
+    border: 1px solid $border-light;
+    border-radius: $radius-md;
+    box-shadow: $shadow-lg;
+    z-index: 10;
+    max-height: 200px;
+    overflow-y: auto;
+
+    &:empty {
+        display: none;
+    }
+}
+
+.suggestionItem {
+    width: 100%;
+    padding: $spacing-3;
+    border: none;
+    background: none;
+    text-align: left;
+    cursor: pointer;
+    color: $text-primary;
+    font-size: $text-sm;
+    transition: background-color $transition-base;
+
+    &:hover {
+        background-color: $bg-muted;
+    }
+
+    &:first-child {
+        border-top-left-radius: $radius-md;
+        border-top-right-radius: $radius-md;
+    }
+
+    &:last-child {
+        border-bottom-left-radius: $radius-md;
+        border-bottom-right-radius: $radius-md;
+    }
+}
+
+.selectedTopics {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $spacing-2;
+    margin-top: $spacing-3;
+}
+
+.topicBadge {
+    position: relative;
+
+    .removeTopic {
+        background: none;
+        border: none;
+        color: inherit;
+        font-size: $text-sm;
+        margin-left: $spacing-2;
+        cursor: pointer;
+        padding: 0;
+        line-height: 1;
+
+        &:hover {
+            color: $error-600;
+        }
+    }
+}
+
+// Visibility Options
+.visibilityOptions {
+    display: grid;
+    gap: $spacing-3;
+    grid-template-columns: repeat(3, 1fr);
+
+    @include tablet-down {
+        grid-template-columns: 1fr;
+    }
+
+    @include mobile-only {
+        grid-template-columns: 1fr;
+    }
+}
+
+.visibilityOption {
+    border: 2px solid $border-light;
+    border-radius: $radius-lg;
+    padding: $spacing-4;
+    cursor: pointer;
+    transition: all $transition-base;
+    background-color: $bg-primary;
+
+    &:hover {
+        border-color: $primary-300;
+        background-color: $primary-50;
+    }
+
+    &.selected {
+        border-color: $primary-500;
+        background-color: $primary-50;
+    }
+}
+
+.optionHeader {
+    display: flex;
+    align-items: center;
+    margin-bottom: $spacing-2;
+}
+
+.optionIcon {
+    font-size: $text-lg;
+    margin-right: $spacing-3;
+}
+
+.optionLabel {
+    font-weight: $font-semibold;
+    color: $text-primary;
+    font-size: $text-sm;
+    flex: 1;
+}
+
+.visibilityRadio {
+    margin-left: auto;
+    accent-color: $primary-500;
+}
+
+.optionDescription {
+    color: $text-secondary;
+    font-size: $text-sm;
+    margin: 0;
+    line-height: $leading-relaxed;
+}
+
+// Schedule Toggle
+.scheduleToggle {
+    margin-bottom: $spacing-4;
+}
+
+.toggleLabel {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    gap: $spacing-3;
+}
+
+.toggleInput {
+    display: none;
+}
+
+.toggleSlider {
+    position: relative;
+    width: 50px;
+    height: 24px;
+    background-color: $border-medium;
+    border-radius: $radius-full;
+    transition: background-color $transition-base;
+
+    &::before {
+        content: "";
+        position: absolute;
+        top: 2px;
+        left: 2px;
+        width: 20px;
+        height: 20px;
+        background-color: $text-white;
+        border-radius: $radius-full;
+        transition: transform $transition-base;
+    }
+
+    .toggleInput:checked + & {
+        background-color: $primary-500;
+
+        &::before {
+            transform: translateX(26px);
+        }
+    }
+}
+
+.toggleText {
+    font-weight: $font-medium;
+    color: $text-primary;
+    font-size: $text-sm;
+}
+
+.scheduleDateTime {
+    margin-top: $spacing-4;
+}
+
+// Modal Footer
+.footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: $spacing-3;
+    padding: $spacing-6;
+    border-top: 1px solid $border-light;
+    flex-shrink: 0;
+
+    @include mobile-only {
+        padding: $spacing-4;
+        flex-direction: column;
+
+        > * {
+            width: 100%;
+        }
+    }
+}

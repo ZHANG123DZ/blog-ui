@@ -1,0 +1,48 @@
+@use "../../styles/variables" as *;
+@use "../../styles/mixins" as *;
+
+.topicsListing {
+    min-height: calc(100vh - 200px);
+    padding: $spacing-8 0;
+
+    @include mobile-only {
+        padding: $spacing-6 0;
+    }
+}
+
+.header {
+    text-align: center;
+    margin-bottom: $spacing-12;
+
+    @include mobile-only {
+        margin-bottom: $spacing-8;
+    }
+}
+
+.title {
+    @include heading-1;
+    margin: 0 0 $spacing-4 0;
+    color: $text-primary;
+
+    @include mobile-only {
+        font-size: $text-3xl;
+        margin-bottom: $spacing-3;
+    }
+}
+
+.description {
+    @include body-large;
+    color: $text-secondary;
+    margin: 0;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+
+    @include mobile-only {
+        font-size: $text-base;
+    }
+}
+
+.content {
+    // TopicList component will handle its own spacing
+}

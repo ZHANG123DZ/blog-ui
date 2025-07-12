@@ -1,0 +1,41 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+
+.relatedPosts {
+  margin-top: $spacing-12;
+
+  @include mobile-only {
+    margin-top: $spacing-8;
+  }
+}
+
+.title {
+  @include heading-2;
+  margin: 0 0 $spacing-6 0;
+  color: $text-primary;
+  text-align: center;
+
+  @include mobile-only {
+    font-size: $text-xl;
+    margin-bottom: $spacing-4;
+  }
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: $spacing-6;
+
+  @include mobile-only {
+    grid-template-columns: 1fr;
+    gap: $spacing-4;
+  }
+
+  @include tablet-only {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @include desktop-up {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}

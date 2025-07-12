@@ -1,0 +1,207 @@
+@use "../../styles/variables" as *;
+@use "../../styles/mixins" as *;
+
+.header {
+    text-align: center;
+    margin-bottom: $spacing-8;
+
+    @include mobile-only {
+        margin-bottom: $spacing-6;
+    }
+}
+
+.title {
+    @include heading-2;
+    margin: 0 0 $spacing-3 0;
+    color: $text-primary;
+
+    @include mobile-only {
+        font-size: $text-2xl;
+        margin-bottom: $spacing-2;
+    }
+}
+
+.subtitle {
+    @include body-base;
+    color: $text-secondary;
+    margin: 0;
+    line-height: $leading-relaxed;
+
+    @include mobile-only {
+        font-size: $text-sm;
+    }
+}
+
+.form {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-5;
+    margin-bottom: $spacing-8;
+
+    @include mobile-only {
+        gap: $spacing-4;
+        margin-bottom: $spacing-6;
+    }
+}
+
+.formOptions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: -$spacing-2 0 0 0;
+
+    @include mobile-only {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: $spacing-3;
+    }
+}
+
+.checkboxLabel {
+    display: flex;
+    align-items: center;
+    gap: $spacing-2;
+    cursor: pointer;
+    @include body-small;
+    color: $text-secondary;
+}
+
+.checkbox {
+    width: 16px;
+    height: 16px;
+    border: 2px solid $border-medium;
+    border-radius: $radius-sm;
+    background-color: $surface-primary;
+    cursor: pointer;
+    transition: all $transition-base;
+
+    &:checked {
+        background-color: $primary-500;
+        border-color: $primary-500;
+        background-image: url("data:image/svg+xml,%3csvg viewBox='0 0 16 16' fill='white' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='m13.854 3.646-7.5 7.5a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6 10.293l7.146-7.147a.5.5 0 0 1 .708.708z'/%3e%3c/svg%3e");
+    }
+
+    &:focus {
+        outline: 2px solid $primary-200;
+        outline-offset: 2px;
+    }
+}
+
+.checkboxText {
+    user-select: none;
+}
+
+.forgotLink {
+    @include body-small;
+    color: $primary-600;
+    text-decoration: none;
+    font-weight: $font-medium;
+    transition: color $transition-base;
+
+    &:hover {
+        color: $primary-700;
+        text-decoration: underline;
+    }
+}
+
+.submitError {
+    padding: $spacing-3;
+    background-color: $error-50;
+    border: 1px solid $error-200;
+    border-radius: $radius-md;
+    color: $error-700;
+    @include body-small;
+    text-align: center;
+}
+
+.socialSection {
+    margin-bottom: $spacing-6;
+
+    @include mobile-only {
+        margin-bottom: $spacing-4;
+    }
+}
+
+.divider {
+    position: relative;
+    text-align: center;
+    margin-bottom: $spacing-6;
+
+    &::before {
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background-color: $border-light;
+    }
+
+    span {
+        background-color: $bg-primary;
+        padding: 0 $spacing-4;
+        @include body-small;
+        color: $text-muted;
+    }
+}
+
+.socialButtons {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-3;
+}
+
+.socialButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: $spacing-3;
+    width: 100%;
+    padding: $spacing-3 $spacing-4;
+    border: 1px solid $border-medium;
+    border-radius: $radius-md;
+    background-color: $surface-primary;
+    color: $text-primary;
+    @include body-base;
+    font-weight: $font-medium;
+    cursor: pointer;
+    transition: all $transition-base;
+
+    &:hover {
+        background-color: $bg-secondary;
+        border-color: $border-dark;
+    }
+
+    &:focus {
+        outline: 2px solid $primary-200;
+        outline-offset: 2px;
+    }
+
+    svg {
+        flex-shrink: 0;
+    }
+}
+
+.footer {
+    text-align: center;
+    padding-top: $spacing-4;
+    border-top: 1px solid $border-light;
+
+    p {
+        @include body-small;
+        color: $text-secondary;
+        margin: 0;
+    }
+}
+
+.registerLink {
+    color: $primary-600;
+    text-decoration: none;
+    font-weight: $font-medium;
+    transition: color $transition-base;
+
+    &:hover {
+        color: $primary-700;
+        text-decoration: underline;
+    }
+}

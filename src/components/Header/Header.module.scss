@@ -1,0 +1,483 @@
+@use "../../styles/variables" as *;
+@use "../../styles/mixins" as *;
+
+.header {
+    background-color: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid $border-light;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    position: sticky;
+    top: 0;
+    z-index: $z-sticky;
+    transition: all $transition-base;
+
+    @supports not (backdrop-filter: blur(10px)) {
+        background-color: $bg-primary;
+    }
+}
+
+.content {
+    @include flex-between;
+    align-items: center;
+    padding: $spacing-4 0;
+    position: relative;
+
+    @include tablet-up {
+        padding: $spacing-5 0;
+    }
+}
+
+.brand {
+    flex-shrink: 0;
+    z-index: 2;
+}
+
+.brandLink {
+    text-decoration: none;
+    color: inherit;
+    transition: transform $transition-base;
+
+    &:hover {
+        transform: scale(1.02);
+        text-decoration: none;
+    }
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: $spacing-3;
+}
+
+.logoIcon {
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, $primary-500, $primary-600);
+    border-radius: $radius-lg;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+    position: relative;
+
+    &::before {
+        content: "";
+        position: absolute;
+        inset: 1px;
+        background: linear-gradient(135deg, $primary-400, $primary-500);
+        border-radius: calc($radius-lg - 1px);
+        z-index: -1;
+    }
+
+    @include tablet-up {
+        width: 44px;
+        height: 44px;
+    }
+}
+
+.logoText {
+    color: white;
+    font-weight: $font-bold;
+    font-size: $text-2xl;
+
+    @include tablet-up {
+        font-size: $text-3xl;
+    }
+}
+
+.brandTitle {
+    font-size: $text-3xl;
+    font-weight: $font-bold;
+    margin: 0;
+    background: linear-gradient(135deg, $gray-900, $primary-600);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+
+    @include tablet-up {
+        font-size: $text-4xl;
+    }
+
+    @include mobile-only {
+        display: none;
+    }
+}
+
+.nav {
+    display: none;
+
+    @include tablet-up {
+        display: block;
+    }
+}
+
+.actions {
+    @include flex-center;
+    gap: $spacing-3;
+    flex-shrink: 0;
+    position: relative;
+
+    @include mobile-only {
+        gap: $spacing-2;
+    }
+}
+
+.authActions {
+    @include flex-center;
+    gap: $spacing-3;
+
+    @include mobile-only {
+        display: none;
+    }
+}
+
+.demoToggle {
+    background: none;
+    border: none;
+    font-size: $text-lg;
+    cursor: pointer;
+    padding: $spacing-2;
+    border-radius: $radius-md;
+    transition: background-color $transition-base;
+
+    &:hover {
+        background-color: $bg-secondary;
+    }
+
+    @include mobile-only {
+        display: none;
+    }
+}
+
+.userMenu {
+    position: relative;
+}
+
+.userButton {
+    @include flex-center;
+    gap: $spacing-3; // Match dropdown item gap
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: $spacing-3; // Square padding for better balance
+    border-radius: $radius-lg;
+    transition: all $transition-base;
+    color: $text-primary;
+
+    &:hover {
+        background-color: $bg-secondary;
+    }
+
+    &[aria-expanded="true"] {
+        background-color: $bg-secondary;
+    }
+
+    @include mobile-only {
+        display: none;
+    }
+}
+
+.userAvatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid $border-light;
+    transition: border-color $transition-base;
+
+    .userButton:hover & {
+        border-color: $primary-300;
+    }
+
+    @include tablet-up {
+        width: 36px;
+        height: 36px;
+    }
+}
+
+.userName {
+    font-weight: $font-medium;
+    font-size: $text-base;
+
+    @include mobile-only {
+        display: none;
+    }
+
+    @include tablet-up {
+        font-size: $text-lg;
+    }
+}
+
+.chevron {
+    color: $text-secondary;
+    transition: transform $transition-base;
+    flex-shrink: 0;
+}
+
+.chevronOpen {
+    transform: rotate(180deg);
+}
+
+.dropdown {
+    position: absolute;
+    top: calc(100% + $spacing-3); // Consistent with user button padding
+    right: 0;
+    min-width: 240px;
+    background: $bg-primary;
+    border: 1px solid $border-light;
+    border-radius: $radius-lg;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    z-index: $z-dropdown;
+    overflow: hidden;
+    animation: dropdownIn 0.2s ease-out;
+
+    @keyframes dropdownIn {
+        from {
+            opacity: 0;
+            transform: translateY(-8px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+}
+
+.dropdownHeader {
+    padding: $spacing-4; // Standard container padding
+    background: $bg-secondary;
+    border-bottom: 1px solid $border-light;
+}
+
+.dropdownUserInfo {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-1; // Tight gap for user info lines
+}
+
+.dropdownUserName {
+    font-weight: $font-semibold;
+    color: $text-primary;
+    font-size: $text-base;
+}
+
+.dropdownUserEmail {
+    font-size: $text-sm;
+    color: $text-secondary;
+}
+
+.dropdownUserRole {
+    font-size: $text-xs;
+    color: $text-muted;
+    font-weight: $font-medium;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.dropdownNav {
+    padding: $spacing-2 0; // Breathing room around nav items
+}
+
+.dropdownItem {
+    @include flex-center;
+    gap: $spacing-3; // Icon to text spacing
+    width: 100%;
+    padding: $spacing-3 $spacing-4; // Match header horizontal padding
+    color: $text-primary;
+    text-decoration: none;
+    background: none;
+    border: none;
+    cursor: pointer;
+    transition: all $transition-base;
+    font-size: $text-sm;
+    font-family: inherit;
+    text-align: left;
+    justify-content: flex-start;
+
+    &:hover {
+        background-color: $bg-secondary;
+    }
+
+    svg {
+        flex-shrink: 0;
+        color: $text-muted;
+        width: 16px;
+        height: 16px;
+    }
+
+    // Logout button specific styles
+    &.logout {
+        color: $error-600;
+        border-top: 1px solid $border-light;
+        padding: calc($spacing-3 + $spacing-2) $spacing-4;
+
+        &:hover {
+            background-color: $error-50;
+            color: $error-700;
+        }
+
+        svg {
+            color: $error-500;
+        }
+
+        &:hover svg {
+            color: $error-700;
+        }
+    }
+}
+
+.mobileMenuToggle {
+    display: none;
+    flex-direction: column;
+    justify-content: space-around;
+    width: 24px;
+    height: 18px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    z-index: 3;
+
+    @include mobile-only {
+        display: flex;
+    }
+
+    span {
+        width: 100%;
+        height: 2px;
+        background-color: $text-primary;
+        transition: all $transition-base;
+        border-radius: 1px;
+        transform-origin: center;
+
+        &.active {
+            &:nth-child(1) {
+                transform: rotate(45deg) translate(3px, 3px);
+            }
+
+            &:nth-child(2) {
+                opacity: 0;
+                transform: scale(0);
+            }
+
+            &:nth-child(3) {
+                transform: rotate(-45deg) translate(3px, -3px);
+            }
+        }
+    }
+
+    &:hover span:not(.active) {
+        background-color: $primary-500;
+    }
+}
+
+.mobileMenu {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: $bg-primary;
+    border-top: 1px solid $border-light;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    padding: $spacing-4 0;
+    animation: mobileMenuIn 0.3s ease-out;
+
+    @include mobile-only {
+        display: block;
+    }
+
+    @keyframes mobileMenuIn {
+        from {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+}
+
+.mobileAuth {
+    padding: $spacing-4;
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-3;
+    border-top: 1px solid $border-light;
+    margin-top: $spacing-4;
+}
+
+.mobileUserMenu {
+    padding: $spacing-4;
+    border-top: 1px solid $border-light;
+    margin-top: $spacing-4;
+}
+
+.mobileUserInfo {
+    display: flex;
+    align-items: center;
+    gap: $spacing-3;
+    padding: $spacing-3;
+    background: $bg-secondary;
+    border-radius: $radius-lg;
+    margin-bottom: $spacing-4;
+}
+
+.mobileUserAvatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid $border-light;
+}
+
+.mobileUserName {
+    font-weight: $font-semibold;
+    color: $text-primary;
+    font-size: $text-base;
+}
+
+.mobileUserEmail {
+    font-size: $text-sm;
+    color: $text-secondary;
+    margin-top: $spacing-1;
+}
+
+.mobileUserNav {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-1;
+
+    a,
+    button {
+        padding: $spacing-3;
+        color: $text-primary;
+        text-decoration: none;
+        background: none;
+        border: none;
+        cursor: pointer;
+        font-size: $text-base;
+        font-family: inherit;
+        text-align: left;
+        border-radius: $radius-md;
+        transition: all $transition-base;
+
+        &:hover {
+            background-color: $bg-secondary;
+            color: $primary-600;
+        }
+
+        &:last-child {
+            color: $error-600;
+            margin-top: $spacing-2;
+            border-top: 1px solid $border-light;
+            padding-top: $spacing-4;
+
+            &:hover {
+                background-color: $error-50;
+                color: $error-700;
+            }
+        }
+    }
+}

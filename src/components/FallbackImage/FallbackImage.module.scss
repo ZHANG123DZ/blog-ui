@@ -1,0 +1,18 @@
+@use "../../styles/variables" as *;
+@use "../../styles/mixins" as *;
+
+.fallbackImage {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    transition: opacity $transition-base;
+
+    &.loading {
+        opacity: 0.7;
+    }
+
+    &.error {
+        opacity: 0.8;
+        filter: grayscale(0.2);
+    }
+}

@@ -1,0 +1,432 @@
+@use "../../styles/variables" as *;
+@use "../../styles/mixins" as *;
+
+.commentItem {
+    margin-bottom: $spacing-4;
+    margin-left: var(--comment-indent, 0);
+
+    &:last-child {
+        margin-bottom: 0;
+    }
+}
+
+.comment {
+    display: flex;
+    gap: $spacing-3;
+
+    @include mobile-only {
+        gap: $spacing-2;
+    }
+}
+
+.avatar {
+    flex-shrink: 0;
+
+    img {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid $border-light;
+
+        @include mobile-only {
+            width: 36px;
+            height: 36px;
+        }
+    }
+}
+
+.content {
+    flex: 1;
+    min-width: 0;
+}
+
+.header {
+    @include flex-between;
+    align-items: flex-start;
+    margin-bottom: $spacing-2;
+    gap: $spacing-2;
+}
+
+.info {
+    display: flex;
+    align-items: center;
+    gap: $spacing-2;
+    flex-wrap: wrap;
+    flex: 1;
+}
+
+.authorName {
+    @include body-base;
+    font-weight: $font-semibold;
+    color: $text-primary;
+    text-decoration: none;
+    transition: color $transition-base;
+
+    &:hover {
+        color: $primary-600;
+        text-decoration: none;
+    }
+}
+
+.date {
+    @include body-small;
+    color: $text-muted;
+}
+
+.edited {
+    @include body-small;
+    color: $text-muted;
+    font-style: italic;
+}
+
+.text {
+    margin-bottom: $spacing-3;
+
+    p {
+        @include body-base;
+        color: $text-primary;
+        line-height: $leading-relaxed;
+        margin: 0;
+        word-wrap: break-word;
+    }
+}
+
+// Actions Dropdown
+.actionsDropdown {
+    position: relative;
+    flex-shrink: 0;
+}
+
+.moreButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border: none;
+    background: none;
+    color: $text-muted;
+    border-radius: $radius-sm;
+    cursor: pointer;
+    transition: all $transition-base;
+
+    &:hover {
+        background-color: $bg-secondary;
+        color: $text-primary;
+    }
+
+    &[aria-expanded="true"] {
+        background-color: $bg-secondary;
+        color: $text-primary;
+    }
+
+    &:focus-visible {
+        outline: 2px solid $primary-500;
+        outline-offset: 2px;
+    }
+
+    svg {
+        flex-shrink: 0;
+    }
+}
+
+.dropdown {
+    position: absolute;
+    top: calc(100% + $spacing-2);
+    right: 0;
+    min-width: 140px;
+    background-color: $surface-primary;
+    border: 1px solid $border-light;
+    border-radius: $radius-md;
+    box-shadow: $shadow-lg;
+    z-index: $z-dropdown;
+    overflow: hidden;
+    animation: dropdownSlideIn 0.15s ease-out;
+
+    @keyframes dropdownSlideIn {
+        from {
+            opacity: 0;
+            transform: translateY(-4px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+}
+
+.dropdownItem {
+    @include flex-center;
+    gap: $spacing-2;
+    width: 100%;
+    padding: $spacing-2 $spacing-3;
+    background: none;
+    border: none;
+    text-align: left;
+    cursor: pointer;
+    transition: all $transition-base;
+    @include body-small;
+    font-weight: $font-medium;
+    color: $text-primary;
+    justify-content: flex-start;
+
+    &:hover {
+        background-color: $bg-secondary;
+    }
+
+    &:focus-visible {
+        outline: 2px solid $primary-500;
+        outline-offset: -2px;
+    }
+
+    svg {
+        flex-shrink: 0;
+        color: $text-muted;
+    }
+
+    &.deleteItem {
+        color: $error-600;
+
+        &:hover {
+            background-color: $error-50;
+            color: $error-700;
+        }
+
+        svg {
+            color: $error-500;
+        }
+
+        &:hover svg {
+            color: $error-700;
+        }
+    }
+}
+
+.actions {
+    display: flex;
+    align-items: center;
+    gap: $spacing-4;
+    margin-bottom: $spacing-2;
+
+    @include mobile-only {
+        gap: $spacing-3;
+    }
+}
+
+.likeButton,
+.replyButton {
+    display: flex;
+    align-items: center;
+    gap: $spacing-1;
+    background: none;
+    border: none;
+    padding: $spacing-1 $spacing-2;
+    border-radius: $radius-sm;
+    cursor: pointer;
+    transition: all $transition-base;
+    @include body-small;
+    font-weight: $font-medium;
+
+    &:hover {
+        background-color: $bg-secondary;
+    }
+
+    &:active {
+        transform: scale(0.98);
+    }
+}
+
+.likeButton {
+    color: $text-muted;
+
+    &.liked {
+        color: $error-500;
+    }
+
+    svg {
+        width: 16px;
+        height: 16px;
+    }
+}
+
+.replyButton {
+    color: $primary-600;
+
+    &:hover {
+        color: $primary-700;
+    }
+}
+
+.replyForm {
+    margin-top: $spacing-3;
+    padding: $spacing-4;
+    background-color: $bg-secondary;
+    border-radius: $radius-md;
+}
+
+.replyInput {
+    width: 100%;
+    min-height: 80px;
+    padding: $spacing-3;
+    border: 1px solid $border-light;
+    border-radius: $radius-md;
+    resize: vertical;
+    font-family: inherit;
+    @include body-base;
+    color: $text-primary;
+    background-color: $surface-primary;
+    margin-bottom: $spacing-3;
+
+    &:focus {
+        outline: none;
+        border-color: $primary-500;
+        box-shadow: 0 0 0 3px rgba($primary-500, 0.1);
+    }
+
+    &::placeholder {
+        color: $text-muted;
+    }
+}
+
+.replyActions {
+    display: flex;
+    justify-content: flex-end;
+    gap: $spacing-2;
+}
+
+// Edit form (same styling as reply form)
+.editForm {
+    margin-top: $spacing-3;
+    padding: $spacing-4;
+    background-color: $bg-secondary;
+    border-radius: $radius-md;
+    border: 1px solid $primary-200;
+}
+
+.editInput {
+    width: 100%;
+    min-height: 80px;
+    padding: $spacing-3;
+    border: 1px solid $border-light;
+    border-radius: $radius-md;
+    resize: vertical;
+    font-family: inherit;
+    @include body-base;
+    color: $text-primary;
+    background-color: $surface-primary;
+    margin-bottom: $spacing-3;
+
+    &:focus {
+        outline: none;
+        border-color: $primary-500;
+        box-shadow: 0 0 0 3px rgba($primary-500, 0.1);
+    }
+
+    &::placeholder {
+        color: $text-muted;
+    }
+}
+
+.editActions {
+    display: flex;
+    justify-content: flex-end;
+    gap: $spacing-2;
+}
+
+.replies {
+    margin-top: $spacing-4;
+    padding-left: $spacing-6;
+    border-left: 2px solid $border-light;
+
+    @include mobile-only {
+        padding-left: $spacing-4;
+    }
+}
+
+// Confirm Modal
+.confirmOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: $z-modal;
+    padding: $spacing-4;
+    animation: fadeIn 0.2s ease-out;
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+        }
+        to {
+            opacity: 1;
+        }
+    }
+}
+
+.confirmModal {
+    background-color: $surface-primary;
+    border-radius: $radius-lg;
+    padding: $spacing-6;
+    max-width: 400px;
+    width: 100%;
+    box-shadow: $shadow-xl;
+    animation: modalSlideIn 0.2s ease-out;
+
+    @keyframes modalSlideIn {
+        from {
+            opacity: 0;
+            transform: scale(0.95) translateY(-10px);
+        }
+        to {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+        }
+    }
+
+    @include mobile-only {
+        margin: $spacing-4;
+        padding: $spacing-4;
+    }
+}
+
+.confirmTitle {
+    @include heading-4;
+    margin: 0 0 $spacing-3 0;
+    color: $text-primary;
+}
+
+.confirmMessage {
+    @include body-base;
+    color: $text-secondary;
+    margin: 0 0 $spacing-6 0;
+    line-height: $leading-relaxed;
+}
+
+.confirmActions {
+    display: flex;
+    justify-content: flex-end;
+    gap: $spacing-3;
+
+    @include mobile-only {
+        flex-direction: column-reverse;
+        gap: $spacing-2;
+    }
+}
+
+.deleteConfirmButton {
+    background-color: $error-600 !important;
+
+    &:hover:not(:disabled) {
+        background-color: $error-700 !important;
+    }
+
+    &:active:not(:disabled) {
+        background-color: $error-700 !important;
+    }
+}

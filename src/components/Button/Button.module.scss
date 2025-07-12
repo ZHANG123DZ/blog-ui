@@ -1,0 +1,145 @@
+@use "../../styles/variables" as *;
+@use "../../styles/mixins" as *;
+
+.button {
+    @include button-base;
+    position: relative;
+    overflow: hidden;
+
+    // Ensure button styles override global link styles
+    &,
+    &:link,
+    &:visited,
+    &:hover,
+    &:active {
+        text-decoration: none !important;
+    }
+
+    // Variants
+    &.primary {
+        @include button-primary;
+
+        &,
+        &:link,
+        &:visited {
+            color: $text-white !important;
+        }
+
+        &:hover:not(:disabled) {
+            color: $text-white !important;
+        }
+    }
+
+    &.secondary {
+        @include button-secondary;
+
+        &,
+        &:link,
+        &:visited {
+            color: $text-primary !important;
+        }
+
+        &:hover:not(:disabled) {
+            color: $text-primary !important;
+        }
+    }
+
+    &.ghost {
+        @include button-ghost;
+
+        &,
+        &:link,
+        &:visited {
+            color: $text-primary !important;
+        }
+
+        &:hover:not(:disabled) {
+            color: $text-primary !important;
+        }
+    }
+
+    &.danger {
+        @include button-base;
+        background-color: $error-500;
+        color: $text-white;
+
+        &:hover:not(:disabled) {
+            background-color: $error-600;
+        }
+
+        &:active:not(:disabled) {
+            background-color: $error-700;
+        }
+    }
+
+    // Sizes
+    &.sm {
+        padding: $spacing-2 $spacing-3;
+        font-size: $text-sm;
+        min-height: 32px;
+    }
+
+    &.md {
+        padding: $spacing-3 $spacing-4;
+        font-size: $text-base;
+        min-height: 40px;
+    }
+
+    &.lg {
+        padding: $spacing-4 $spacing-6;
+        font-size: $text-lg;
+        min-height: 48px;
+    }
+
+    // States
+    &.disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        pointer-events: none;
+    }
+
+    &.loading {
+        cursor: wait;
+        pointer-events: none;
+        position: relative;
+
+        // Maintain button dimensions when loading
+        .hiddenText {
+            opacity: 0;
+            // Keep text for layout but hide it
+        }
+    }
+
+    &.fullWidth {
+        width: 100%;
+    }
+}
+
+.spinner {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 16px;
+    height: 16px;
+    margin-top: -8px; // Half of height
+    margin-left: -8px; // Half of width
+    border: 2px solid transparent;
+    border-top: 2px solid currentColor;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+.hiddenText {
+    // Text is invisible but maintains layout
+    color: transparent !important;
+    user-select: none;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}

@@ -1,0 +1,316 @@
+@use "./variables" as *;
+
+// ===== RESPONSIVE MIXINS =====
+@mixin mobile-only {
+    @media (max-width: #{$breakpoint-sm - 1px}) {
+        @content;
+    }
+}
+
+@mixin tablet-only {
+    @media (min-width: #{$breakpoint-md}) and (max-width: #{$breakpoint-lg - 1px}) {
+        @content;
+    }
+}
+
+@mixin tablet-up {
+    @media (min-width: #{$breakpoint-md}) {
+        @content;
+    }
+}
+
+@mixin tablet-down {
+    @media (max-width: #{$breakpoint-lg - 1px}) {
+        @content;
+    }
+}
+
+@mixin desktop-up {
+    @media (min-width: #{$breakpoint-lg}) {
+        @content;
+    }
+}
+
+@mixin large-desktop-up {
+    @media (min-width: #{$breakpoint-xl}) {
+        @content;
+    }
+}
+
+// ===== LAYOUT MIXINS =====
+@mixin container {
+    width: 100%;
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: $spacing-4;
+    padding-right: $spacing-4;
+
+    @include tablet-up {
+        padding-left: $spacing-6;
+        padding-right: $spacing-6;
+    }
+
+    @include desktop-up {
+        padding-left: $spacing-8;
+        padding-right: $spacing-8;
+    }
+}
+
+@mixin flex-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+@mixin flex-between {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+@mixin flex-column {
+    display: flex;
+    flex-direction: column;
+}
+
+// ===== TYPOGRAPHY MIXINS =====
+@mixin text-truncate {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+@mixin text-truncate-lines($lines: 2) {
+    display: -webkit-box;
+    -webkit-line-clamp: $lines;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+@mixin heading-1 {
+    font-size: $text-4xl;
+    font-weight: $font-bold;
+    line-height: $leading-tight;
+
+    @include tablet-up {
+        font-size: $text-5xl;
+    }
+}
+
+@mixin heading-2 {
+    font-size: $text-3xl;
+    font-weight: $font-bold;
+    line-height: $leading-tight;
+
+    @include tablet-up {
+        font-size: $text-4xl;
+    }
+}
+
+@mixin heading-3 {
+    font-size: $text-2xl;
+    font-weight: $font-semibold;
+    line-height: $leading-tight;
+
+    @include tablet-up {
+        font-size: $text-3xl;
+    }
+}
+
+@mixin heading-4 {
+    font-size: $text-xl;
+    font-weight: $font-semibold;
+    line-height: $leading-tight;
+
+    @include tablet-up {
+        font-size: $text-2xl;
+    }
+}
+
+@mixin body-large {
+    font-size: $text-lg;
+    font-weight: $font-normal;
+    line-height: $leading-relaxed;
+}
+
+@mixin body-base {
+    font-size: $text-base;
+    font-weight: $font-normal;
+    line-height: $leading-normal;
+}
+
+@mixin body-small {
+    font-size: $text-sm;
+    font-weight: $font-normal;
+    line-height: $leading-normal;
+}
+
+// ===== BUTTON MIXINS =====
+@mixin button-base {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    border-radius: $radius-md;
+    font-weight: $font-medium;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all $transition-base;
+    outline: none;
+
+    &:focus-visible {
+        outline: 2px solid $primary-500;
+        outline-offset: 2px;
+    }
+
+    &:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+    }
+}
+
+@mixin button-primary {
+    @include button-base;
+    background-color: $primary-600;
+    color: $text-white;
+
+    &:hover:not(:disabled) {
+        background-color: $primary-700;
+    }
+
+    &:active:not(:disabled) {
+        background-color: $primary-800;
+    }
+}
+
+@mixin button-secondary {
+    @include button-base;
+    background-color: $bg-primary;
+    color: $text-primary;
+    border: 1px solid $border-medium;
+
+    &:hover:not(:disabled) {
+        background-color: $bg-secondary;
+    }
+
+    &:active:not(:disabled) {
+        background-color: $bg-muted;
+    }
+}
+
+@mixin button-ghost {
+    @include button-base;
+    background-color: transparent;
+    color: $text-primary;
+
+    &:hover:not(:disabled) {
+        background-color: $bg-secondary;
+    }
+
+    &:active:not(:disabled) {
+        background-color: $bg-muted;
+    }
+}
+
+// ===== CARD MIXINS =====
+@mixin card-base {
+    background-color: $bg-primary;
+    border: 1px solid $border-light;
+    border-radius: $radius-lg;
+    box-shadow: $shadow-sm;
+    transition: all $transition-base;
+}
+
+@mixin card-hover {
+    &:hover {
+        box-shadow: $shadow-md;
+        transform: translateY(-2px);
+    }
+}
+
+// ===== INPUT MIXINS =====
+@mixin input-base {
+    width: 100%;
+    padding: $spacing-3 $spacing-4;
+    border: 1px solid $border-medium;
+    border-radius: $radius-md;
+    font-size: $text-base;
+    line-height: $leading-normal;
+    background-color: $bg-primary;
+    color: $text-primary;
+    transition: all $transition-base;
+
+    &::placeholder {
+        color: $text-muted;
+    }
+
+    &:focus {
+        outline: none;
+        border-color: $primary-500;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+
+    &:disabled {
+        background-color: $bg-muted;
+        cursor: not-allowed;
+    }
+}
+
+// ===== ANIMATION MIXINS =====
+@mixin fade-in($duration: 0.3s) {
+    animation: fadeIn $duration ease-in-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@mixin slide-up($duration: 0.3s) {
+    animation: slideUp $duration ease-out;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+// ===== UTILITY MIXINS =====
+@mixin visually-hidden {
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    padding: 0 !important;
+    margin: -1px !important;
+    overflow: hidden !important;
+    clip: rect(0, 0, 0, 0) !important;
+    white-space: nowrap !important;
+    border: 0 !important;
+}
+
+@mixin loading-spinner {
+    border: 2px solid $border-light;
+    border-top: 2px solid $primary-500;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}

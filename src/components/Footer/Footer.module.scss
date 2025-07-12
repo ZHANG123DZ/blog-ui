@@ -1,0 +1,87 @@
+@use "../../styles/variables" as *;
+@use "../../styles/mixins" as *;
+
+.footer {
+    background-color: $bg-secondary;
+    border-top: 1px solid $border-light;
+    margin-top: auto;
+}
+
+.content {
+    padding: $spacing-8 0 $spacing-6;
+
+    @include tablet-up {
+        @include flex-between;
+        align-items: center;
+        padding: $spacing-6 0;
+    }
+
+    @include mobile-only {
+        text-align: center;
+        @include flex-column;
+        gap: $spacing-4;
+    }
+}
+
+.links {
+    order: 1;
+
+    @include tablet-up {
+        order: 0;
+    }
+}
+
+.nav {
+    // No specific styles needed
+}
+
+.navList {
+    @include flex-center;
+    gap: $spacing-6;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    flex-wrap: wrap;
+
+    @include mobile-only {
+        gap: $spacing-4;
+        justify-content: center;
+    }
+}
+
+.navItem {
+    // No specific styles needed
+}
+
+.navLink {
+    @include body-small;
+    color: $text-secondary;
+    text-decoration: none;
+    font-weight: $font-medium;
+    transition: color $transition-base;
+
+    &:hover {
+        color: $primary-600;
+        text-decoration: none;
+    }
+
+    &:focus-visible {
+        outline: 2px solid $primary-500;
+        outline-offset: 2px;
+        border-radius: $radius-sm;
+    }
+}
+
+.copyright {
+    order: 0;
+
+    @include tablet-up {
+        order: 1;
+    }
+
+    p {
+        @include body-small;
+        color: $text-muted;
+        margin: 0;
+    }
+}

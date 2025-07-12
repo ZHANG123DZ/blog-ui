@@ -1,0 +1,463 @@
+@use "../../styles/variables" as *;
+@use "../../styles/mixins" as *;
+
+.container {
+    min-height: 100vh;
+    background-color: $bg-secondary;
+    padding: $spacing-8 0;
+
+    @include tablet-down {
+        padding: $spacing-6 0;
+    }
+}
+
+.header {
+    text-align: center;
+    margin-bottom: $spacing-8;
+    position: relative;
+
+    @include tablet-down {
+        margin-bottom: $spacing-6;
+    }
+
+    .backButton {
+        position: absolute;
+        left: 0;
+        top: 0;
+
+        @include tablet-down {
+            position: static;
+            margin-bottom: $spacing-4;
+        }
+    }
+
+    .title {
+        @include heading-1;
+        color: $text-primary;
+        margin-bottom: $spacing-2;
+    }
+
+    .subtitle {
+        @include body-large;
+        color: $text-secondary;
+    }
+}
+
+.settingsLayout {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: $spacing-8;
+    align-items: start;
+
+    @include tablet-down {
+        grid-template-columns: 1fr;
+        gap: $spacing-6;
+    }
+}
+
+// Sidebar Navigation
+.sidebar {
+    background-color: $surface-primary;
+    border-radius: $radius-lg;
+    padding: $spacing-6;
+    box-shadow: $shadow-sm;
+    border: 1px solid $border-light;
+    position: sticky;
+    top: $spacing-8;
+
+    @include tablet-down {
+        position: static;
+        padding: $spacing-4;
+    }
+}
+
+.sidebarItem {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: $spacing-3;
+    padding: $spacing-3 $spacing-4;
+    border: none;
+    background: none;
+    color: $text-secondary;
+    text-align: left;
+    border-radius: $radius-md;
+    cursor: pointer;
+    transition: all $transition-base;
+    margin-bottom: $spacing-1;
+
+    &:hover {
+        background-color: $bg-secondary;
+        color: $text-primary;
+    }
+
+    &.active {
+        background-color: $primary-50;
+        color: $primary-700;
+        font-weight: $font-semibold;
+    }
+
+    &:last-child {
+        margin-bottom: 0;
+    }
+}
+
+.sidebarIcon {
+    font-size: $text-lg;
+    flex-shrink: 0;
+}
+
+.sidebarLabel {
+    font-size: $text-sm;
+    font-weight: $font-medium;
+
+    @include mobile-only {
+        font-size: $text-xs;
+    }
+}
+
+// Main Content
+.mainContent {
+    padding: $spacing-8 !important;
+
+    @include tablet-down {
+        padding: $spacing-6 !important;
+    }
+
+    @include mobile-only {
+        padding: $spacing-4 !important;
+    }
+}
+
+.settingsContent {
+    h2 {
+        @include heading-2;
+        color: $text-primary;
+        margin-bottom: $spacing-6;
+        padding-bottom: $spacing-3;
+        border-bottom: 2px solid $primary-100;
+    }
+}
+
+// Setting Groups
+.settingGroup {
+    margin-bottom: $spacing-8;
+
+    &:last-child {
+        margin-bottom: 0;
+    }
+
+    h3 {
+        @include heading-4;
+        color: $text-primary;
+        margin-bottom: $spacing-4;
+    }
+}
+
+// Setting Rows
+.settingRow {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: $spacing-6;
+    padding: $spacing-4 0;
+    border-bottom: 1px solid $border-light;
+
+    &:last-child {
+        border-bottom: none;
+    }
+
+    @include tablet-down {
+        flex-direction: column;
+        gap: $spacing-3;
+        align-items: stretch;
+    }
+}
+
+.settingInfo {
+    flex: 1;
+
+    label {
+        display: block;
+        font-weight: $font-semibold;
+        color: $text-primary;
+        margin-bottom: $spacing-1;
+        font-size: $text-sm;
+    }
+}
+
+.settingDescription {
+    @include body-small;
+    color: $text-secondary;
+    line-height: $leading-relaxed;
+}
+
+.settingControl {
+    display: flex;
+    align-items: center;
+    gap: $spacing-3;
+    flex-shrink: 0;
+
+    @include tablet-down {
+        justify-content: flex-start;
+    }
+}
+
+// Toggle Switch
+.toggle {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 24px;
+    cursor: pointer;
+
+    input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+}
+
+.slider {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: $border-medium;
+    border-radius: 12px;
+    transition: all $transition-base;
+
+    &:before {
+        position: absolute;
+        content: "";
+        height: 18px;
+        width: 18px;
+        left: 3px;
+        bottom: 3px;
+        background-color: white;
+        border-radius: 50%;
+        transition: all $transition-base;
+        box-shadow: $shadow-sm;
+    }
+
+    input:checked + & {
+        background-color: $primary-600;
+
+        &:before {
+            transform: translateX(26px);
+        }
+    }
+
+    input:focus + & {
+        box-shadow: 0 0 0 3px rgba($primary-600, 0.1);
+    }
+}
+
+// Select Input
+.selectInput {
+    padding: $spacing-3;
+    border: 1px solid $border-medium;
+    border-radius: $radius-md;
+    font-size: $text-sm;
+    background-color: $bg-primary;
+    color: $text-primary;
+    cursor: pointer;
+    transition: all $transition-base;
+    min-width: 150px;
+
+    &:focus {
+        outline: none;
+        border-color: $primary-500;
+        box-shadow: 0 0 0 3px rgba($primary-600, 0.1);
+    }
+
+    &:hover {
+        border-color: $border-dark;
+    }
+
+    @include tablet-down {
+        width: 100%;
+    }
+}
+
+// Password Form
+.passwordForm {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-4;
+    max-width: 400px;
+
+    @include tablet-down {
+        max-width: none;
+    }
+}
+
+// Message
+.message {
+    background-color: $success-50;
+    color: $success-700;
+    padding: $spacing-4;
+    border-radius: $radius-md;
+    margin-bottom: $spacing-6;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border: 1px solid $success-200;
+}
+
+.messageClose {
+    background: none;
+    border: none;
+    font-size: $text-lg;
+    color: $success-600;
+    cursor: pointer;
+    padding: 0;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: $radius-sm;
+    transition: all $transition-base;
+
+    &:hover {
+        background-color: $success-100;
+    }
+}
+
+// Save Actions
+.saveActions {
+    margin-top: $spacing-8;
+    padding-top: $spacing-6;
+    border-top: 1px solid $border-light;
+    display: flex;
+    justify-content: flex-end;
+
+    @include tablet-down {
+        justify-content: stretch;
+
+        button {
+            width: 100%;
+        }
+    }
+}
+
+// Danger Zone
+.dangerTitle {
+    color: $error-600 !important;
+}
+
+.dangerZone {
+    border: 1px solid $error-200;
+    border-radius: $radius-md;
+    padding: $spacing-4;
+    background-color: $error-50;
+
+    .settingRow {
+        border-bottom: none;
+        padding: 0;
+    }
+
+    button {
+        background-color: $error-600 !important;
+        color: white !important;
+
+        &:hover {
+            background-color: $error-700 !important;
+        }
+    }
+}
+
+// Responsive Mobile Sidebar
+@include mobile-only {
+    .sidebar {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+        gap: $spacing-2;
+        padding: $spacing-3;
+    }
+
+    .sidebarItem {
+        flex-direction: column;
+        gap: $spacing-1;
+        padding: $spacing-3 $spacing-2;
+        text-align: center;
+        margin-bottom: 0;
+    }
+
+    .sidebarIcon {
+        font-size: $text-base;
+    }
+
+    .sidebarLabel {
+        font-size: $text-xs;
+        line-height: 1.2;
+    }
+}
+
+// Focus states for accessibility
+.sidebarItem:focus-visible,
+.toggle input:focus-visible + .slider,
+.selectInput:focus-visible {
+    outline: 2px solid $primary-500;
+    outline-offset: 2px;
+}
+
+// Animations
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.settingsContent {
+    animation: slideInUp 0.3s ease-out;
+}
+
+// Dark mode preparation (for future)
+@media (prefers-color-scheme: dark) {
+    .container {
+        // Dark mode styles can be added here
+    }
+}
+
+// Print styles
+@media print {
+    .container {
+        background: white;
+        padding: 0;
+    }
+
+    .sidebar,
+    .saveActions,
+    .backButton {
+        display: none;
+    }
+
+    .settingsLayout {
+        grid-template-columns: 1fr;
+    }
+
+    .mainContent {
+        box-shadow: none;
+        border: 1px solid $border-light;
+    }
+}
+
+// High contrast mode
+@media (prefers-contrast: high) {
+    .toggle .slider {
+        border: 2px solid $text-primary;
+    }
+
+    .selectInput,
+    .settingRow {
+        border-width: 2px;
+    }
+}

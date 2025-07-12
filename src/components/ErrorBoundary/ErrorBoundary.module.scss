@@ -1,0 +1,136 @@
+@use "../../styles/variables" as *;
+@use "../../styles/mixins" as *;
+
+.errorContainer {
+    min-height: 100vh;
+    @include flex-center;
+    padding: $spacing-4;
+    background: linear-gradient(135deg, $error-50 0%, $bg-secondary 100%);
+}
+
+.errorContent {
+    max-width: 600px;
+    width: 100%;
+    text-align: center;
+    background-color: $surface-primary;
+    border-radius: $radius-2xl;
+    padding: $spacing-8;
+    box-shadow: $shadow-xl;
+    border: 1px solid $border-light;
+
+    @include mobile-only {
+        padding: $spacing-6;
+        border-radius: $radius-xl;
+        box-shadow: $shadow-lg;
+    }
+}
+
+.errorIcon {
+    display: flex;
+    justify-content: center;
+    margin-bottom: $spacing-6;
+
+    svg {
+        animation: pulse 2s infinite;
+    }
+}
+
+.errorTitle {
+    @include heading-2;
+    margin: 0 0 $spacing-4 0;
+    color: $text-primary;
+
+    @include mobile-only {
+        font-size: $text-2xl;
+        margin-bottom: $spacing-3;
+    }
+}
+
+.errorDescription {
+    @include body-large;
+    color: $text-secondary;
+    margin: 0 0 $spacing-8 0;
+    line-height: $leading-relaxed;
+
+    @include mobile-only {
+        font-size: $text-base;
+        margin-bottom: $spacing-6;
+    }
+}
+
+.errorActions {
+    display: flex;
+    gap: $spacing-4;
+    justify-content: center;
+    margin-bottom: $spacing-8;
+
+    @include mobile-only {
+        flex-direction: column;
+        align-items: center;
+        gap: $spacing-3;
+        margin-bottom: $spacing-6;
+    }
+}
+
+.errorDetails {
+    text-align: left;
+    padding: $spacing-6;
+    background-color: $bg-secondary;
+    border-radius: $radius-lg;
+    border: 1px solid $border-medium;
+
+    h3 {
+        @include heading-3;
+        font-size: $text-xl; // Smaller than heading-3
+        margin: 0 0 $spacing-4 0;
+        color: $text-primary;
+    }
+}
+
+.errorMessage {
+    @include body-base;
+    color: $error-600;
+    margin: 0 0 $spacing-4 0;
+    padding: $spacing-3;
+    background-color: $error-50;
+    border-radius: $radius-md;
+    font-family: monospace;
+}
+
+.errorStack {
+    summary {
+        @include body-base;
+        font-weight: $font-medium;
+        color: $text-secondary;
+        cursor: pointer;
+        margin-bottom: $spacing-3;
+
+        &:hover {
+            color: $text-primary;
+        }
+    }
+
+    pre {
+        @include body-small;
+        color: $text-secondary;
+        margin: 0;
+        padding: $spacing-3;
+        background-color: $bg-muted;
+        border-radius: $radius-md;
+        overflow-x: auto;
+        white-space: pre-wrap;
+        font-family: monospace;
+    }
+}
+
+@keyframes pulse {
+    0%,
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1.05);
+        opacity: 0.8;
+    }
+}

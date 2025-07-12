@@ -1,0 +1,352 @@
+@use "../../styles/variables" as *;
+@use "../../styles/mixins" as *;
+
+.chatWindow {
+    position: fixed;
+    bottom: 0;
+    right: $spacing-6;
+    width: 380px;
+    height: 520px;
+    background: $bg-primary;
+    border: 1px solid $border-light;
+    border-bottom: none;
+    border-radius: $radius-lg $radius-lg 0 0;
+    box-shadow: $shadow-lg;
+    display: flex;
+    flex-direction: column;
+    z-index: 1000;
+    font-family: inherit;
+
+    @include mobile-only {
+        right: $spacing-4;
+        width: 340px;
+        height: 460px;
+    }
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: $spacing-3 $spacing-4;
+    border-bottom: 1px solid $border-light;
+    background: $bg-primary;
+    border-radius: $radius-lg $radius-lg 0 0;
+}
+
+.userInfo {
+    display: flex;
+    align-items: center;
+    gap: $spacing-3;
+    flex: 1;
+    min-width: 0;
+}
+
+.avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.userDetails {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.name {
+    @include body-base;
+    font-weight: $font-semibold;
+    color: $text-primary;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.status {
+    @include body-small;
+    color: $text-muted;
+    font-size: 12px;
+}
+
+.headerActions {
+    display: flex;
+    align-items: center;
+    gap: $spacing-1;
+}
+
+.menuContainer {
+    position: relative;
+}
+
+.menuButton,
+.minimizeButton,
+.closeButton {
+    width: 32px;
+    height: 32px;
+    border: none;
+    background: none;
+    color: $text-muted;
+    cursor: pointer;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all $transition-fast;
+
+    &:hover {
+        background-color: $bg-secondary;
+        color: $text-primary;
+    }
+
+    &:focus-visible {
+        outline: 2px solid $primary-500;
+        outline-offset: 2px;
+    }
+}
+
+.menu {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background: $bg-primary;
+    border: 1px solid $border-light;
+    border-radius: $radius-md;
+    box-shadow: $shadow-lg;
+    min-width: 220px;
+    z-index: 1001;
+    margin-top: $spacing-1;
+}
+
+.menuItem {
+    width: 100%;
+    padding: $spacing-3 $spacing-4;
+    border: none;
+    background: none;
+    color: $text-primary;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: $spacing-3;
+    @include body-base;
+    transition: background-color $transition-fast;
+
+    &:hover {
+        background-color: $bg-secondary;
+    }
+
+    &:focus-visible {
+        outline: 2px solid $primary-500;
+        outline-offset: -2px;
+    }
+
+    svg {
+        color: $text-muted;
+    }
+}
+
+.messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: $spacing-4;
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-3;
+    scroll-behavior: smooth;
+
+    &::-webkit-scrollbar {
+        width: 4px;
+    }
+
+    &::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background: $border-medium;
+        border-radius: $radius-full;
+    }
+}
+
+.message {
+    display: flex;
+    max-width: 85%;
+
+    &.own {
+        align-self: flex-end;
+
+        .messageContent {
+            background: $primary-500;
+            color: $text-white;
+            border-radius: $radius-lg $radius-sm $radius-lg $radius-lg;
+        }
+    }
+
+    &.other {
+        align-self: flex-start;
+
+        .messageContent {
+            background: $bg-secondary;
+            color: $text-primary;
+            border-radius: $radius-sm $radius-lg $radius-lg $radius-lg;
+        }
+    }
+}
+
+.messageContent {
+    padding: $spacing-2 $spacing-3;
+    position: relative;
+    word-wrap: break-word;
+    min-width: 0;
+}
+
+.messageText {
+    @include body-base;
+    margin: 0;
+    line-height: $leading-normal;
+}
+
+.messageTime {
+    @include body-small;
+    font-size: 11px;
+    opacity: 0.7;
+    margin-top: $spacing-1;
+    display: block;
+}
+
+.inputForm {
+    display: flex;
+    align-items: flex-end;
+    gap: $spacing-2;
+    padding: $spacing-3 $spacing-4;
+    border-top: 1px solid $border-light;
+    background: $bg-primary;
+}
+
+.input {
+    @include input-base;
+    flex: 1;
+    padding: $spacing-2 $spacing-3;
+    border: 1px solid $border-light;
+    border-radius: $radius-full;
+    background: $bg-primary;
+    color: $text-primary;
+    font-size: 14px;
+    line-height: 1.4;
+    min-height: 36px;
+    resize: none;
+
+    &:focus {
+        outline: none;
+        border-color: $primary-500;
+        box-shadow: 0 0 0 1px $primary-500;
+    }
+
+    &::placeholder {
+        color: $text-muted;
+    }
+}
+
+.sendButton {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+
+    &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+}
+
+// Minimized window styles
+.minimizedWindow {
+    position: fixed;
+    bottom: 0;
+    right: $spacing-6;
+    background: $bg-primary;
+    border: 1px solid $border-light;
+    border-bottom: none;
+    border-radius: $radius-lg $radius-lg 0 0;
+    box-shadow: $shadow-md;
+    padding: $spacing-3 $spacing-4;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: $spacing-2;
+    z-index: 999;
+    transition: all $transition-base;
+
+    &:hover {
+        box-shadow: $shadow-lg;
+        transform: translateY(-2px);
+    }
+
+    @include mobile-only {
+        right: $spacing-4;
+    }
+}
+
+.minimizedAvatar {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+}
+
+.minimizedName {
+    @include body-base;
+    font-weight: $font-medium;
+    color: $text-primary;
+    white-space: nowrap;
+}
+
+// Animations
+@keyframes slideUp {
+    from {
+        transform: translateY(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.chatWindow {
+    animation: slideUp 0.3s ease-out;
+}
+
+// High contrast support
+@media (prefers-contrast: high) {
+    .chatWindow {
+        border-width: 2px;
+    }
+
+    .message.own .messageContent {
+        border: 1px solid $primary-700;
+    }
+
+    .message.other .messageContent {
+        border: 1px solid $border-medium;
+    }
+}
+
+// Reduced motion support
+@media (prefers-reduced-motion: reduce) {
+    .chatWindow {
+        animation: none;
+    }
+
+    .minimizedWindow {
+        transition: none;
+
+        &:hover {
+            transform: none;
+        }
+    }
+}

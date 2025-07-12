@@ -1,0 +1,260 @@
+@use "../../styles/variables" as *;
+@use "../../styles/mixins" as *;
+
+.authorInfo {
+    @include card-base;
+    background-color: $surface-primary;
+    border: 1px solid $border-light;
+    padding: $spacing-6;
+    border-radius: $radius-lg;
+
+    @include mobile-only {
+        padding: $spacing-4;
+        border-radius: $radius-md;
+    }
+}
+
+.header {
+    display: flex;
+    align-items: flex-start;
+    gap: $spacing-4;
+    margin-bottom: $spacing-4;
+
+    @include mobile-only {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: $spacing-3;
+    }
+}
+
+.avatarContainer {
+    flex-shrink: 0;
+}
+
+.avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid $primary-100;
+
+    @include mobile-only {
+        width: 72px;
+        height: 72px;
+    }
+}
+
+.info {
+    flex: 1;
+    min-width: 0;
+}
+
+.name {
+    @include heading-3;
+    margin: 0 0 $spacing-1 0;
+    color: $text-primary;
+
+    @include mobile-only {
+        font-size: $text-xl;
+    }
+}
+
+.nameLink {
+    color: inherit;
+    text-decoration: none;
+    transition: color $transition-base;
+
+    &:hover {
+        color: $primary-600;
+        text-decoration: none;
+    }
+}
+
+.title {
+    @include body-base;
+    color: $primary-600;
+    font-weight: $font-medium;
+    margin: 0 0 $spacing-3 0;
+}
+
+.stats {
+    display: flex;
+    align-items: center;
+    gap: $spacing-4;
+    flex-wrap: wrap;
+
+    @include mobile-only {
+        justify-content: center;
+        gap: $spacing-3;
+    }
+}
+
+.stat {
+    @include body-small;
+    color: $text-secondary;
+
+    strong {
+        color: $text-primary;
+        font-weight: $font-semibold;
+    }
+}
+
+.action {
+    flex-shrink: 0;
+
+    @include mobile-only {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+    }
+}
+
+.bio {
+    margin-bottom: $spacing-4;
+
+    p {
+        @include body-base;
+        color: $text-secondary;
+        line-height: $leading-relaxed;
+        margin: 0;
+    }
+}
+
+.social {
+    display: flex;
+    align-items: center;
+    gap: $spacing-3;
+    padding-top: $spacing-4;
+    border-top: 1px solid $border-light;
+    flex-wrap: wrap;
+
+    @include mobile-only {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: $spacing-2;
+    }
+}
+
+.socialLabel {
+    @include body-small;
+    color: $text-secondary;
+    font-weight: $font-medium;
+    flex-shrink: 0;
+}
+
+.socialLinks {
+    display: flex;
+    align-items: center;
+    gap: $spacing-2;
+}
+
+.socialLink {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background-color: $bg-secondary;
+    color: $text-muted;
+    text-decoration: none;
+    transition: all $transition-base;
+
+    &:hover {
+        background-color: $primary-500;
+        color: white;
+        transform: translateY(-1px);
+    }
+
+    &:active {
+        transform: translateY(0);
+    }
+
+    svg {
+        width: 18px;
+        height: 18px;
+    }
+}
+
+// Loading skeleton
+.skeleton {
+    display: flex;
+    gap: $spacing-4;
+
+    @include mobile-only {
+        flex-direction: column;
+        align-items: center;
+    }
+}
+
+.skeletonAvatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background-color: $bg-muted;
+    flex-shrink: 0;
+
+    @include mobile-only {
+        width: 72px;
+        height: 72px;
+    }
+}
+
+.skeletonContent {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-2;
+
+    @include mobile-only {
+        align-items: center;
+        width: 100%;
+    }
+}
+
+.skeletonName {
+    height: 24px;
+    width: 180px;
+    background-color: $bg-muted;
+    border-radius: $radius-md;
+
+    @include mobile-only {
+        width: 150px;
+    }
+}
+
+.skeletonTitle {
+    height: 20px;
+    width: 140px;
+    background-color: $bg-muted;
+    border-radius: $radius-md;
+
+    @include mobile-only {
+        width: 120px;
+    }
+}
+
+.skeletonBio {
+    height: 16px;
+    width: 100%;
+    background-color: $bg-muted;
+    border-radius: $radius-md;
+    margin-top: $spacing-2;
+
+    @include mobile-only {
+        width: 200px;
+    }
+}
+
+.skeletonSocial {
+    height: 20px;
+    width: 120px;
+    background-color: $bg-muted;
+    border-radius: $radius-md;
+    margin-top: $spacing-3;
+
+    @include mobile-only {
+        width: 100px;
+    }
+}

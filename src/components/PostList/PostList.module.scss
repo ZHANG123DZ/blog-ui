@@ -1,0 +1,45 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+
+.postList {
+  width: 100%;
+}
+
+.postsContainer {
+  &.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: $spacing-6;
+
+    @include mobile-only {
+      grid-template-columns: 1fr;
+      gap: $spacing-4;
+    }
+
+    @include tablet-up {
+      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    }
+  }
+
+  &.list {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-4;
+
+    .postItem {
+      width: 100%;
+    }
+  }
+}
+
+.postItem {
+  width: 100%;
+}
+
+.paginationContainer {
+  margin-top: $spacing-12;
+  
+  @include mobile-only {
+    margin-top: $spacing-8;
+  }
+}

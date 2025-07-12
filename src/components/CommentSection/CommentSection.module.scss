@@ -1,0 +1,178 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+
+.commentSection {
+  margin-top: $spacing-12;
+  border-top: 1px solid $border-light;
+  padding-top: $spacing-8;
+
+  @include mobile-only {
+    margin-top: $spacing-8;
+    padding-top: $spacing-6;
+  }
+}
+
+.header {
+  margin-bottom: $spacing-8;
+
+  @include mobile-only {
+    margin-bottom: $spacing-6;
+  }
+}
+
+.title {
+  @include heading-2;
+  margin: 0;
+  color: $text-primary;
+
+  @include mobile-only {
+    font-size: $text-xl;
+  }
+}
+
+.commentForm {
+  margin-bottom: $spacing-8;
+  padding: $spacing-6;
+  background-color: $bg-secondary;
+  border-radius: $radius-lg;
+  border: 1px solid $border-light;
+
+  @include mobile-only {
+    padding: $spacing-4;
+    margin-bottom: $spacing-6;
+  }
+}
+
+.formGroup {
+  margin-bottom: $spacing-4;
+}
+
+.commentInput {
+  width: 100%;
+  min-height: 120px;
+  padding: $spacing-4;
+  border: 1px solid $border-light;
+  border-radius: $radius-md;
+  resize: vertical;
+  font-family: inherit;
+  @include body-base;
+  color: $text-primary;
+  background-color: $surface-primary;
+  transition: border-color $transition-base, box-shadow $transition-base;
+
+  &:focus {
+    outline: none;
+    border-color: $primary-500;
+    box-shadow: 0 0 0 3px rgba($primary-500, 0.1);
+  }
+
+  &::placeholder {
+    color: $text-muted;
+  }
+}
+
+.formActions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: $spacing-4;
+
+  @include mobile-only {
+    flex-direction: column;
+    align-items: stretch;
+    gap: $spacing-3;
+  }
+}
+
+.guidelines {
+  @include body-small;
+  color: $text-muted;
+
+  @include mobile-only {
+    text-align: center;
+    order: 2;
+  }
+}
+
+.loginPrompt {
+  margin-bottom: $spacing-8;
+  padding: $spacing-6;
+  text-align: center;
+  background-color: $bg-secondary;
+  border-radius: $radius-lg;
+  border: 1px solid $border-light;
+
+  @include mobile-only {
+    padding: $spacing-4;
+    margin-bottom: $spacing-6;
+  }
+
+  p {
+    @include body-base;
+    color: $text-secondary;
+    margin: 0;
+
+    a {
+      color: $primary-600;
+      text-decoration: none;
+      font-weight: $font-medium;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+}
+
+.commentsList {
+  margin-bottom: $spacing-8;
+
+  @include mobile-only {
+    margin-bottom: $spacing-6;
+  }
+}
+
+.loadMore {
+  text-align: center;
+}
+
+// Loading skeleton
+.skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-6;
+}
+
+.skeletonComment {
+  display: flex;
+  gap: $spacing-3;
+}
+
+.skeletonAvatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: $bg-muted;
+  flex-shrink: 0;
+}
+
+.skeletonContent {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-2;
+}
+
+.skeletonHeader {
+  height: 20px;
+  width: 200px;
+  background-color: $bg-muted;
+  border-radius: $radius-md;
+}
+
+.skeletonText {
+  height: 16px;
+  width: 100%;
+  background-color: $bg-muted;
+  border-radius: $radius-md;
+}

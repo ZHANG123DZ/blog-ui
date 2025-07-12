@@ -1,0 +1,367 @@
+@use "../../styles/variables" as *;
+@use "../../styles/mixins" as *;
+
+.postCard {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    @include slide-up(0.4s);
+}
+
+.imageContainer {
+    position: relative;
+    width: 100%;
+    height: 200px;
+    overflow: hidden;
+
+    @include tablet-up {
+        height: 240px;
+    }
+}
+
+.image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform $transition-slow;
+
+    &:hover {
+        transform: scale(1.05);
+    }
+}
+
+.content {
+    padding: $spacing-6;
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-4;
+    flex: 1;
+
+    @include mobile-only {
+        padding: $spacing-4;
+        gap: $spacing-3;
+    }
+}
+
+.topicBadge {
+    align-self: flex-start;
+}
+
+.title {
+    margin: 0;
+    line-height: $leading-tight;
+}
+
+.titleLink {
+    color: $text-primary;
+    text-decoration: none;
+    transition: color $transition-base;
+
+    &:hover {
+        color: $primary-600;
+        text-decoration: none;
+    }
+
+    &:focus-visible {
+        outline: 2px solid $primary-500;
+        outline-offset: 2px;
+        border-radius: $radius-sm;
+    }
+}
+
+.excerpt {
+    font-size: $text-base;
+    font-weight: $font-normal;
+    line-height: $leading-normal;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    color: $text-secondary;
+    margin: 0;
+    flex: 1;
+}
+
+.meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: $spacing-3;
+    margin-top: auto;
+
+    @include mobile-only {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: $spacing-2;
+    }
+}
+
+.author {
+    display: flex;
+    align-items: center;
+    gap: $spacing-2;
+    min-width: 0;
+}
+
+.authorAvatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+}
+
+.authorName {
+    font-size: $text-sm;
+    font-weight: $font-medium;
+    color: $text-primary;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    text-decoration: none;
+    transition: color $transition-base;
+
+    &:hover {
+        color: $primary-600;
+        text-decoration: none;
+    }
+}
+
+.metaInfo {
+    display: flex;
+    align-items: center;
+    gap: $spacing-2;
+    font-size: $text-sm;
+    color: $text-muted;
+    flex-shrink: 0;
+
+    @include mobile-only {
+        align-self: stretch;
+    }
+}
+
+.date {
+    white-space: nowrap;
+}
+
+.separator {
+    color: $text-muted;
+}
+
+.readTime {
+    white-space: nowrap;
+}
+
+// Interactions section
+.interactions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: $spacing-3;
+    border-top: 1px solid $border-light;
+    margin-top: $spacing-1;
+
+    @include mobile-only {
+        flex-direction: column;
+        align-items: stretch;
+        gap: $spacing-2;
+    }
+}
+
+.stats {
+    display: flex;
+    align-items: center;
+    gap: $spacing-4;
+
+    @include mobile-only {
+        justify-content: center;
+        gap: $spacing-3;
+    }
+}
+
+.stat {
+    display: flex;
+    align-items: center;
+    gap: $spacing-1;
+    color: $text-muted;
+    font-size: $text-sm;
+    font-weight: $font-medium;
+
+    svg {
+        flex-shrink: 0;
+    }
+}
+
+.actions {
+    display: flex;
+    align-items: center;
+    gap: $spacing-2;
+
+    @include mobile-only {
+        justify-content: center;
+    }
+}
+
+.actionButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: $radius-md;
+    border: none;
+    background-color: transparent;
+    color: $text-muted;
+    cursor: pointer;
+    transition: all $transition-base;
+
+    &:hover {
+        background-color: $bg-secondary;
+        color: $text-primary;
+        transform: translateY(-1px);
+    }
+
+    &:active {
+        transform: translateY(0);
+    }
+
+    svg {
+        flex-shrink: 0;
+    }
+
+    &.liked {
+        color: $error-500;
+
+        &:hover {
+            color: $error-600;
+            background-color: $error-50;
+        }
+    }
+
+    &.bookmarked {
+        color: $primary-600;
+
+        &:hover {
+            color: $primary-700;
+            background-color: $primary-50;
+        }
+    }
+
+    &.loading {
+        pointer-events: none;
+        opacity: 0.7;
+        position: relative;
+
+        svg {
+            opacity: 0.3;
+        }
+
+        &::after {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 16px;
+            height: 16px;
+            margin: -8px 0 0 -8px;
+            @include loading-spinner;
+        }
+    }
+
+    &:disabled {
+        cursor: not-allowed;
+        opacity: 0.6;
+    }
+}
+
+// Loading skeleton styles
+.loading {
+    .skeletonImage {
+        width: 100%;
+        height: 200px;
+        background-color: $bg-muted;
+        border-radius: $radius-md $radius-md 0 0;
+    }
+
+    .skeletonBadge {
+        width: 60px;
+        height: 20px;
+        background-color: $bg-muted;
+        border-radius: $radius-sm;
+        margin-bottom: $spacing-2;
+    }
+
+    .skeletonTitle {
+        width: 85%;
+        height: 24px;
+        background-color: $bg-muted;
+        border-radius: $radius-md;
+        margin-bottom: $spacing-3;
+    }
+
+    .skeletonExcerpt {
+        width: 100%;
+        height: 16px;
+        background-color: $bg-muted;
+        border-radius: $radius-md;
+        margin-bottom: $spacing-1;
+
+        &:nth-child(2) {
+            width: 75%;
+        }
+    }
+
+    .skeletonMeta {
+        width: 150px;
+        height: 16px;
+        background-color: $bg-muted;
+        border-radius: $radius-md;
+        margin-top: $spacing-3;
+    }
+}
+
+// Compact mode styles
+.compact {
+    .imageContainer {
+        height: 150px;
+
+        @include mobile-only {
+            height: 120px;
+        }
+    }
+
+    .content {
+        padding: $spacing-4;
+
+        @include mobile-only {
+            padding: $spacing-3;
+        }
+    }
+
+    .title {
+        font-size: $text-lg;
+        margin-bottom: $spacing-2;
+
+        @include mobile-only {
+            font-size: $text-base;
+        }
+    }
+
+    .excerpt {
+        font-size: $text-sm;
+        margin-bottom: $spacing-3;
+        -webkit-line-clamp: 2;
+    }
+
+    .authorAvatar {
+        width: 28px;
+        height: 28px;
+    }
+
+    .authorName,
+    .date,
+    .readTime {
+        font-size: $text-xs;
+    }
+}

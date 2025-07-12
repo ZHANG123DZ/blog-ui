@@ -1,0 +1,62 @@
+@use "../../styles/variables" as *;
+@use "../../styles/mixins" as *;
+
+.badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: $radius-full;
+    font-weight: $font-medium;
+    line-height: 1;
+    white-space: nowrap;
+
+    // Variants
+    &.default {
+        background-color: $gray-100;
+        color: $gray-700;
+    }
+
+    &.primary {
+        background-color: $primary-100;
+        color: $primary-700;
+    }
+
+    &.secondary {
+        background-color: $gray-100;
+        color: $gray-600;
+    }
+
+    &.success {
+        background-color: $success-50;
+        color: $success-600;
+    }
+
+    &.warning {
+        background-color: $warning-50;
+        color: $warning-600;
+    }
+
+    &.error {
+        background-color: $error-50;
+        color: $error-600;
+    }
+
+    // Sizes
+    &.sm {
+        padding: $spacing-1 $spacing-2;
+        font-size: $text-xs;
+        min-height: 20px;
+    }
+
+    &.md {
+        padding: $spacing-1 $spacing-3;
+        font-size: $text-sm;
+        min-height: 24px;
+    }
+
+    &.lg {
+        padding: $spacing-2 $spacing-4;
+        font-size: $text-base;
+        min-height: 32px;
+    }
+}

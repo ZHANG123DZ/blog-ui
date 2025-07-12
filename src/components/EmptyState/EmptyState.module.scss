@@ -1,0 +1,66 @@
+@use "../../styles/variables" as *;
+@use "../../styles/mixins" as *;
+
+.emptyState {
+    @include flex-center;
+    @include flex-column;
+    gap: $spacing-6;
+    padding: $spacing-12 $spacing-4;
+    text-align: center;
+    max-width: 400px;
+    margin: 0 auto;
+
+    @include mobile-only {
+        padding: $spacing-8 $spacing-4;
+        gap: $spacing-4;
+    }
+}
+
+.icon {
+    @include flex-center;
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background-color: $bg-secondary;
+
+    @include mobile-only {
+        width: 64px;
+        height: 64px;
+    }
+}
+
+.emoji {
+    font-size: $text-4xl;
+    line-height: 1;
+
+    @include mobile-only {
+        font-size: $text-3xl;
+    }
+}
+
+.content {
+    @include flex-column;
+    gap: $spacing-3;
+}
+
+.title {
+    @include heading-3;
+    color: $text-primary;
+    margin: 0;
+
+    @include mobile-only {
+        font-size: $text-xl;
+    }
+}
+
+.description {
+    @include body-base;
+    color: $text-secondary;
+    margin: 0;
+    max-width: 300px;
+    line-height: $leading-relaxed;
+}
+
+.action {
+    margin-top: $spacing-2;
+}

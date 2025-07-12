@@ -1,0 +1,473 @@
+@use "../../styles/variables" as *;
+@use "../../styles/mixins" as *;
+
+.container {
+    min-height: 100vh;
+    background-color: $bg-secondary;
+    padding: $spacing-8 0;
+
+    @include tablet-down {
+        padding: $spacing-6 0;
+    }
+}
+
+.header {
+    @include flex-between;
+    margin-bottom: $spacing-8;
+    gap: $spacing-6;
+
+    @include tablet-down {
+        @include flex-column;
+        align-items: flex-start;
+        gap: $spacing-4;
+        margin-bottom: $spacing-6;
+    }
+}
+
+.headerContent {
+    flex: 1;
+
+    .title {
+        @include heading-2;
+        color: $text-primary;
+        margin-bottom: $spacing-2;
+    }
+
+    .subtitle {
+        @include body-base;
+        color: $text-secondary;
+    }
+}
+
+.actions {
+    @include tablet-down {
+        width: 100%;
+    }
+
+    button {
+        @include tablet-down {
+            width: 100%;
+            justify-content: center;
+        }
+    }
+}
+
+.controls {
+    background-color: $surface-primary;
+    border-radius: $radius-lg;
+    padding: $spacing-6;
+    margin-bottom: $spacing-6;
+    box-shadow: $shadow-sm;
+    border: 1px solid $border-light;
+    display: flex;
+    gap: $spacing-6;
+    align-items: flex-end;
+
+    @include tablet-down {
+        @include flex-column;
+        align-items: stretch;
+        padding: $spacing-4;
+        gap: $spacing-4;
+    }
+}
+
+.searchContainer {
+    flex: 1;
+    max-width: 400px;
+
+    @include tablet-down {
+        max-width: none;
+    }
+}
+
+.searchInput {
+    position: relative;
+    width: 100%;
+
+    .searchIcon {
+        position: absolute;
+        left: $spacing-3;
+        top: 50%;
+        transform: translateY(-50%);
+        color: $text-muted;
+        pointer-events: none;
+    }
+
+    input {
+        width: 100%;
+        padding: $spacing-3 $spacing-3 $spacing-3 40px;
+        border: 1px solid $border-medium;
+        border-radius: $radius-md;
+        font-size: $text-sm;
+        background-color: $bg-primary;
+        color: $text-primary;
+        transition: all $transition-base;
+
+        &::placeholder {
+            color: $text-muted;
+        }
+
+        &:focus {
+            outline: none;
+            border-color: $primary-500;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+    }
+}
+
+.filterContainer {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-1;
+    min-width: 200px;
+
+    @include tablet-down {
+        min-width: auto;
+    }
+}
+
+.filterLabel {
+    font-size: $text-xs;
+    font-weight: $font-medium;
+    color: $text-secondary;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.topicFilter {
+    padding: $spacing-3;
+    border: 1px solid $border-medium;
+    border-radius: $radius-md;
+    font-size: $text-sm;
+    background-color: $bg-primary;
+    color: $text-primary;
+    cursor: pointer;
+    transition: all $transition-base;
+
+    &:focus {
+        outline: none;
+        border-color: $primary-500;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+
+    &:hover {
+        border-color: $border-dark;
+    }
+}
+
+.content {
+    min-height: 400px;
+}
+
+.bookmarksGrid {
+    display: grid;
+    gap: $spacing-6;
+
+    @include desktop-up {
+        grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+    }
+}
+
+.bookmarkItem {
+    background-color: $surface-primary;
+    border-radius: $radius-lg;
+    overflow: hidden;
+    box-shadow: $shadow-sm;
+    border: 1px solid $border-light;
+    transition: all $transition-base;
+
+    &:hover {
+        box-shadow: $shadow-md;
+        transform: translateY(-2px);
+    }
+}
+
+.bookmarkMeta {
+    padding: $spacing-4;
+    @include flex-between;
+    align-items: flex-start;
+    gap: $spacing-4;
+    border-top: 1px solid $border-light;
+    background-color: $bg-secondary;
+
+    @include tablet-down {
+        @include flex-column;
+        align-items: stretch;
+        gap: $spacing-3;
+    }
+}
+
+.bookmarkInfo {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-2;
+}
+
+.bookmarkedDate {
+    display: flex;
+    align-items: center;
+    gap: $spacing-1;
+    color: $text-muted;
+    font-size: $text-xs;
+    font-weight: $font-medium;
+
+    svg {
+        flex-shrink: 0;
+        color: $primary-500;
+    }
+}
+
+.postStats {
+    display: flex;
+    align-items: center;
+    gap: $spacing-3;
+
+    @include mobile-only {
+        gap: $spacing-2;
+    }
+}
+
+.stat {
+    display: flex;
+    align-items: center;
+    gap: $spacing-1;
+    color: $text-muted;
+    font-size: $text-xs;
+    font-weight: $font-medium;
+
+    svg {
+        flex-shrink: 0;
+    }
+}
+
+.bookmarkActions {
+    display: flex;
+    align-items: center;
+    gap: $spacing-2;
+
+    @include tablet-down {
+        justify-content: flex-end;
+    }
+}
+
+.actionButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: $radius-md;
+    color: $text-muted;
+    background-color: transparent;
+    border: 1px solid $border-light;
+    transition: all $transition-base;
+    text-decoration: none;
+    cursor: pointer;
+
+    &:hover {
+        color: $primary-600;
+        background-color: $primary-50;
+        border-color: $primary-200;
+        transform: translateY(-1px);
+    }
+
+    &:active {
+        transform: translateY(0);
+    }
+
+    svg {
+        flex-shrink: 0;
+    }
+}
+
+.removeButton {
+    &:hover {
+        color: $error-600;
+        background-color: $error-50;
+        border-color: $error-200;
+    }
+}
+
+.resultsInfo {
+    margin-top: $spacing-8;
+    padding-top: $spacing-6;
+    border-top: 1px solid $border-light;
+}
+
+.resultsText {
+    @include body-small;
+    color: $text-secondary;
+    display: flex;
+    align-items: center;
+    gap: $spacing-3;
+    flex-wrap: wrap;
+
+    @include mobile-only {
+        justify-content: center;
+        text-align: center;
+    }
+}
+
+.activeTopic {
+    display: flex;
+    align-items: center;
+    gap: $spacing-1;
+}
+
+.clearFilter {
+    background: none;
+    border: none;
+    color: inherit;
+    cursor: pointer;
+    font-size: $text-base;
+    line-height: 1;
+    padding: 0;
+    margin-left: $spacing-1;
+    opacity: 0.7;
+    transition: opacity $transition-base;
+
+    &:hover {
+        opacity: 1;
+    }
+}
+
+// Empty state overrides
+:global(.empty-state) {
+    background-color: $surface-primary;
+    border-radius: $radius-lg;
+    padding: $spacing-12;
+    box-shadow: $shadow-sm;
+    border: 1px solid $border-light;
+
+    @include tablet-down {
+        padding: $spacing-8;
+    }
+}
+
+// Loading state
+.container :global(.loading) {
+    padding: $spacing-12;
+    background-color: $surface-primary;
+    border-radius: $radius-lg;
+    margin: $spacing-8 0;
+}
+
+// Animation for bookmark items
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.bookmarkItem {
+    animation: slideInUp 0.3s ease-out;
+}
+
+// Staggered animation for multiple items
+.bookmarkItem:nth-child(1) {
+    animation-delay: 0ms;
+}
+.bookmarkItem:nth-child(2) {
+    animation-delay: 100ms;
+}
+.bookmarkItem:nth-child(3) {
+    animation-delay: 200ms;
+}
+.bookmarkItem:nth-child(4) {
+    animation-delay: 300ms;
+}
+.bookmarkItem:nth-child(5) {
+    animation-delay: 400ms;
+}
+
+// Focus states for accessibility
+.actionButton:focus-visible,
+.topicFilter:focus-visible,
+.clearFilter:focus-visible {
+    outline: 2px solid $primary-500;
+    outline-offset: 2px;
+}
+
+// Responsive adjustments
+@include mobile-only {
+    .header {
+        margin-bottom: $spacing-4;
+    }
+
+    .controls {
+        margin-bottom: $spacing-4;
+    }
+
+    .bookmarkMeta {
+        padding: $spacing-3;
+    }
+
+    .bookmarksGrid {
+        gap: $spacing-4;
+    }
+}
+
+// Special styling for bookmark icon in meta
+.bookmarkedDate svg {
+    color: $primary-600;
+}
+
+// Hover effects for better interactivity
+.bookmarkItem:hover {
+    .bookmarkedDate svg {
+        color: $primary-700;
+    }
+
+    .actionButton {
+        border-color: $border-medium;
+    }
+}
+
+// Print styles
+@media print {
+    .container {
+        background: white;
+        padding: 0;
+    }
+
+    .controls,
+    .bookmarkActions,
+    .actions {
+        display: none;
+    }
+
+    .bookmarkItem {
+        box-shadow: none;
+        border: 1px solid $border-light;
+        break-inside: avoid;
+        margin-bottom: $spacing-4;
+    }
+
+    .bookmarkMeta {
+        background: white;
+    }
+}
+
+// Dark mode adjustments (if needed in future)
+@media (prefers-color-scheme: dark) {
+    .container {
+        // Dark mode styles could be added here
+    }
+}
+
+// High contrast mode support
+@media (prefers-contrast: high) {
+    .bookmarkItem {
+        border-width: 2px;
+    }
+
+    .actionButton {
+        border-width: 2px;
+    }
+}

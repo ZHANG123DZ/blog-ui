@@ -1,0 +1,359 @@
+@use "../../styles/variables" as *;
+@use "../../styles/mixins" as *;
+
+.blogContent {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.imageContainer {
+    width: 100%;
+    margin-bottom: $spacing-8;
+    border-radius: $radius-lg;
+    overflow: hidden;
+
+    @include mobile-only {
+        margin-bottom: $spacing-6;
+        border-radius: $radius-md;
+    }
+}
+
+.featuredImage {
+    width: 100%;
+    height: 400px;
+    object-fit: cover;
+    display: block;
+
+    @include mobile-only {
+        height: 250px;
+    }
+}
+
+.header {
+    margin-bottom: $spacing-8;
+
+    @include mobile-only {
+        margin-bottom: $spacing-6;
+    }
+}
+
+.topicBadge {
+    margin-bottom: $spacing-4;
+}
+
+.title {
+    @include heading-1;
+    margin: 0 0 $spacing-6 0;
+    line-height: $leading-tight;
+    color: $text-primary;
+
+    @include mobile-only {
+        font-size: $text-3xl;
+        margin-bottom: $spacing-4;
+    }
+}
+
+.meta {
+    padding-bottom: $spacing-6;
+    border-bottom: 1px solid $border-light;
+}
+
+.author {
+    display: flex;
+    align-items: center;
+    gap: $spacing-3;
+}
+
+.authorAvatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+
+    @include mobile-only {
+        width: 40px;
+        height: 40px;
+    }
+}
+
+.authorInfo {
+    flex: 1;
+    min-width: 0;
+}
+
+.authorName {
+    @include body-base;
+    font-weight: $font-semibold;
+    color: $text-primary;
+    display: block;
+    margin-bottom: $spacing-1;
+    text-decoration: none;
+    transition: color $transition-base;
+
+    &:hover {
+        color: $primary-600;
+        text-decoration: none;
+    }
+}
+
+.dateInfo {
+    @include body-small;
+    color: $text-muted;
+    display: flex;
+    align-items: center;
+    gap: $spacing-1;
+    flex-wrap: wrap;
+}
+
+.publishDate {
+    white-space: nowrap;
+}
+
+.updateInfo,
+.readTime {
+    white-space: nowrap;
+}
+
+.content {
+    margin-bottom: $spacing-8;
+
+    @include mobile-only {
+        margin-bottom: $spacing-6;
+    }
+}
+
+.htmlContent {
+    // Article typography styles
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+        margin: $spacing-8 0 $spacing-4 0;
+        color: $text-primary;
+        line-height: $leading-tight;
+
+        &:first-child {
+            margin-top: 0;
+        }
+    }
+
+    h2 {
+        @include heading-2;
+        margin-top: $spacing-12;
+
+        @include mobile-only {
+            font-size: $text-2xl;
+            margin-top: $spacing-8;
+        }
+    }
+
+    h3 {
+        @include heading-3;
+
+        @include mobile-only {
+            font-size: $text-xl;
+        }
+    }
+
+    p {
+        @include body-large;
+        color: $text-primary;
+        line-height: $leading-relaxed;
+        margin: 0 0 $spacing-6 0;
+
+        @include mobile-only {
+            font-size: $text-base;
+            margin-bottom: $spacing-4;
+        }
+    }
+
+    ul,
+    ol {
+        margin: $spacing-6 0;
+        padding-left: $spacing-6;
+
+        @include mobile-only {
+            margin: $spacing-4 0;
+            padding-left: $spacing-4;
+        }
+
+        li {
+            @include body-large;
+            color: $text-primary;
+            line-height: $leading-relaxed;
+            margin-bottom: $spacing-2;
+
+            @include mobile-only {
+                font-size: $text-base;
+            }
+        }
+    }
+
+    blockquote {
+        margin: $spacing-8 0;
+        padding: $spacing-6;
+        background-color: $bg-secondary;
+        border-left: 4px solid $primary-500;
+        border-radius: $radius-md;
+
+        @include mobile-only {
+            margin: $spacing-6 0;
+            padding: $spacing-4;
+        }
+
+        p {
+            margin-bottom: 0;
+            font-style: italic;
+            color: $text-secondary;
+        }
+    }
+
+    code {
+        background-color: $bg-muted;
+        color: $primary-700;
+        padding: $spacing-1 $spacing-2;
+        border-radius: $radius-sm;
+        font-family: $font-mono;
+        font-size: 0.9em;
+    }
+
+    pre {
+        background-color: $gray-900;
+        color: $gray-100;
+        padding: $spacing-6;
+        border-radius: $radius-md;
+        overflow-x: auto;
+        margin: $spacing-8 0;
+
+        @include mobile-only {
+            padding: $spacing-4;
+            margin: $spacing-6 0;
+        }
+
+        code {
+            background: none;
+            color: inherit;
+            padding: 0;
+        }
+    }
+
+    img {
+        width: 100%;
+        height: auto;
+        border-radius: $radius-md;
+        margin: $spacing-8 0;
+
+        @include mobile-only {
+            margin: $spacing-6 0;
+        }
+    }
+
+    a {
+        color: $primary-600;
+        text-decoration: underline;
+        transition: color $transition-base;
+
+        &:hover {
+            color: $primary-700;
+        }
+    }
+}
+
+.footer {
+    padding-top: $spacing-6;
+    border-top: 1px solid $border-light;
+}
+
+.tags {
+    display: flex;
+    align-items: center;
+    gap: $spacing-3;
+    flex-wrap: wrap;
+
+    @include mobile-only {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: $spacing-2;
+    }
+}
+
+.tagsLabel {
+    @include body-base;
+    font-weight: $font-medium;
+    color: $text-secondary;
+    flex-shrink: 0;
+}
+
+.tagsList {
+    display: flex;
+    align-items: center;
+    gap: $spacing-2;
+    flex-wrap: wrap;
+}
+
+// Loading skeleton
+.skeleton {
+    // Similar to other skeleton implementations
+}
+
+.skeletonImage {
+    width: 100%;
+    height: 400px;
+    background-color: $bg-muted;
+    border-radius: $radius-lg;
+    margin-bottom: $spacing-8;
+
+    @include mobile-only {
+        height: 250px;
+        margin-bottom: $spacing-6;
+    }
+}
+
+.skeletonHeader {
+    margin-bottom: $spacing-8;
+}
+
+.skeletonTitle {
+    height: 48px;
+    background-color: $bg-muted;
+    border-radius: $radius-md;
+    margin-bottom: $spacing-4;
+
+    @include mobile-only {
+        height: 36px;
+    }
+}
+
+.skeletonMeta {
+    height: 24px;
+    width: 300px;
+    background-color: $bg-muted;
+    border-radius: $radius-md;
+
+    @include mobile-only {
+        width: 250px;
+    }
+}
+
+.skeletonContent {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-4;
+}
+
+.skeletonParagraph {
+    height: 20px;
+    background-color: $bg-muted;
+    border-radius: $radius-md;
+
+    &:nth-child(odd) {
+        width: 100%;
+    }
+
+    &:nth-child(even) {
+        width: 85%;
+    }
+}

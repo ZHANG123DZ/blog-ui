@@ -1,0 +1,431 @@
+// Forward variables and mixins to avoid conflicts
+@forward "./variables";
+@forward "./mixins";
+
+// Use them locally
+@use "./variables" as *;
+@use "./mixins" as *;
+
+// ===== CSS RESET =====
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    line-height: 1.15;
+    -webkit-text-size-adjust: 100%;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+    margin: 0;
+    font-family: $font-sans;
+    font-size: $text-base;
+    font-weight: $font-normal;
+    line-height: $leading-normal;
+    color: $text-primary;
+    background-color: $bg-primary;
+}
+
+// ===== TYPOGRAPHY =====
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    margin: 0;
+    color: $text-primary;
+}
+
+h1 {
+    @include heading-1;
+}
+
+h2 {
+    @include heading-2;
+}
+
+h3 {
+    @include heading-3;
+}
+
+h4 {
+    font-size: $text-xl;
+    font-weight: $font-semibold;
+    line-height: $leading-tight;
+}
+
+h5 {
+    font-size: $text-lg;
+    font-weight: $font-semibold;
+    line-height: $leading-tight;
+}
+
+h6 {
+    font-size: $text-base;
+    font-weight: $font-semibold;
+    line-height: $leading-normal;
+}
+
+p {
+    margin: 0;
+    @include body-base;
+}
+
+// Only style plain links without classes or with .link class
+a:not([class]),
+a.link {
+    color: $primary-600;
+    text-decoration: none;
+    transition: color $transition-base;
+
+    &:hover {
+        color: $primary-700;
+        text-decoration: underline;
+    }
+
+    &:focus-visible {
+        outline: 2px solid $primary-500;
+        outline-offset: 2px;
+        border-radius: $radius-sm;
+    }
+}
+
+// Reset for all links to prevent inheritance issues
+a {
+    text-decoration: none;
+    color: inherit;
+
+    &:focus-visible {
+        outline: 2px solid $primary-500;
+        outline-offset: 2px;
+        border-radius: $radius-sm;
+    }
+}
+
+// ===== LISTS =====
+ul,
+ol {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+// ===== FORMS =====
+button,
+input,
+textarea,
+select {
+    font-family: inherit;
+    font-size: inherit;
+}
+
+button {
+    background: none;
+    border: none;
+    cursor: pointer;
+
+    &:focus-visible {
+        outline: 2px solid $primary-500;
+        outline-offset: 2px;
+    }
+}
+
+input,
+textarea {
+    &:focus {
+        outline: none;
+    }
+}
+
+// ===== IMAGES =====
+img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+
+// ===== TABLES =====
+table {
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+// ===== UTILITY CLASSES =====
+.sr-only {
+    @include visually-hidden;
+}
+
+.container {
+    @include container;
+}
+
+// Text utilities
+.text-primary {
+    color: $text-primary;
+}
+
+.text-secondary {
+    color: $text-secondary;
+}
+
+.text-muted {
+    color: $text-muted;
+}
+
+.text-white {
+    color: $text-white;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.text-left {
+    text-align: left;
+}
+
+.text-right {
+    text-align: right;
+}
+
+// Display utilities
+.d-none {
+    display: none;
+}
+
+.d-block {
+    display: block;
+}
+
+.d-flex {
+    display: flex;
+}
+
+.d-inline-flex {
+    display: inline-flex;
+}
+
+// Flex utilities
+.flex-center {
+    @include flex-center;
+}
+
+.flex-between {
+    @include flex-between;
+}
+
+.flex-column {
+    @include flex-column;
+}
+
+.flex-wrap {
+    flex-wrap: wrap;
+}
+
+.flex-1 {
+    flex: 1;
+}
+
+// Spacing utilities
+.mt-0 {
+    margin-top: $spacing-0;
+}
+.mt-1 {
+    margin-top: $spacing-1;
+}
+.mt-2 {
+    margin-top: $spacing-2;
+}
+.mt-3 {
+    margin-top: $spacing-3;
+}
+.mt-4 {
+    margin-top: $spacing-4;
+}
+.mt-5 {
+    margin-top: $spacing-5;
+}
+.mt-6 {
+    margin-top: $spacing-6;
+}
+.mt-8 {
+    margin-top: $spacing-8;
+}
+
+.mb-0 {
+    margin-bottom: $spacing-0;
+}
+.mb-1 {
+    margin-bottom: $spacing-1;
+}
+.mb-2 {
+    margin-bottom: $spacing-2;
+}
+.mb-3 {
+    margin-bottom: $spacing-3;
+}
+.mb-4 {
+    margin-bottom: $spacing-4;
+}
+.mb-5 {
+    margin-bottom: $spacing-5;
+}
+.mb-6 {
+    margin-bottom: $spacing-6;
+}
+.mb-8 {
+    margin-bottom: $spacing-8;
+}
+
+.ml-0 {
+    margin-left: $spacing-0;
+}
+.ml-1 {
+    margin-left: $spacing-1;
+}
+.ml-2 {
+    margin-left: $spacing-2;
+}
+.ml-3 {
+    margin-left: $spacing-3;
+}
+.ml-4 {
+    margin-left: $spacing-4;
+}
+
+.mr-0 {
+    margin-right: $spacing-0;
+}
+.mr-1 {
+    margin-right: $spacing-1;
+}
+.mr-2 {
+    margin-right: $spacing-2;
+}
+.mr-3 {
+    margin-right: $spacing-3;
+}
+.mr-4 {
+    margin-right: $spacing-4;
+}
+
+.pt-0 {
+    padding-top: $spacing-0;
+}
+.pt-1 {
+    padding-top: $spacing-1;
+}
+.pt-2 {
+    padding-top: $spacing-2;
+}
+.pt-3 {
+    padding-top: $spacing-3;
+}
+.pt-4 {
+    padding-top: $spacing-4;
+}
+.pt-5 {
+    padding-top: $spacing-5;
+}
+.pt-6 {
+    padding-top: $spacing-6;
+}
+.pt-8 {
+    padding-top: $spacing-8;
+}
+
+.pb-0 {
+    padding-bottom: $spacing-0;
+}
+.pb-1 {
+    padding-bottom: $spacing-1;
+}
+.pb-2 {
+    padding-bottom: $spacing-2;
+}
+.pb-3 {
+    padding-bottom: $spacing-3;
+}
+.pb-4 {
+    padding-bottom: $spacing-4;
+}
+.pb-5 {
+    padding-bottom: $spacing-5;
+}
+.pb-6 {
+    padding-bottom: $spacing-6;
+}
+.pb-8 {
+    padding-bottom: $spacing-8;
+}
+
+.pl-0 {
+    padding-left: $spacing-0;
+}
+.pl-1 {
+    padding-left: $spacing-1;
+}
+.pl-2 {
+    padding-left: $spacing-2;
+}
+.pl-3 {
+    padding-left: $spacing-3;
+}
+.pl-4 {
+    padding-left: $spacing-4;
+}
+
+.pr-0 {
+    padding-right: $spacing-0;
+}
+.pr-1 {
+    padding-right: $spacing-1;
+}
+.pr-2 {
+    padding-right: $spacing-2;
+}
+.pr-3 {
+    padding-right: $spacing-3;
+}
+.pr-4 {
+    padding-right: $spacing-4;
+}
+
+// ===== RESPONSIVE UTILITIES =====
+@include mobile-only {
+    .mobile-hidden {
+        display: none;
+    }
+}
+
+@include tablet-up {
+    .tablet-hidden {
+        display: none;
+    }
+}
+
+@include desktop-up {
+    .desktop-hidden {
+        display: none;
+    }
+}
+
+// ===== LOADING STATE =====
+.loading {
+    @include loading-spinner;
+    width: 20px;
+    height: 20px;
+}
+
+.loading-lg {
+    @include loading-spinner;
+    width: 32px;
+    height: 32px;
+}

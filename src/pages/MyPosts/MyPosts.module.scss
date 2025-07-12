@@ -1,0 +1,377 @@
+@use "../../styles/variables" as *;
+@use "../../styles/mixins" as *;
+
+.container {
+    min-height: 100vh;
+    background-color: $bg-secondary;
+    padding: $spacing-8 0;
+
+    @include tablet-down {
+        padding: $spacing-6 0;
+    }
+}
+
+.header {
+    @include flex-between;
+    margin-bottom: $spacing-8;
+    gap: $spacing-6;
+
+    @include tablet-down {
+        @include flex-column;
+        align-items: flex-start;
+        gap: $spacing-4;
+        margin-bottom: $spacing-6;
+    }
+}
+
+.headerContent {
+    flex: 1;
+
+    .title {
+        @include heading-2;
+
+        & {
+            color: $text-primary;
+            margin-bottom: $spacing-2;
+        }
+    }
+
+    .subtitle {
+        @include body-base;
+        color: $text-secondary;
+    }
+}
+
+.actions {
+    @include tablet-down {
+        width: 100%;
+    }
+
+    a {
+        @include tablet-down {
+            width: 100%;
+        }
+
+        button {
+            @include tablet-down {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    }
+}
+
+.controls {
+    background-color: $surface-primary;
+    border-radius: $radius-lg;
+    padding: $spacing-6;
+    margin-bottom: $spacing-6;
+    box-shadow: $shadow-sm;
+    border: 1px solid $border-light;
+
+    @include tablet-down {
+        padding: $spacing-4;
+    }
+}
+
+.tabs {
+    display: flex;
+    gap: $spacing-2;
+    margin-bottom: $spacing-6;
+    border-bottom: 1px solid $border-light;
+
+    @include mobile-only {
+        flex-wrap: wrap;
+        gap: $spacing-1;
+        margin-bottom: $spacing-4;
+    }
+}
+
+.tab {
+    display: flex;
+    align-items: center;
+    gap: $spacing-2;
+    padding: $spacing-3 $spacing-4;
+    border: none;
+    background: none;
+    color: $text-secondary;
+    font-weight: $font-medium;
+    font-size: $text-sm;
+    border-radius: $radius-md;
+    cursor: pointer;
+    transition: all $transition-base;
+    border-bottom: 2px solid transparent;
+    position: relative;
+
+    @include mobile-only {
+        flex: 1;
+        justify-content: center;
+        padding: $spacing-2 $spacing-3;
+        font-size: $text-xs;
+    }
+
+    &:hover {
+        color: $text-primary;
+        background-color: $bg-secondary;
+    }
+
+    &.tabActive {
+        color: $primary-600;
+        border-bottom-color: $primary-600;
+        background-color: $primary-50;
+    }
+}
+
+.tabCount {
+    background-color: $bg-muted;
+    color: $text-muted;
+    padding: 2px $spacing-2;
+    border-radius: $radius-full;
+    font-size: $text-xs;
+    font-weight: $font-medium;
+    min-width: 20px;
+    text-align: center;
+
+    .tabActive & {
+        background-color: $primary-100;
+        color: $primary-700;
+    }
+}
+
+.searchContainer {
+    flex: 1;
+    max-width: 400px;
+
+    @include tablet-down {
+        max-width: none;
+    }
+}
+
+.searchInput {
+    position: relative;
+    width: 100%;
+
+    .searchIcon {
+        position: absolute;
+        left: $spacing-3;
+        top: 50%;
+        transform: translateY(-50%);
+        color: $text-muted;
+        pointer-events: none;
+    }
+
+    input {
+        width: 100%;
+        padding: $spacing-3 $spacing-3 $spacing-3 40px;
+        border: 1px solid $border-medium;
+        border-radius: $radius-md;
+        font-size: $text-sm;
+        background-color: $bg-primary;
+        color: $text-primary;
+        transition: all $transition-base;
+
+        &::placeholder {
+            color: $text-muted;
+        }
+
+        &:focus {
+            outline: none;
+            border-color: $primary-500;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+    }
+}
+
+.content {
+    min-height: 400px;
+}
+
+.postsGrid {
+    display: grid;
+    gap: $spacing-6;
+}
+
+.postItem {
+    background-color: $surface-primary;
+    border-radius: $radius-lg;
+    overflow: hidden;
+    box-shadow: $shadow-sm;
+    border: 1px solid $border-light;
+    transition: all $transition-base;
+
+    &:hover {
+        box-shadow: $shadow-md;
+        transform: translateY(-2px);
+    }
+}
+
+.postMeta {
+    padding: $spacing-4;
+    @include flex-between;
+    align-items: flex-start;
+    gap: $spacing-4;
+    border-top: 1px solid $border-light;
+
+    @include tablet-down {
+        @include flex-column;
+        align-items: stretch;
+        gap: $spacing-3;
+    }
+}
+
+.postStatus {
+    display: flex;
+    align-items: center;
+}
+
+.postStats {
+    display: flex;
+    align-items: center;
+    gap: $spacing-4;
+
+    @include mobile-only {
+        gap: $spacing-3;
+    }
+}
+
+.stat {
+    display: flex;
+    align-items: center;
+    gap: $spacing-1;
+    color: $text-muted;
+    font-size: $text-sm;
+    font-weight: $font-medium;
+
+    @include mobile-only {
+        font-size: $text-xs;
+    }
+
+    svg {
+        flex-shrink: 0;
+    }
+}
+
+.postActions {
+    display: flex;
+    align-items: center;
+    gap: $spacing-2;
+
+    @include tablet-down {
+        justify-content: flex-end;
+    }
+}
+
+.actionButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: $radius-md;
+    color: $text-muted;
+    background-color: transparent;
+    border: 1px solid $border-light;
+    transition: all $transition-base;
+    text-decoration: none;
+
+    &:hover {
+        color: $primary-600;
+        background-color: $primary-50;
+        border-color: $primary-200;
+        transform: translateY(-1px);
+    }
+
+    &:active {
+        transform: translateY(0);
+    }
+
+    svg {
+        flex-shrink: 0;
+    }
+}
+
+// Empty state overrides
+:global(.empty-state) {
+    background-color: $surface-primary;
+    border-radius: $radius-lg;
+    padding: $spacing-12;
+    box-shadow: $shadow-sm;
+    border: 1px solid $border-light;
+
+    @include tablet-down {
+        padding: $spacing-8;
+    }
+}
+
+// Loading state
+.container :global(.loading) {
+    padding: $spacing-12;
+    background-color: $surface-primary;
+    border-radius: $radius-lg;
+    margin: $spacing-8 0;
+}
+
+// Responsive grid
+@include desktop-up {
+    .postsGrid {
+        grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+    }
+}
+
+@include tablet-up {
+    .controls {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        gap: $spacing-6;
+    }
+
+    .tabs {
+        margin-bottom: 0;
+        border-bottom: none;
+        flex: 1;
+    }
+}
+
+// Animation for post items
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.postItem {
+    animation: slideInUp 0.3s ease-out;
+}
+
+// Focus states for accessibility
+.tab:focus-visible,
+.actionButton:focus-visible {
+    outline: 2px solid $primary-500;
+    outline-offset: 2px;
+}
+
+// Print styles
+@media print {
+    .container {
+        background: white;
+        padding: 0;
+    }
+
+    .controls,
+    .postActions {
+        display: none;
+    }
+
+    .postItem {
+        box-shadow: none;
+        border: 1px solid $border-light;
+        break-inside: avoid;
+        margin-bottom: $spacing-4;
+    }
+}
