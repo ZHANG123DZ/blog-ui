@@ -7,6 +7,7 @@ import Loading from "./Loading/Loading";
 import ErrorBoundary from "./ErrorBoundary/ErrorBoundary";
 import { getCurrentUser } from "@/features/auth/authAsync";
 import { useDispatch, useSelector } from "react-redux";
+import VerifyEmail from "@/pages/VerifyEmail";
 
 // Lazy load pages for better performance
 const Home = lazy(() => import("../pages/Home/Home"));
@@ -98,6 +99,15 @@ const AppRoutes = () => {
             element={
               <AuthLayout>
                 <ResetPassword />
+              </AuthLayout>
+            }
+          />
+
+          <Route
+            path="/verify-email"
+            element={
+              <AuthLayout>
+                <VerifyEmail />
               </AuthLayout>
             }
           />

@@ -94,7 +94,21 @@ const Register = () => {
 
     try {
       // Simulate API call
+
       const { confirmPassword, agreeToTerms, ...data } = formData;
+
+      if (!data.avatar_url) {
+        try {
+          const res = await fetch("https://randomuser.me/api");
+          const data_image = await res.json();
+          data.avatar_url = data_image.results[0].picture.large;
+          data.cover_url = data_image.results[0].picture.large;
+        } catch (err) {
+          console.log("Lỗi khi fetch avatar:", err);
+        }
+
+        e;
+      }
       await authService.register(data);
 
       // Navigate to login or welcome page

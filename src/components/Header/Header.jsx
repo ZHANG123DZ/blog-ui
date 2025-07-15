@@ -17,15 +17,6 @@ const Header = () => {
   const dropdownRef = useRef(null);
   const notificationRef = useRef(null);
 
-  // Mock user data
-  const mockUser = {
-    name: "John Doe",
-    username: "john-doe",
-    email: "john.doe@example.com",
-    avatar: "https://via.placeholder.com/40?text=JD",
-    role: "Author",
-  };
-
   // Mock notifications data
   const mockNotifications = [
     {
@@ -167,7 +158,7 @@ const Header = () => {
                     aria-haspopup="true"
                   >
                     <FallbackImage
-                      src={user?.avatar}
+                      src={user?.avatar_url}
                       alt={user?.name}
                       className={styles.userAvatar}
                     />
