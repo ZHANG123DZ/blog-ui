@@ -1,20 +1,22 @@
-import { createSlice } from '@reduxjs/toolkit';
-import { getCurrentUser } from './authAsync';
-import { loginHandle } from './loginAsync';
-import { registerHandle } from './registerAsync';
+import { createSlice } from "@reduxjs/toolkit";
+import { getCurrentUser } from "./authAsync";
+import { loginHandle } from "./loginAsync";
+import { registerHandle } from "./registerAsync";
+import { settingHandle } from "./settingAsync";
 
 const initialState = {
   currentUser: null,
+  userSetting: null,
   isLoading: false,
   isAuth: false,
-  component: 'optionalLogin',
+  component: "optionalLogin",
   dataRegister: {},
   dataLogin: {},
   redirectAfterLogin: false,
 };
 
 const authSlice = createSlice({
-  name: 'auth',
+  name: "auth",
   initialState,
   reducers: {
     setComponent: (state, action) => {
@@ -82,6 +84,24 @@ const authSlice = createSlice({
       })
       .addCase(registerHandle.rejected, (state) => {
         state.currentUser = null;
+        state.isLoading = false;
+        state.isAuth = false;
+      });
+    
+    //auth/setting
+    builder
+      .addCase(settingHandle.fulfilled, (state, action) => {
+        state.setting = action.payload;
+        state.isLoading = false;
+        state.isAuth = true;
+      })
+      .addCase(settingHandle.pending, (state) => {
+        state.setting = null;
+        state.isLoading = true;
+        state.isAuth = false;
+      })
+      .addCase(settingHandle.rejected, (state) => {
+        state.setting = null;
         state.isLoading = false;
         state.isAuth = false;
       });

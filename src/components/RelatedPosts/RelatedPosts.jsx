@@ -1,7 +1,7 @@
-import PropTypes from 'prop-types';
-import PostCard from '../PostCard/PostCard';
-import EmptyState from '../EmptyState/EmptyState';
-import styles from './RelatedPosts.module.scss';
+import PropTypes from "prop-types";
+import PostCard from "../PostCard/PostCard";
+import EmptyState from "../EmptyState/EmptyState";
+import styles from "./RelatedPosts.module.scss";
 
 const RelatedPosts = ({
   posts = [],
@@ -14,7 +14,10 @@ const RelatedPosts = ({
 
   if (loading) {
     return (
-      <section className={`${styles.relatedPosts} ${className || ''}`} {...props}>
+      <section
+        className={`${styles.relatedPosts} ${className || ""}`}
+        {...props}
+      >
         <h2 className={styles.title}>Related Posts</h2>
         <div className={styles.grid}>
           {Array.from({ length: maxPosts }, (_, index) => (
@@ -27,7 +30,10 @@ const RelatedPosts = ({
 
   if (displayPosts.length === 0) {
     return (
-      <section className={`${styles.relatedPosts} ${className || ''}`} {...props}>
+      <section
+        className={`${styles.relatedPosts} ${className || ""}`}
+        {...props}
+      >
         <h2 className={styles.title}>Related Posts</h2>
         <EmptyState
           icon="📰"
@@ -39,12 +45,13 @@ const RelatedPosts = ({
   }
 
   return (
-    <section className={`${styles.relatedPosts} ${className || ''}`} {...props}>
+    <section className={`${styles.relatedPosts} ${className || ""}`} {...props}>
       <h2 className={styles.title}>Related Posts</h2>
       <div className={styles.grid}>
         {displayPosts.map((post) => (
           <PostCard
             key={post.id}
+            postId={Number(post.id) || 0}
             {...post}
             compact
           />

@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios from "axios";
 
 let isRefreshing = false;
 let tokenListeners = [];
@@ -67,7 +67,7 @@ httpRequest.interceptors.response.use(
     const shouldRefresh =
       error.response?.status === 401 &&
       !error.config._retry &&
-      !error.config.url.includes('/auth/refresh-token');
+      !error.config.url.includes("/auth/refresh-token");
 
     if (shouldRefresh) {
       error.config._retry = true;
@@ -87,7 +87,7 @@ httpRequest.interceptors.response.use(
           tokenListeners = [];
           return httpRequest(error.config); // Gửi lại request cũ
         } catch (refreshError) {
-          console.error('Refresh token thất bại:', refreshError);
+          console.error("Refresh token thất bại:", refreshError);
           throw refreshError;
         } finally {
           isRefreshing = false;
@@ -103,40 +103,47 @@ httpRequest.interceptors.response.use(
   }
 );
 
-const send = async (method, url, data, config) => {
-  const isPutOrPatch = ['put', 'patch'].includes(method.toLowerCase());
-  const effectiveMethod = isPutOrPatch ? 'post' : method;
-  const effectivePath = isPutOrPatch
-    ? `${url}${url.includes('?') ? '&' : '?'}_method=${method}`
-    : url;
+const send = async (method, url, payload = {}, config = {}) => {
+  const m = method.toLowerCase();
 
-  const response = await httpRequest.request({
-    method: effectiveMethod,
-    url: effectivePath,
-    data,
+  const axiosConfig = {
+    method: m,
+    url,
     ...config,
-  });
-  return response.data;
+  };
+
+  if (["get", "delete"].includes(m)) {
+    axiosConfig.params = payload; // query string
+  } else {
+    axiosConfig.data = payload; // body
+  }
+
+  try {
+    const response = await httpRequest.request(axiosConfig);
+    return config.raw ? response : response.data;
+  } catch (err) {
+    throw err?.response?.data || err;
+  }
 };
 
 export const get = (url, config) => {
-  return send('get', url, null, config);
+  return send("get", url, null, config);
 };
 
 export const post = (url, data, config) => {
-  return send('post', url, data, config);
+  return send("post", url, data, config);
 };
 
 export const put = (url, data, config) => {
-  return send('put', url, data, config);
+  return send("put", url, data, config);
 };
 
 export const patch = (url, data, config) => {
-  return send('patch', url, data, config);
+  return send("patch", url, data, config);
 };
 
 export const del = (url, config) => {
-  return send('delete', url, null, config);
+  return send("delete", url, null, config);
 };
 
 // export const setToken = (token, refresh_token) => {

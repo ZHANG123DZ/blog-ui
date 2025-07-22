@@ -1,10 +1,10 @@
-import { useState } from 'react';
-import PropTypes from 'prop-types';
-import CommentItem from '../CommentItem/CommentItem';
-import Button from '../Button/Button';
-import Input from '../Input/Input';
-import EmptyState from '../EmptyState/EmptyState';
-import styles from './CommentSection.module.scss';
+import { useState } from "react";
+import PropTypes from "prop-types";
+import CommentItem from "../CommentItem/CommentItem";
+import Button from "../Button/Button";
+import Input from "../Input/Input";
+import EmptyState from "../EmptyState/EmptyState";
+import styles from "./CommentSection.module.scss";
 
 const CommentSection = ({
   comments = [],
@@ -18,7 +18,7 @@ const CommentSection = ({
   className,
   ...props
 }) => {
-  const [newComment, setNewComment] = useState('');
+  const [newComment, setNewComment] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async (e) => {
@@ -29,10 +29,10 @@ const CommentSection = ({
     try {
       if (onAddComment) {
         await onAddComment(newComment.trim());
-        setNewComment('');
+        setNewComment("");
       }
     } catch (error) {
-      console.error('Failed to add comment:', error);
+      console.error("Failed to add comment:", error);
     } finally {
       setIsSubmitting(false);
     }
@@ -43,14 +43,17 @@ const CommentSection = ({
       try {
         await onReplyComment(parentId, content);
       } catch (error) {
-        console.error('Failed to reply to comment:', error);
+        console.error("Failed to reply to comment:", error);
       }
     }
   };
 
   if (loading) {
     return (
-      <section className={`${styles.commentSection} ${className || ''}`} {...props}>
+      <section
+        className={`${styles.commentSection} ${className || ""}`}
+        {...props}
+      >
         <h2 className={styles.title}>Comments</h2>
         <div className={styles.skeleton}>
           {Array.from({ length: 3 }, (_, index) => (
@@ -68,11 +71,12 @@ const CommentSection = ({
   }
 
   return (
-    <section className={`${styles.commentSection} ${className || ''}`} {...props}>
+    <section
+      className={`${styles.commentSection} ${className || ""}`}
+      {...props}
+    >
       <div className={styles.header}>
-        <h2 className={styles.title}>
-          Comments ({comments.length})
-        </h2>
+        <h2 className={styles.title}>Comments ({comments.length})</h2>
       </div>
 
       {/* Comment Form */}
@@ -98,13 +102,15 @@ const CommentSection = ({
               disabled={!newComment.trim() || isSubmitting}
               loading={isSubmitting}
             >
-              {isSubmitting ? 'Posting...' : 'Post Comment'}
+              {isSubmitting ? "Posting..." : "Post Comment"}
             </Button>
           </div>
         </form>
       ) : (
         <div className={styles.loginPrompt}>
-          <p>Please <a href="/login">sign in</a> to leave a comment.</p>
+          <p>
+            Please <a href="/login">sign in</a> to leave a comment.
+          </p>
         </div>
       )}
 
@@ -126,6 +132,7 @@ const CommentSection = ({
               onEdit={isAuthenticated ? onEditComment : undefined}
               onDelete={isAuthenticated ? onDeleteComment : undefined}
               showActions={isAuthenticated}
+              maxLevel={2}
             />
           ))
         )}

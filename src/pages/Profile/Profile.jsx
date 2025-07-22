@@ -30,83 +30,83 @@ const Profile = () => {
   // Check if this is the user's own profile
   // In a real app, you'd get current user from auth context
   const cur_user = useSelector((state) => state.auth.currentUser);
-  const currentUser = cur_user.username; // Mock current user
+  const currentUser = cur_user?.username || null; // Mock current user
   const isOwnProfile = currentUser === username;
 
   // Mock profile data - trong thực tế sẽ fetch từ API
-  const mockProfile = {
-    username: username || "john-doe",
-    name: "John Doe",
-    title: "Senior Frontend Developer",
-    bio: "Passionate about modern web development, React ecosystem, and creating amazing user experiences. Love sharing knowledge through writing and open source contributions.",
-    avatar: "https://via.placeholder.com/120?text=JD",
-    coverImage: "https://via.placeholder.com/1200x300?text=Cover+Image",
-    location: "San Francisco, CA",
-    website: "https://johndoe.dev",
-    joinedDate: "2022-01-15",
-    social: {
-      twitter: "https://twitter.com/johndoe",
-      github: "https://github.com/johndoe",
-      linkedin: "https://linkedin.com/in/johndoe",
-      website: "https://johndoe.dev",
-    },
-    stats: {
-      postsCount: 42,
-      followers: 1250,
-      following: 180,
-      likes: 3400,
-    },
-    skills: ["React", "TypeScript", "Node.js", "GraphQL", "AWS", "Docker"],
-    badges: [
-      { name: "Top Author", color: "primary", icon: "🏆" },
-      { name: "Early Adopter", color: "secondary", icon: "🚀" },
-      { name: "Community Helper", color: "success", icon: "🤝" },
-    ],
-  };
+  // const mockProfile = {
+  //   username: username || "john-doe",
+  //   name: "John Doe",
+  //   title: "Senior Frontend Developer",
+  //   bio: "Passionate about modern web development, React ecosystem, and creating amazing user experiences. Love sharing knowledge through writing and open source contributions.",
+  //   avatar: "https://via.placeholder.com/120?text=JD",
+  //   coverImage: "https://via.placeholder.com/1200x300?text=Cover+Image",
+  //   location: "San Francisco, CA",
+  //   website: "https://johndoe.dev",
+  //   joinedDate: "2022-01-15",
+  //   social: {
+  //     twitter: "https://twitter.com/johndoe",
+  //     github: "https://github.com/johndoe",
+  //     linkedin: "https://linkedin.com/in/johndoe",
+  //     website: "https://johndoe.dev",
+  //   },
+  //   stats: {
+  //     postsCount: 42,
+  //     followers: 1250,
+  //     following: 180,
+  //     likes: 3400,
+  //   },
+  //   skills: ["React", "TypeScript", "Node.js", "GraphQL", "AWS", "Docker"],
+  //   badges: [
+  //     { name: "Top Author", color: "primary", icon: "🏆" },
+  //     { name: "Early Adopter", color: "secondary", icon: "🚀" },
+  //     { name: "Community Helper", color: "success", icon: "🤝" },
+  //   ],
+  // };
 
   // Mock posts data
-  const generatePosts = (page = 1) => {
-    const postsPerPage = 6;
-    const totalPosts = 42;
-    const startIndex = (page - 1) * postsPerPage;
+  // const generatePosts = (page = 1) => {
+  //   const postsPerPage = 6;
+  //   const totalPosts = 42;
+  //   const startIndex = (page - 1) * postsPerPage;
 
-    return Array.from(
-      { length: Math.min(postsPerPage, totalPosts - startIndex) },
-      (_, i) => ({
-        id: startIndex + i + 1,
-        title: `Understanding ${
-          [
-            "React Hooks",
-            "TypeScript Generics",
-            "CSS Grid",
-            "Node.js Streams",
-            "GraphQL Queries",
-            "Docker Containers",
-          ][i % 6]
-        }`,
-        excerpt:
-          "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-        author: {
-          name: profile.full_name,
-          avatar: profile.avatar,
-          username: profile.username,
-        },
-        publishedAt: new Date(
-          Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000
-        ).toISOString(),
-        readTime: Math.floor(Math.random() * 10) + 3,
-        topic: ["React", "TypeScript", "CSS", "Node.js", "GraphQL", "DevOps"][
-          i % 6
-        ],
-        slug: `post-${startIndex + i + 1}`,
-        featuredImage: `https://via.placeholder.com/400x200?text=Post+${
-          startIndex + i + 1
-        }`,
-        likes: Math.floor(Math.random() * 100) + 10,
-        comments: Math.floor(Math.random() * 50) + 5,
-      })
-    );
-  };
+  //   return Array.from(
+  //     { length: Math.min(postsPerPage, totalPosts - startIndex) },
+  //     (_, i) => ({
+  //       id: startIndex + i + 1,
+  //       title: `Understanding ${
+  //         [
+  //           "React Hooks",
+  //           "TypeScript Generics",
+  //           "CSS Grid",
+  //           "Node.js Streams",
+  //           "GraphQL Queries",
+  //           "Docker Containers",
+  //         ][i % 6]
+  //       }`,
+  //       excerpt:
+  //         "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+  //       author: {
+  //         name: profile.full_name,
+  //         avatar: profile.avatar,
+  //         username: profile.username,
+  //       },
+  //       publishedAt: new Date(
+  //         Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000
+  //       ).toISOString(),
+  //       readTime: Math.floor(Math.random() * 10) + 3,
+  //       topic: ["React", "TypeScript", "CSS", "Node.js", "GraphQL", "DevOps"][
+  //         i % 6
+  //       ],
+  //       slug: `post-${startIndex + i + 1}`,
+  //       featuredImage: `https://via.placeholder.com/400x200?text=Post+${
+  //         startIndex + i + 1
+  //       }`,
+  //       likes: Math.floor(Math.random() * 100) + 10,
+  //       comments: Math.floor(Math.random() * 50) + 5,
+  //     })
+  //   );
+  // };
 
   useEffect(() => {
     const loadProfile = async () => {
@@ -125,9 +125,10 @@ const Profile = () => {
     const loadPosts = async () => {
       setPostsLoading(true);
       // Simulate API delay
-      await new Promise((resolve) => setTimeout(resolve, 600));
-      const newPosts = generatePosts(currentPage);
-      setPosts(newPosts);
+      const postsData = await userService.getUserPosts(username);
+      // const newPosts = generatePosts(5);
+
+      setPosts(postsData.data);
       setTotalPages(Math.ceil(42 / 6)); // 42 total posts, 6 per page
       setPostsLoading(false);
     };
@@ -148,17 +149,20 @@ const Profile = () => {
       month: "long",
     });
   };
+  //Follow Action
   const [follow, setFollow] = useState(false);
 
   const checkFollow = async () => {
+    if (isOwnProfile) return;
     if (!cur_user) {
       return false;
     }
 
     const data = {
-      follow_able_id: profile.id,
+      follow_able_id: profile?.id,
       type: "user",
     };
+
     try {
       const isFollowing = await followService.check(data);
       return isFollowing.data;
@@ -170,7 +174,7 @@ const Profile = () => {
   useEffect(() => {
     const fetchFollowState = async () => {
       const result = await checkFollow();
-      setFollow(result); // gán kết quả vào state
+      setFollow(result);
     };
 
     fetchFollowState();
@@ -184,7 +188,7 @@ const Profile = () => {
 
     try {
       const data = {
-        follow_able_id: profile.id,
+        follow_able_id: profile?.id,
         type: "user",
       };
       if (!follow) {
@@ -312,7 +316,7 @@ const Profile = () => {
             )}
 
             {/* Stats */}
-            {/* <div className={styles.statsCard}>
+            <div className={styles.statsCard}>
               <h3>Stats</h3>
               <div className={styles.stats}>
                 <div className={styles.stat}>
@@ -332,10 +336,10 @@ const Profile = () => {
                   <span>Likes</span>
                 </div>
               </div>
-            </div> */}
+            </div>
 
             {/* Skills */}
-            {/* {profile.skills && profile.skills.length > 0 && (
+            {profile.skills && profile.skills.length > 0 && (
               <div className={styles.skillsCard}>
                 <h3>Skills</h3>
                 <div className={styles.skills}>
@@ -346,10 +350,10 @@ const Profile = () => {
                   ))}
                 </div>
               </div>
-            )} */}
+            )}
 
             {/* Badges */}
-            {/* {profile.badges && profile.badges.length > 0 && (
+            {profile.badges && profile.badges.length > 0 && (
               <div className={styles.badgesCard}>
                 <h3>Achievements</h3>
                 <div className={styles.badges}>
@@ -361,7 +365,7 @@ const Profile = () => {
                   ))}
                 </div>
               </div>
-            )} */}
+            )}
 
             {/* Additional Info */}
             <div className={styles.infoCard}>
@@ -393,7 +397,7 @@ const Profile = () => {
             </div>
 
             {/* Social Links */}
-            {/* {profile.social && Object.keys(profile.social).length > 0 && (
+            {profile.social && Object.keys(profile.social).length > 0 && (
               <div className={styles.socialCard}>
                 <h3>Connect</h3>
                 <div className={styles.socialLinks}>
@@ -426,7 +430,7 @@ const Profile = () => {
                   )}
                 </div>
               </div>
-            )} */}
+            )}
           </aside>
 
           {/* Main Content */}
@@ -439,7 +443,7 @@ const Profile = () => {
                 }`}
                 onClick={() => setActiveTab("posts")}
               >
-                Posts ({profile.posts_count})
+                Posts ({profile.stats.postsCount})
               </button>
               <button
                 className={`${styles.tab} ${
@@ -475,9 +479,9 @@ const Profile = () => {
                       bio: profile.bio,
                       avatar: profile.avatar_url,
                       social: profile.social,
-                      postsCount: profile.posts_count,
-                      followers: profile.followers_count,
-                      following: profile.following_count,
+                      postsCount: profile.stats.postsCount,
+                      followers: profile.stats.followers,
+                      following: profile.stats.following,
                     }}
                     showFollowButton={false}
                   />

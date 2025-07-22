@@ -1,9 +1,49 @@
-import { ForgotPassword } from "@/pages";
 import httpRequest from "../../utils/httpRequest";
 
 export const getCurrentUser = async () => {
   const res = await httpRequest.get("/auth/me");
+  const data = res.data;
+  data.social = JSON.parse(data.social) || {};
+  data.stats = {
+    postsCount: Number(data.post_count) || 0,
+    followers: Number(data.follower_count) || 0,
+    following: Number(data.following_count) || 0,
+    likes: Number(data.like_count) || 0,
+  };
+  data.joinedDate = data.created_at;
+  const skills = data.skillList.map((skill) => skill.name);
+  data.skills = skills;
   return res;
+};
+
+export const editProfile = async (data) => {
+  try {
+    const res = await httpRequest.patch("auth/edit-profile", data);
+    return res;
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
+};
+
+export const userSetting = async () => {
+  try {
+    const res = await httpRequest.get("auth/settings");
+    return res;
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
+};
+
+export const settings = async (data) => {
+  try {
+    const res = await httpRequest.patch("auth/settings", data);
+    return res;
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
 };
 
 export const login = async (data) => {
@@ -66,6 +106,16 @@ export const forgotPassword = async (email) => {
   }
 };
 
+export const changePassword = async (data) => {
+  try {
+    const res = await httpRequest.post(`/auth/change-password`, data);
+    return res;
+  } catch (err) {
+    console.error("Thất bại:", err);
+    throw err;
+  }
+};
+
 export const resetPassword = async (data) => {
   try {
     const res = await httpRequest.post(`/auth/reset-password`, data);
@@ -90,10 +140,14 @@ export default {
   getCurrentUser,
   login,
   register,
+  editProfile,
+  settings,
+  userSetting,
   checkEmail,
   sendCode,
   verifyEmail,
   forgotPassword,
+  changePassword,
   resetPassword,
   logout,
 };

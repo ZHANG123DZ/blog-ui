@@ -6,8 +6,9 @@ import AuthLayout from "../layouts/AuthLayout/AuthLayout";
 import Loading from "./Loading/Loading";
 import ErrorBoundary from "./ErrorBoundary/ErrorBoundary";
 import { getCurrentUser } from "@/features/auth/authAsync";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import VerifyEmail from "@/pages/VerifyEmail";
+import { settingHandle } from "@/features/auth/settingAsync";
 
 // Lazy load pages for better performance
 const Home = lazy(() => import("../pages/Home/Home"));
@@ -37,12 +38,10 @@ const NotFound = lazy(() => import("../pages/NotFound/NotFound"));
 
 const AppRoutes = () => {
   const dispatch = useDispatch();
-  const isAuth = useSelector((state) => state.auth.isAuth);
-
-  //   const isAuth = useSelector((state) => state.auth.isAuth);
 
   useEffect(() => {
     dispatch(getCurrentUser());
+    dispatch(settingHandle());
   }, [dispatch]);
 
   return (
