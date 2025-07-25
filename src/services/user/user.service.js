@@ -20,6 +20,7 @@ export const getUserPosts = async (userName) => {
   const res = await httpRequest.get(`/users/${userName}/posts`);
   res.data = res.data.map((post) => ({
     ...post,
+    id: Number(post.id),
     author: {
       name: post.author_name,
       avatar: post.author_avatar,
@@ -27,10 +28,11 @@ export const getUserPosts = async (userName) => {
     },
     topics: post.topics?.map((topic) => topic.name) || [],
     publishedAt: post.published_at,
-    readTime: post.reading_time,
-    featuredImage: post.cover_url,
-    likes: post.like_count,
-    comments: post.comment_count,
+    readTime: Number(post.reading_time),
+    featuredImage: post.thumbnail_url,
+    coverImage: post.cover_url,
+    likes: Number(post.like_count),
+    comments: Number(post.comment_count),
   }));
   return res;
 };

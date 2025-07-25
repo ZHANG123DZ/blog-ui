@@ -14,7 +14,7 @@ export const getBookMarkedUserId = async (data) => {
   const bookMarks = res.data.bookMarks.map((bookmark) => ({
     ...bookmark,
     id: Number(bookmark.id),
-    coverImage: bookmark.cover_url,
+    featuredImage: bookmark.thumbnail_url,
     readingTime: Number(bookmark.reading_time),
     publishedAt: bookmark.published_at,
     viewsCount: Number(bookmark.view_count),

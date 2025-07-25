@@ -36,7 +36,7 @@ const CommentItem = ({
     replies = [],
     isEdited = false,
   } = comment;
-  const myComment = currentUser.username === author.username;
+  const myComment = currentUser?.username === author.username;
   // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {

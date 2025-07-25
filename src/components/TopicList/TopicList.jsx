@@ -4,6 +4,7 @@ import Badge from "../Badge/Badge";
 import EmptyState from "../EmptyState/EmptyState";
 import FallbackImage from "../FallbackImage/FallbackImage";
 import styles from "./TopicList.module.scss";
+import { normalizeImageUrl } from "@/utils/normalizeImageUrl";
 
 const TopicList = ({ topics = [], loading = false, className, ...props }) => {
   if (loading) {
@@ -45,7 +46,10 @@ const TopicList = ({ topics = [], loading = false, className, ...props }) => {
                 <div className={styles.iconContainer}>
                   {typeof topic.icon === "string" ? (
                     <span className={styles.emoji}>
-                      <img src={topic.icon} alt={topic.name} />
+                      <img
+                        src={normalizeImageUrl(topic.icon)}
+                        alt={topic.name}
+                      />
                     </span>
                   ) : (
                     <FallbackImage

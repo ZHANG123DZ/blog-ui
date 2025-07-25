@@ -30,7 +30,7 @@ const EditProfile = () => {
   //     skills: ["React", "TypeScript", "Node.js", "GraphQL", "AWS", "Docker"],
   // };
   const currentUser = useSelector((state) => state.auth.currentUser);
-
+  const userSetting = useSelector((state) => state.auth.setting);
   const [formData, setFormData] = useState({
     full_name: currentUser?.full_name || "",
     username: currentUser?.username || "",
@@ -47,12 +47,12 @@ const EditProfile = () => {
     },
     skills: currentUser?.skills?.join(", ") || "",
     privacy: {
-      profileVisibility: "public", // public, private
-      showEmail: false,
-      showFollowersCount: true,
-      showFollowingCount: true,
-      allowDirectMessages: true,
-      showOnlineStatus: true,
+      profileVisibility: userSetting.profileVisibility, // public, private
+      showEmail: userSetting.showEmail,
+      showFollowersCount: userSetting.showFollowersCount,
+      showFollowingCount: userSetting.showFollowingCount,
+      allowDirectMessages: userSetting.allowDirectMessages,
+      showOnlineStatus: userSetting.showOnlineStatus,
     },
   });
 
@@ -137,7 +137,6 @@ const EditProfile = () => {
       ...prev,
       [type]: file,
     }));
-
     // Create preview URL
     const reader = new FileReader();
     reader.onload = (e) => {
@@ -203,7 +202,7 @@ const EditProfile = () => {
       // Simulate upload - in real app, upload to your storage service
       const res = await mediaService.replace({
         avatar_url: imageFiles.avatar_url,
-        folder: "user",
+        folder: "profile/avatar",
         oldUrl: currentUser.avatar_url,
       });
 
@@ -215,7 +214,7 @@ const EditProfile = () => {
       // Simulate upload - in real app, upload to your storage service
       const res = await mediaService.replace({
         cover_url: imageFiles.cover_url,
-        folder: "user",
+        folder: "profile/cover",
         oldUrl: currentUser.cover_url,
       });
       uploadedUrls.cover_url = res.data.url;
@@ -252,7 +251,7 @@ const EditProfile = () => {
       submitData.social = JSON.stringify(formData.social);
       // Simulate API call
       await authService.editProfile(submitData);
-
+      await authService.settings(formData.privacy);
       // Navigate back to profile with success message
       navigate(`/profile/${formData.username}`, {
         state: { message: "Profile updated successfully!" },

@@ -9,6 +9,8 @@ import { getCurrentUser } from "@/features/auth/authAsync";
 import { useDispatch } from "react-redux";
 import VerifyEmail from "@/pages/VerifyEmail";
 import { settingHandle } from "@/features/auth/settingAsync";
+import Following from "@/pages/Follwing/Following";
+import Follower from "@/pages/Follower/Follower";
 
 // Lazy load pages for better performance
 const Home = lazy(() => import("../pages/Home/Home"));
@@ -59,6 +61,8 @@ const AppRoutes = () => {
             <Route path="my-posts" element={<MyPosts />} />
             <Route path="bookmarks" element={<Bookmarks />} />
             <Route path="settings" element={<Settings />} />
+            <Route path="profile/:username/following" element={<Following />} />
+            <Route path="profile/:username/follower" element={<Follower />} />
           </Route>
 
           {/* Fullscreen Layout Routes */}

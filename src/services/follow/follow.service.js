@@ -9,7 +9,7 @@ export const getFollowers = async (data) => {
 
 export const getFollowing = async (data) => {
   const res = await httpRequest.get(
-    `/follows/list/${data.type}/${data.follow_able_id}`
+    `/follows/list/${data.type}/${data.userId}`
   );
   return res;
 };

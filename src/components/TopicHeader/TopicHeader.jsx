@@ -2,6 +2,7 @@ import PropTypes from "prop-types";
 import Badge from "../Badge/Badge";
 import FallbackImage from "../FallbackImage/FallbackImage";
 import styles from "./TopicHeader.module.scss";
+import { normalizeImageUrl } from "@/utils/normalizeImageUrl";
 
 const TopicHeader = ({ topic, loading = false, className, ...props }) => {
   if (loading) {
@@ -31,7 +32,7 @@ const TopicHeader = ({ topic, loading = false, className, ...props }) => {
           <div className={styles.iconContainer}>
             {typeof topic.icon === "string" ? (
               <span className={styles.emoji}>
-                <img src={topic.icon} alt={topic.name} />
+                <img src={normalizeImageUrl(topic.icon)} alt={topic.name} />
               </span>
             ) : (
               <FallbackImage

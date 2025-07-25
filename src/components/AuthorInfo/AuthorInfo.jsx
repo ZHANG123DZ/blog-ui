@@ -1,5 +1,5 @@
 import PropTypes from "prop-types";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Button from "../Button/Button";
 import FallbackImage from "../FallbackImage/FallbackImage";
 import styles from "./AuthorInfo.module.scss";
@@ -16,6 +16,7 @@ const AuthorInfo = ({
   className,
   ...props
 }) => {
+  const navigate = useNavigate();
   const cur_user = useSelector((state) => state.auth.currentUser);
   const [follow, setFollow] = useState(false);
   const checkFollow = async () => {
@@ -127,19 +128,35 @@ const AuthorInfo = ({
               </span>
             )}
             {followers !== undefined && (
-              <span className={styles.stat}>
-                <strong>{followers}</strong> Followers
-              </span>
+              <>
+                <span
+                  className={styles.stat}
+                  onClick={() =>
+                    navigate(`/profile/${author.username}/follower`, {
+                      replace: true,
+                    })
+                  }
+                >
+                  <strong>{followers}</strong> Followers
+                </span>
+              </>
             )}
             {following !== undefined && (
-              <span className={styles.stat}>
+              <span
+                className={styles.stat}
+                onClick={() =>
+                  navigate(`/profile/${author.username}/following`, {
+                    replace: true,
+                  })
+                }
+              >
                 <strong>{following}</strong> Following
               </span>
             )}
           </div>
         </div>
 
-        {showFollowButton && (
+        {showFollowButton && cur_user?.username !== author.username && (
           <div className={styles.action} onClick={handleFollowClick}>
             <Button size="sm" variant="primary">
               {follow ? "Đã follow" : "Follow"}

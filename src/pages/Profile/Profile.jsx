@@ -474,7 +474,9 @@ const Profile = () => {
                 <div className={styles.aboutTab}>
                   <AuthorInfo
                     author={{
+                      id: profile.id,
                       name: profile.full_name,
+                      username: profile.username,
                       title: profile.title,
                       bio: profile.bio,
                       avatar: profile.avatar_url,

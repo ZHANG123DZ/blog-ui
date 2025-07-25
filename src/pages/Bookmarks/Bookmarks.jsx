@@ -291,7 +291,7 @@ const Bookmarks = () => {
                     postId={bookmark.id}
                     title={bookmark.title}
                     excerpt={bookmark.excerpt}
-                    featuredImage={bookmark.coverImage}
+                    featuredImage={bookmark.featuredImage}
                     readTime={bookmark.readingTime}
                     publishedAt={bookmark.publishedAt}
                     slug={bookmark.slug}

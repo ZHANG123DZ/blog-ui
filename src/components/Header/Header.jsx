@@ -1,21 +1,31 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useState, useRef, useEffect } from "react";
 import Navigation from "../Navigation/Navigation";
 import Button from "../Button/Button";
 import FallbackImage from "../FallbackImage/FallbackImage";
 import NotificationDropdown from "../NotificationDropdown/NotificationDropdown";
 import styles from "./Header.module.scss";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { settingHandle } from "@/features/auth/settingAsync";
+import { getCurrentUser } from "@/features/auth/authAsync";
+import { logoutHandle } from "@/features/auth/logoutAsync";
 
 const Header = () => {
   // Mock authentication state - trong thực tế sẽ từ context/store
   const isAuthenticated = useSelector((state) => state.auth.isAuth);
   const user = useSelector((state) => state.auth.currentUser);
+
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
   const dropdownRef = useRef(null);
   const notificationRef = useRef(null);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(getCurrentUser());
+    dispatch(settingHandle());
+  }, [dispatch]);
 
   // Mock notifications data
   const mockNotifications = [
@@ -75,6 +85,7 @@ const Header = () => {
   }, []);
 
   // Close mobile menu when window resizes
+  const navigate = useNavigate();
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth >= 768) {
@@ -86,7 +97,14 @@ const Header = () => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    try {
+      dispatch(logoutHandle());
+      navigate("/login", { replace: true });
+    } catch (error) {
+      console.log(error);
+    }
+
     setIsDropdownOpen(false);
     setIsNotificationOpen(false);
   };

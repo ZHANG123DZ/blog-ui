@@ -15,6 +15,7 @@ import bookmarkService from "@/services/bookmark/bookmark.service";
 import likeService from "@/services/like/like.service";
 import updateCommentLikeById from "@/function/updateCommentLikeById";
 import findCommentById from "@/function/findCommentById";
+import randomArray from "@/utils/randomArray";
 
 // Mock data for demonstration
 // const mockBlogPost = {
@@ -97,56 +98,56 @@ import findCommentById from "@/function/findCommentById";
 //     "https://images.unsplash.com/photo-1633356122544-f134324a6cee?w=800&h=400&fit=crop",
 // };
 
-const mockRelatedPosts = [
-  {
-    id: 2,
-    title: "Advanced React Patterns You Should Know",
-    excerpt:
-      "Explore advanced React patterns including render props, higher-order components, and compound components.",
-    featuredImage:
-      "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=400&h=250&fit=crop",
-    author: {
-      name: "Sarah Wilson",
-      avatar:
-        "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=150&h=150&fit=crop&crop=face",
-    },
-    publishedAt: "2024-01-12T09:15:00Z",
-    readTime: 12,
-    topic: "React",
-  },
-  {
-    id: 3,
-    title: "State Management in React: Context vs Redux",
-    excerpt:
-      "Compare different state management solutions and learn when to use each approach in your React applications.",
-    featuredImage:
-      "https://images.unsplash.com/photo-1551650975-87deedd944c3?w=400&h=250&fit=crop",
-    author: {
-      name: "Mike Chen",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face",
-    },
-    publishedAt: "2024-01-10T16:45:00Z",
-    readTime: 10,
-    topic: "React",
-  },
-  {
-    id: 4,
-    title: "Building Responsive Components with CSS-in-JS",
-    excerpt:
-      "Learn how to create responsive and maintainable React components using modern CSS-in-JS libraries.",
-    featuredImage:
-      "https://images.unsplash.com/photo-1517180102446-f3ece451e9d8?w=400&h=250&fit=crop",
-    author: {
-      name: "Emily Davis",
-      avatar:
-        "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face",
-    },
-    publishedAt: "2024-01-08T11:20:00Z",
-    readTime: 7,
-    topic: "CSS",
-  },
-];
+// const mockRelatedPosts = [
+//   {
+//     id: 2,
+//     title: "Advanced React Patterns You Should Know",
+//     excerpt:
+//       "Explore advanced React patterns including render props, higher-order components, and compound components.",
+//     featuredImage:
+//       "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=400&h=250&fit=crop",
+//     author: {
+//       name: "Sarah Wilson",
+//       avatar:
+//         "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=150&h=150&fit=crop&crop=face",
+//     },
+//     publishedAt: "2024-01-12T09:15:00Z",
+//     readTime: 12,
+//     topic: "React",
+//   },
+//   {
+//     id: 3,
+//     title: "State Management in React: Context vs Redux",
+//     excerpt:
+//       "Compare different state management solutions and learn when to use each approach in your React applications.",
+//     featuredImage:
+//       "https://images.unsplash.com/photo-1551650975-87deedd944c3?w=400&h=250&fit=crop",
+//     author: {
+//       name: "Mike Chen",
+//       avatar:
+//         "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face",
+//     },
+//     publishedAt: "2024-01-10T16:45:00Z",
+//     readTime: 10,
+//     topic: "React",
+//   },
+//   {
+//     id: 4,
+//     title: "Building Responsive Components with CSS-in-JS",
+//     excerpt:
+//       "Learn how to create responsive and maintainable React components using modern CSS-in-JS libraries.",
+//     featuredImage:
+//       "https://images.unsplash.com/photo-1517180102446-f3ece451e9d8?w=400&h=250&fit=crop",
+//     author: {
+//       name: "Emily Davis",
+//       avatar:
+//         "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face",
+//     },
+//     publishedAt: "2024-01-08T11:20:00Z",
+//     readTime: 7,
+//     topic: "CSS",
+//   },
+// ];
 
 // const mockComments = [
 //   {
@@ -235,12 +236,16 @@ const BlogDetail = () => {
         // Simulate loading delay
         const post = await postService.getPost(slug);
         const postData = post.data;
+        const topics = postData.topics;
+        const relatedPosts = await postService.getRelatedPost(topics);
+
+        const randomPost = randomArray(relatedPosts.data);
         setPost(postData);
-        setRelatedPosts(mockRelatedPosts);
+        setRelatedPosts(randomPost);
+        console.log();
         const commentsData = await commentService.getCommentsByPostId(
           postData.slug
         );
-        console.log(commentsData);
         setComments(commentsData.data);
       } catch (error) {
         console.error("Failed to load post:", error);
@@ -323,13 +328,15 @@ const BlogDetail = () => {
       if (!isLiked) {
         await likeService.like(data);
         setIsLiked(true);
+        return true;
       } else {
         await likeService.unlike(data);
         setIsLiked(false);
+        return true;
       }
     } catch (error) {
       console.log(error);
-      return;
+      return false;
     }
   };
 
@@ -337,7 +344,7 @@ const BlogDetail = () => {
   const handleBookmarkClick = async (postId) => {
     if (!cur_user) {
       alert("Bạn chưa đăng nhập, vui lòng đăng nhập!");
-      return;
+      return false;
     }
 
     try {
@@ -348,13 +355,15 @@ const BlogDetail = () => {
       if (!isBookmarked) {
         await bookmarkService.bookmark(data);
         setIsBookmarked(true);
+        return true;
       } else {
         await bookmarkService.unBookMark(data);
         setIsBookmarked(false);
+        return true;
       }
     } catch (error) {
       console.log(error);
-      return;
+      return false;
     }
   };
 
@@ -364,7 +373,7 @@ const BlogDetail = () => {
       content,
       like_count: 0,
       parent_id: null,
-      user_id: cur_user.id,
+      user_id: cur_user?.id,
       post_id: post.id,
     };
     const comments = await commentService.createComment(post.id, data);
@@ -390,7 +399,7 @@ const BlogDetail = () => {
       content,
       like_count: 0,
       parent_id: parentId,
-      user_id: cur_user.id,
+      user_id: cur_user?.id,
       post_id: post.id,
     };
     const newReply = await commentService.createComment(post.id, data);
@@ -518,15 +527,15 @@ const BlogDetail = () => {
   const handleLikePost = async () => {
     if (likingInProgress) return;
 
-    setLikingInProgress(true);
-
-    // Optimistic update
-    setIsLiked(!isLiked);
-    setLikes(isLiked ? likes - 1 : likes + 1);
-
     try {
       // Simulate API call
-      await handleLikeClick(post.id);
+      const res = await handleLikeClick(post.id);
+      if (!res) return;
+      setLikingInProgress(true);
+
+      // Optimistic update
+      setIsLiked(!isLiked);
+      setLikes(isLiked ? likes - 1 : likes + 1);
     } catch (error) {
       // Revert on error
       setIsLiked(isLiked);
@@ -540,14 +549,14 @@ const BlogDetail = () => {
   const handleBookmarkPost = async () => {
     if (bookmarkingInProgress) return;
 
-    setBookmarkingInProgress(true);
-
-    // Optimistic update
-    setIsBookmarked(!isBookmarked);
-
     try {
       // Simulate API call
-      await handleBookmarkClick(post.id);
+      const res = await handleBookmarkClick(post.id);
+      if (!res) return;
+      setBookmarkingInProgress(true);
+
+      // Optimistic update
+      setIsBookmarked(!isBookmarked);
     } catch (error) {
       // Revert on error
       setIsBookmarked(isBookmarked);
@@ -583,87 +592,92 @@ const BlogDetail = () => {
         <BlogContent {...post} />
 
         {/* Post Interactions - Moved to top for better UX */}
-        <div className={styles.interactions}>
-          {/* Stats */}
-          <div className={styles.stats}>
-            {/* Views */}
-            <div className={styles.stat}>
-              <svg viewBox="0 0 16 16" fill="none">
-                <path
-                  d="M1 8s3-5 7-5 7 5 7 5-3 5-7 5-7-5-7-5z"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-                <circle cx="8" cy="8" r="2" />
-              </svg>
-              <span>{views} views</span>
+        {post.status !== "draft" && (
+          <div className={styles.interactions}>
+            {/* Stats */}
+            <div className={styles.stats}>
+              {/* Views */}
+              <div className={styles.stat}>
+                <svg viewBox="0 0 16 16" fill="none">
+                  <path
+                    d="M1 8s3-5 7-5 7 5 7 5-3 5-7 5-7-5-7-5z"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                  <circle cx="8" cy="8" r="2" />
+                </svg>
+                <span>{views} views</span>
+              </div>
+
+              {/* Likes */}
+              <div className={styles.stat}>
+                <svg viewBox="0 0 16 16" fill="none">
+                  <path
+                    d="M14 6.5c0 4.8-5.25 7.5-6 7.5s-6-2.7-6-7.5C2 3.8 4.8 1 8 1s6 2.8 6 5.5z"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+                <span>{likes} likes</span>
+              </div>
             </div>
 
-            {/* Likes */}
-            <div className={styles.stat}>
-              <svg viewBox="0 0 16 16" fill="none">
-                <path
-                  d="M14 6.5c0 4.8-5.25 7.5-6 7.5s-6-2.7-6-7.5C2 3.8 4.8 1 8 1s6 2.8 6 5.5z"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
-              <span>{likes} likes</span>
-            </div>
-          </div>
-
-          {/* Action Buttons */}
-          <div className={styles.actions}>
-            {/* Like Button */}
-            <button
-              className={`${styles.actionButton} ${
-                isLiked ? styles.liked : ""
-              } ${likingInProgress ? styles.loading : ""}`}
-              onClick={handleLikePost}
-              disabled={likingInProgress}
-              title={isLiked ? "Unlike" : "Like"}
-              aria-label={`${isLiked ? "Unlike" : "Like"} this post`}
-            >
-              <svg viewBox="0 0 24 24" fill={isLiked ? "currentColor" : "none"}>
-                <path
-                  d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
-              {isLiked ? "Liked" : "Like"}
-            </button>
-
-            {/* Bookmark Button */}
-            <button
-              className={`${styles.actionButton} ${
-                isBookmarked ? styles.bookmarked : ""
-              } ${bookmarkingInProgress ? styles.loading : ""}`}
-              onClick={handleBookmarkPost}
-              disabled={bookmarkingInProgress}
-              title={isBookmarked ? "Remove bookmark" : "Bookmark"}
-              aria-label={`${
-                isBookmarked ? "Remove bookmark from" : "Bookmark"
-              } this post`}
-            >
-              <svg
-                viewBox="0 0 16 16"
-                fill={isBookmarked ? "currentColor" : "none"}
+            {/* Action Buttons */}
+            <div className={styles.actions}>
+              {/* Like Button */}
+              <button
+                className={`${styles.actionButton} ${
+                  isLiked ? styles.liked : ""
+                } ${likingInProgress ? styles.loading : ""}`}
+                onClick={handleLikePost}
+                disabled={likingInProgress}
+                title={isLiked ? "Unlike" : "Like"}
+                aria-label={`${isLiked ? "Unlike" : "Like"} this post`}
               >
-                <path
-                  d="M3 1C2.45 1 2 1.45 2 2V15L8 12L14 15V2C14 1.45 13.55 1 13 1H3Z"
-                  stroke="currentColor"
-                  strokeWidth="1.5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
-              {isBookmarked ? "Bookmarked" : "Bookmark"}
-            </button>
+                <svg
+                  viewBox="0 0 24 24"
+                  fill={isLiked ? "currentColor" : "none"}
+                >
+                  <path
+                    d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+                {isLiked ? "Liked" : "Like"}
+              </button>
+
+              {/* Bookmark Button */}
+              <button
+                className={`${styles.actionButton} ${
+                  isBookmarked ? styles.bookmarked : ""
+                } ${bookmarkingInProgress ? styles.loading : ""}`}
+                onClick={handleBookmarkPost}
+                disabled={bookmarkingInProgress}
+                title={isBookmarked ? "Remove bookmark" : "Bookmark"}
+                aria-label={`${
+                  isBookmarked ? "Remove bookmark from" : "Bookmark"
+                } this post`}
+              >
+                <svg
+                  viewBox="0 0 16 16"
+                  fill={isBookmarked ? "currentColor" : "none"}
+                >
+                  <path
+                    d="M3 1C2.45 1 2 1.45 2 2V15L8 12L14 15V2C14 1.45 13.55 1 13 1H3Z"
+                    stroke="currentColor"
+                    strokeWidth="1.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+                {isBookmarked ? "Bookmarked" : "Bookmark"}
+              </button>
+            </div>
           </div>
-        </div>
+        )}
       </div>
 
       {/* Author Info */}
@@ -672,22 +686,26 @@ const BlogDetail = () => {
       </div>
 
       {/* Related Posts */}
-      <div className={styles.contentSection}>
-        <RelatedPosts posts={relatedPosts} />
-      </div>
+      {post.status !== "draft" && (
+        <div className={styles.contentSection}>
+          <RelatedPosts posts={relatedPosts} />
+        </div>
+      )}
 
       {/* Comments */}
-      <div className={styles.contentSection}>
-        <CommentSection
-          comments={comments}
-          onAddComment={handleAddComment}
-          onReplyComment={handleReplyComment}
-          onLikeComment={handleLikeComment}
-          onEditComment={handleEditComment}
-          onDeleteComment={handleDeleteComment}
-          isAuthenticated={isAuthenticated}
-        />
-      </div>
+      {post.status !== "draft" && (
+        <div className={styles.contentSection}>
+          <CommentSection
+            comments={comments}
+            onAddComment={handleAddComment}
+            onReplyComment={handleReplyComment}
+            onLikeComment={handleLikeComment}
+            onEditComment={handleEditComment}
+            onDeleteComment={handleDeleteComment}
+            isAuthenticated={isAuthenticated}
+          />
+        </div>
+      )}
     </div>
   );
 };

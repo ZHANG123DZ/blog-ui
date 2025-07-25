@@ -3,6 +3,7 @@ import { getCurrentUser } from "./authAsync";
 import { loginHandle } from "./loginAsync";
 import { registerHandle } from "./registerAsync";
 import { settingHandle } from "./settingAsync";
+import { logoutHandle } from "./logoutAsync";
 
 const initialState = {
   currentUser: null,
@@ -87,7 +88,25 @@ const authSlice = createSlice({
         state.isLoading = false;
         state.isAuth = false;
       });
-    
+
+    //auth/logout
+    builder
+      .addCase(logoutHandle.fulfilled, (state) => {
+        state.currentUser = null;
+        state.isLoading = false;
+        state.isAuth = true;
+      })
+      .addCase(logoutHandle.pending, (state) => {
+        state.currentUser = null;
+        state.isLoading = true;
+        state.isAuth = false;
+      })
+      .addCase(logoutHandle.rejected, (state) => {
+        state.currentUser = null;
+        state.isLoading = false;
+        state.isAuth = false;
+      });
+
     //auth/setting
     builder
       .addCase(settingHandle.fulfilled, (state, action) => {
@@ -96,7 +115,6 @@ const authSlice = createSlice({
         state.isAuth = true;
       })
       .addCase(settingHandle.pending, (state) => {
-        state.setting = null;
         state.isLoading = true;
         state.isAuth = false;
       })

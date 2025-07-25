@@ -355,7 +355,7 @@ PostCard.propTypes = {
     avatar: PropTypes.string,
     username: PropTypes.string,
   }).isRequired,
-  publishedAt: PropTypes.string.isRequired,
+  publishedAt: PropTypes.string,
   readTime: PropTypes.number,
   topic: PropTypes.string,
   slug: PropTypes.string,

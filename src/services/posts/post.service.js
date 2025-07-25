@@ -101,9 +101,34 @@ export const getFeaturedPost = async () => {
       publishedAt: post.published_at,
       readTime: post.reading_time,
       featuredImage: post.cover_url,
-      likes: post.like_count,
-      views: post.like_count,
-      comments: post.comment_count,
+      likes: Number(post.like_count),
+      views: Number(post.like_count),
+      comments: Number(post.comment_count),
+    }));
+
+    return res;
+  } catch (error) {
+    console.error("Failed to fetch posts:", error);
+  }
+};
+
+export const getRelatedPost = async (preTopics) => {
+  try {
+    const res = await httpRequest.post(`/posts/related`, { topics: preTopics });
+    res.data = res.data.map((post) => ({
+      ...post,
+      author: {
+        name: post.author_name,
+        avatar: post.author_avatar,
+        username: post.author_username,
+      },
+      topics: post.topics?.map((topic) => topic.name) || [],
+      publishedAt: post.published_at,
+      readTime: post.reading_time,
+      featuredImage: post.cover_url,
+      likes: Number(post.like_count),
+      views: Number(post.like_count),
+      comments: Number(post.comment_count),
     }));
 
     return res;
@@ -127,6 +152,7 @@ export default {
   deletePost,
   getPosts,
   getPost,
+  getRelatedPost,
   getFeaturedPost,
   getLatestPost,
 };

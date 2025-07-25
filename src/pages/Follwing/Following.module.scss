@@ -27,7 +27,9 @@
     gap: $spacing-3;
   }
 }
-
+.userProfile:hover {
+  cursor: pointer;
+}
 .avatarContainer {
   flex-shrink: 0;
 }

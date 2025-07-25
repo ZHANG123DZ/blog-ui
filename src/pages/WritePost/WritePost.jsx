@@ -8,22 +8,32 @@ import RichTextEditor from "../../components/RichTextEditor/RichTextEditor";
 import PublishModal from "../../components/PublishModal/PublishModal";
 import styles from "./WritePost.module.scss";
 import topicService from "@/services/topic/topic.service";
+import mediaService from "@/services/media/media.service";
+import postService from "@/services/posts/post.service";
+import { useSelector } from "react-redux";
+import anyUrlToFile from "@/utils/anyUrlToFile";
+import uploadService from "@/services/upload/upload.service";
+import { normalizeImageUrl } from "@/utils/normalizeImageUrl";
 
 const WritePost = () => {
   const { slug } = useParams();
   const navigate = useNavigate();
   const isEditing = Boolean(slug);
 
+  const cur_user = useSelector((state) => state.auth.currentUser);
+  const userSetting = useSelector((state) => state.auth.setting);
+
   const [formData, setFormData] = useState({
     title: "",
     excerpt: "",
     content: "",
-    coverImage: "",
+    cover_url: "",
+    thumbnail_url: "",
     topics: [],
     status: "draft",
-    visibility: "public",
-    metaTitle: "",
-    metaDescription: "",
+    visibility: userSetting.defaultPostVisibility,
+    meta_title: "",
+    meta_description: "",
   });
 
   const [errors, setErrors] = useState({});
@@ -35,7 +45,7 @@ const WritePost = () => {
   const [showPublishModal, setShowPublishModal] = useState(false);
 
   const headerRef = useRef(null);
-
+  const quillRef = useRef();
   // const availableTopics = [
   //     "React",
   //     "JavaScript",
@@ -50,14 +60,22 @@ const WritePost = () => {
   //     "Frontend",
   //     "DevOps",
   // ];
+
   const [availableTopics, setAvailableTopics] = useState([]);
-  const getAllTopics = async () => {
-    const topics = await topicService.getTopics();
-    setAvailableTopics(topics.data.map((topic) => topic.name));
-  };
-  useEffect(async () => {
-    await getAllTopics();
+
+  useEffect(() => {
+    const fetchTopics = async () => {
+      try {
+        const topics = await topicService.getTopics();
+        setAvailableTopics(topics.data.map((topic) => topic.name));
+      } catch (error) {
+        console.error("Error fetching topics:", error);
+      }
+    };
+    fetchTopics();
   }, []);
+
+  const [localImages, setLocalImages] = useState([]);
 
   useEffect(() => {
     if (isEditing) {
@@ -68,12 +86,12 @@ const WritePost = () => {
           "Learn the fundamentals of React Hooks and how they can simplify your component logic.",
         content:
           "# Getting Started with React Hooks\n\nReact Hooks revolutionized how we write components...",
-        coverImage: "https://via.placeholder.com/800x400?text=React+Hooks",
+        cover_url: "https://via.placeholder.com/800x400?text=React+Hooks",
         topics: ["React", "JavaScript"],
         status: "draft",
         visibility: "public",
-        metaTitle: "Getting Started with React Hooks - Complete Guide",
-        metaDescription:
+        meta_title: "Getting Started with React Hooks - Complete Guide",
+        meta_description:
           "Comprehensive guide to React Hooks, covering useState, useEffect, and custom hooks with practical examples and best practices.",
       };
       setFormData(mockPost);
@@ -156,31 +174,72 @@ const WritePost = () => {
     try {
       const postData = {
         ...formData,
-        status,
-        updatedAt: new Date().toISOString(),
+        status: "draft",
+        updated_at: new Date().toISOString(),
       };
 
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-      console.log("Saving post:", postData);
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(postData.content, "text/html");
+      const images = doc.querySelectorAll("img");
+
+      const formMediaData = {};
+      const base64ToReplace = [];
+      for (const img of images) {
+        const src = img.getAttribute("src");
+        if (src.startsWith("data:image/")) {
+          const matched = localImages.find(
+            (imgObj) => imgObj.previewUrl === src
+          );
+          if (!matched) {
+            const imageFile = await anyUrlToFile(
+              src,
+              `${new Date().toISOString()}-screenshot`
+            );
+            formMediaData[`${imageFile.name}`] = imageFile;
+            base64ToReplace.push(src);
+            continue;
+          }
+          formMediaData[`${new Date().toISOString()}-${matched.file.name}`] =
+            matched.file;
+          base64ToReplace.push(src);
+        }
+      }
+      formMediaData.folder = `post/content-images`;
+      if (Object.keys(formMediaData).some((k) => k !== "folder")) {
+        const urls = await uploadService.uploadMultipleFiles(formMediaData);
+        urls.data.forEach((image, idx) => {
+          const base64 = base64ToReplace[idx];
+          postData.content = postData.content.replaceAll(
+            base64,
+            normalizeImageUrl(image.url)
+          );
+        });
+      }
+
+      postData.published_at = null;
+
+      await postService.createPost(postData);
       navigate("/my-posts");
     } catch (error) {
-      console.error("Error saving post:", error);
-    } finally {
-      setSaving(false);
+      console.log(error);
     }
   };
 
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
-    if (file) {
-      const mockImageUrl = `https://via.placeholder.com/800x400?text=${encodeURIComponent(
-        file.name
-      )}`;
-      setFormData((prev) => ({
-        ...prev,
-        coverImage: mockImageUrl,
-      }));
-    }
+    if (!file) return;
+
+    const blobUrl = URL.createObjectURL(file);
+    const inputType = e.target.name;
+
+    setFormData((prev) => {
+      if (inputType === "thumbnail") {
+        return { ...prev, thumbnail_url: blobUrl };
+      } else if (inputType === "cover") {
+        return { ...prev, cover_url: blobUrl };
+      }
+      return prev;
+    });
   };
 
   const handleOpenPublishModal = () => {
@@ -198,12 +257,56 @@ const WritePost = () => {
       const postData = {
         ...publishData,
         status: "published",
-        updatedAt: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
       };
 
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-      console.log("Publishing post:", postData);
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(postData.content, "text/html");
+      const images = doc.querySelectorAll("img");
+
+      const formMediaData = {};
+      const base64ToReplace = [];
+      for (const img of images) {
+        const src = img.getAttribute("src");
+        if (src.startsWith("data:image/")) {
+          const matched = localImages.find(
+            (imgObj) => imgObj.previewUrl === src
+          );
+          if (!matched) {
+            const imageFile = await anyUrlToFile(
+              src,
+              `${new Date()}-screenshot`
+            );
+            formMediaData[`${imageFile.name}`] = imageFile;
+            base64ToReplace.push(src);
+            continue;
+          }
+          formMediaData[`${new Date()}-${matched.file.name}`] = matched.file;
+          base64ToReplace.push(src);
+        }
+      }
+      formMediaData.folder = `post/content-images`;
+      const urls = await mediaService.uploadMultipleFiles(formMediaData);
+      urls.data.forEach((image, idx) => {
+        const base64 = base64ToReplace[idx];
+        postData.content = postData.content.replaceAll(base64, image.url);
+      });
+      postData.published_at = postData.publishDate || new Date().toISOString();
+      const fileCover = await anyUrlToFile(postData.cover_url, "cover");
+      const fileThumbnail = await anyUrlToFile(postData.cover_url, "thumbnail");
+      const coverUrl = await mediaService.uploadSingleFile({
+        cover: fileCover,
+        folder: `post/cover`,
+      });
+      const thumbnailUrl = await mediaService.uploadSingleFile({
+        cover: fileThumbnail,
+        folder: `post/cover`,
+      });
+      postData.cover_url = coverUrl.data.url;
+      postData.thumbnail_url = thumbnailUrl.data.url;
+      await postService.createPost(postData);
       setShowPublishModal(false);
+
       navigate("/my-posts");
     } catch (error) {
       console.error("Error publishing post:", error);
@@ -249,6 +352,7 @@ const WritePost = () => {
                   Content *
                 </label>
                 <RichTextEditor
+                  setLocalImages={setLocalImages}
                   value={formData.content}
                   onChange={(value) =>
                     setFormData((prev) => ({
@@ -256,6 +360,7 @@ const WritePost = () => {
                       content: value,
                     }))
                   }
+                  ref={quillRef}
                   placeholder="Start writing your post content..."
                   error={errors.content}
                   className={styles.richTextEditor}
@@ -267,9 +372,9 @@ const WritePost = () => {
           <div className={styles.preview}>
             <div className={styles.previewContent}>
               <div className={styles.previewHeader}>
-                {formData.coverImage && (
+                {formData.cover_url && (
                   <FallbackImage
-                    src={formData.coverImage}
+                    src={formData.cover_url}
                     alt={formData.title}
                     className={styles.previewCoverImage}
                   />

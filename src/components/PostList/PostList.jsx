@@ -141,7 +141,7 @@ PostList.propTypes = {
         name: PropTypes.string.isRequired,
         avatar: PropTypes.string,
       }).isRequired,
-      published_at: PropTypes.string.isRequired,
+      published_at: PropTypes.string,
       readTime: PropTypes.number,
       topic: PropTypes.string,
       slug: PropTypes.string.isRequired,
