@@ -16,6 +16,7 @@ import likeService from "@/services/like/like.service";
 import updateCommentLikeById from "@/function/updateCommentLikeById";
 import findCommentById from "@/function/findCommentById";
 import randomArray from "@/utils/randomArray";
+import socketClient from "@/configs/socketClient";
 
 // Mock data for demonstration
 // const mockBlogPost = {
@@ -390,33 +391,6 @@ const BlogDetail = () => {
     }
   };
 
-  const handleAddComment = async (content) => {
-    // Simulate API call
-    const data = {
-      content,
-      like_count: 0,
-      parent_id: null,
-      user_id: cur_user?.id,
-      post_id: post.id,
-    };
-    const comments = await commentService.createComment(post.id, data);
-    // const newComment = {
-    //   id: Date.now(),
-    //   author: {
-    //     name: "You",
-    //     avatar:
-    //       "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&h=150&fit=crop&crop=face",
-    //   },
-    //   content,
-    //   createdAt: new Date().toISOString(),
-    //   likes: 0,
-    //   isLiked: false,
-    //   replies: [],
-    // };
-    setToTalComment((prev) => prev + 1);
-    setComments((prev) => [comments.data, ...prev]);
-  };
-
   const addReplyToComments = (comments, parentId, newReply) => {
     return comments.map((comment) => {
       if (comment.id === parentId) {
@@ -435,68 +409,30 @@ const BlogDetail = () => {
     });
   };
 
-  const handleReplyComment = async (parentId, content) => {
-    const data = {
-      content,
-      like_count: 0,
-      parent_id: parentId,
-      user_id: cur_user?.id,
-      post_id: post.id,
-    };
+  // setComments((prev) => updateCommentRecursively(prev));
 
-    const newReply = await commentService.createComment(post.id, data);
-    setToTalComment((prev) => prev + 1);
-    setComments((prev) => addReplyToComments(prev, parentId, newReply.data));
-  };
+  useEffect(() => {
+    if (!post?.id) return;
 
-  const handleLikeComment = async (commentId) => {
-    if (!cur_user) {
-      alert("Bạn chưa đăng nhập, vui lòng đăng nhập!");
-      return;
-    }
+    const pusher = socketClient;
 
-    const comment = findCommentById(comments, commentId);
-    if (!comment) return;
-
-    const isLiked = comment.isLiked;
-    const data = {
-      like_able_id: commentId,
-      type: "comment",
-    };
-
-    try {
-      if (!isLiked) {
-        await likeService.like(data);
-        await commentService.updateComment(post.slug, commentId, {
-          like_count: Number(comment.likes) + 1,
-        });
+    const channel = pusher.subscribe(`post-${post.id}-comments`);
+    channel.bind("new-comment", (newComment) => {
+      if (newComment.parent_id === null) {
+        setComments((prev) => [newComment, ...prev]);
       } else {
-        await likeService.unlike(data);
-        await commentService.updateComment(post.slug, commentId, {
-          like_count: Number(comment.likes) - 1,
-        });
+        setComments((prev) =>
+          addReplyToComments(prev, newComment.parent_id, newComment)
+        );
       }
-    } catch (error) {
-      console.log(error);
-      return;
-    }
-
-    setComments((prev) => updateCommentLikeById(prev, commentId));
-  };
-
-  const handleEditComment = async (commentId, newContent) => {
-    try {
-      // Simulate API call
-      await commentService.updateComment(slug, commentId, {
-        content: newContent,
-      });
-
+    });
+    channel.bind("updated-comment", (editComment) => {
       const updateCommentRecursively = (comments) => {
         return comments.map((comment) => {
-          if (comment.id === commentId) {
+          if (comment.id === editComment.id) {
             return {
               ...comment,
-              content: newContent,
+              content: editComment.content,
               isEdited: true,
             };
           }
@@ -509,18 +445,11 @@ const BlogDetail = () => {
           return comment;
         });
       };
-
-      setComments((prev) => updateCommentRecursively(prev));
-    } catch (error) {
-      console.error("Failed to edit comment:", error);
-    }
-  };
-
-  const handleDeleteComment = async (commentId) => {
-    try {
-      // Simulate API call
-      await commentService.deleteComment(slug, commentId);
-
+      setComments((prev) =>
+        updateCommentRecursively(prev, editComment.id, editComment.content)
+      );
+    });
+    channel.bind("delete-comment", (commentId) => {
       const deleteCommentRecursively = (comments) => {
         return comments
           .filter((comment) => comment.id !== commentId)
@@ -534,8 +463,95 @@ const BlogDetail = () => {
             return comment;
           });
       };
-      setToTalComment((prev) => prev - 1);
       setComments((prev) => deleteCommentRecursively(prev));
+    });
+    return () => {
+      channel.unbind_all();
+      channel.unsubscribe();
+    };
+  }, [post?.id]);
+
+  const handleAddComment = async (content) => {
+    // Simulate API call
+    const data = {
+      content,
+      like_count: 0,
+      parent_id: null,
+      user_id: cur_user?.id,
+      post_id: post.id,
+    };
+    await commentService.createComment(post.id, data);
+    // const newComment = {
+    //   id: Date.now(),
+    //   author: {
+    //     name: "You",
+    //     avatar:
+    //       "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&h=150&fit=crop&crop=face",
+    //   },
+    //   content,
+    //   createdAt: new Date().toISOString(),
+    //   likes: 0,
+    //   isLiked: false,
+    //   replies: [],
+    // };
+    setToTalComment((prev) => prev + 1);
+  };
+
+  const handleReplyComment = async (parentId, content) => {
+    const data = {
+      content,
+      like_count: 0,
+      parent_id: parentId,
+      user_id: cur_user?.id,
+      post_id: post.id,
+    };
+
+    await commentService.createComment(post.id, data);
+    setToTalComment((prev) => prev + 1);
+  };
+
+  const handleLikeComment = async (commentId, isLiked) => {
+    if (!cur_user) {
+      alert("Bạn chưa đăng nhập, vui lòng đăng nhập!");
+      return;
+    }
+
+    const comment = findCommentById(comments, commentId);
+    if (!comment) return;
+
+    const data = {
+      like_able_id: commentId,
+      type: "comment",
+    };
+
+    try {
+      if (!isLiked) {
+        await likeService.like(data);
+      } else {
+        await likeService.unlike(data);
+      }
+    } catch (error) {
+      console.log(error);
+      return;
+    }
+  };
+
+  const handleEditComment = async (commentId, newContent) => {
+    try {
+      // Simulate API call
+      await commentService.updateComment(slug, commentId, {
+        content: newContent,
+      });
+    } catch (error) {
+      console.error("Failed to edit comment:", error);
+    }
+  };
+
+  const handleDeleteComment = async (commentId) => {
+    try {
+      // Simulate API call
+      await commentService.deleteComment(slug, commentId);
+      setToTalComment((prev) => prev - 1);
     } catch (error) {
       console.error("Failed to delete comment:", error);
     }

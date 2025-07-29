@@ -3,12 +3,6 @@ import httpRequest from "../../utils/httpRequest";
 export const createComment = async (slug, data) => {
   try {
     const res = await httpRequest.post(`/posts/${slug}/comments`, data);
-    res.data.author = {
-      avatar: res.data.author.avatar_url,
-      name: res.data.author.full_name,
-    };
-    res.data.createdAt = res.data.created_at;
-    res.data.likes = Number(res.data.like_count);
     return res;
   } catch (err) {
     console.error("Failed to create comment:", err);

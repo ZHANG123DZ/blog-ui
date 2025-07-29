@@ -121,24 +121,48 @@ const ChatWindow = ({
         user.id
       );
       setConversationId(conversation?.id);
-      const msgs = await conversationService.getOrCreateConversation(
+      const msgs = await conversationService.getConversationById(
         conversation?.id
       );
       setMessages(msgs.messages);
+      if (conversation && msgs) {
+        const data = {
+          messageId: msgs.messages[0].id,
+          readAt: new Date(),
+        };
+        await conversationService.markedRead(conversation.id, data);
+      }
     } catch (err) {
       console.error("Error loading conversation:", err);
     }
   };
 
   useEffect(() => {
-    const getMes = async () => {
-      if (user?.id) {
-        await fetchMessages();
-      }
-    };
-    getMes();
-  }, [user?.id]);
+    if (isOpen) {
+      const getMes = async () => {
+        if (user?.id) {
+          await fetchMessages();
+        }
+      };
+      getMes();
+    }
+  }, [isOpen, user?.id]);
 
+  useEffect(() => {
+    return () => {
+      const markAsRead = async () => {
+        if (conversationId && messages?.length > 0 && isOpen) {
+          const lastMessage = messages[messages.length - 1];
+          const data = {
+            messageId: lastMessage.id,
+            readAt: new Date(),
+          };
+          await conversationService.markedRead(conversationId, data);
+        }
+      };
+      markAsRead();
+    };
+  }, [conversationId, isOpen, messages]);
   // Scroll to bottom when window opens or when new messages arrive
   useEffect(() => {
     if (isOpen && !isMinimized && messages.length > 0) {
@@ -253,6 +277,7 @@ const ChatWindow = ({
         setMessage("");
       } catch (error) {
         console.log(error);
+        setMessage("");
       }
       return;
     }

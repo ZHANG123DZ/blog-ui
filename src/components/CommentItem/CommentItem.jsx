@@ -38,6 +38,8 @@ const CommentItem = ({
     isEdited = false,
   } = comment;
   const myComment = currentUser?.username === author.username;
+  const [liked, setLiked] = useState(isLiked);
+  const [likeCount, setLikeCount] = useState(likes);
   // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -89,7 +91,9 @@ const CommentItem = ({
 
   const handleLike = () => {
     if (onLike) {
-      onLike(id);
+      onLike(id, liked);
+      setLiked(!liked);
+      setLikeCount((prev) => (liked ? prev - 1 : prev + 1));
     }
   };
 
@@ -119,7 +123,7 @@ const CommentItem = ({
   const toggleDropdown = () => {
     setShowDropdown(!showDropdown);
   };
-  // if (level > maxLevel) return null;
+
   return (
     <div
       className={`${styles.commentItem} ${className || ""}`}
@@ -231,9 +235,7 @@ const CommentItem = ({
           {showActions && (
             <div className={styles.actions}>
               <button
-                className={`${styles.likeButton} ${
-                  isLiked ? styles.liked : ""
-                }`}
+                className={`${styles.likeButton} ${liked ? styles.liked : ""}`}
                 onClick={handleLike}
                 type="button"
               >
@@ -245,7 +247,7 @@ const CommentItem = ({
                 >
                   <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
                 </svg>
-                {likes > 0 && <span>{likes}</span>}
+                {likeCount > 0 && <span>{likeCount}</span>}
               </button>
 
               <button

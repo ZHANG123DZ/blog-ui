@@ -9,6 +9,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { settingHandle } from "@/features/auth/settingAsync";
 import { getCurrentUser } from "@/features/auth/authAsync";
 import { logoutHandle } from "@/features/auth/logoutAsync";
+import notificationService from "@/services/notification/notification.service";
 
 const Header = () => {
   // Mock authentication state - trong thực tế sẽ từ context/store
@@ -28,44 +29,50 @@ const Header = () => {
   }, [dispatch]);
 
   // Mock notifications data
-  const mockNotifications = [
-    {
-      id: 1,
-      type: "like",
-      message: 'Sarah Johnson liked your post "Advanced React Patterns"',
-      link: "/blog/advanced-react-patterns",
-      read: false,
-      createdAt: "2024-01-20T10:30:00Z",
-    },
-    {
-      id: 2,
-      type: "comment",
-      message: 'Mike Chen commented on your post "Building Scalable APIs"',
-      link: "/blog/building-scalable-apis",
-      read: false,
-      createdAt: "2024-01-20T09:15:00Z",
-    },
-    {
-      id: 3,
-      type: "follow",
-      message: "Emily Rodriguez started following you",
-      link: "/profile/emily-rodriguez",
-      read: true,
-      createdAt: "2024-01-19T16:45:00Z",
-    },
-    {
-      id: 4,
-      type: "like",
-      message: 'David Kim and 5 others liked your post "CSS Grid Guide"',
-      link: "/blog/css-grid-guide",
-      read: true,
-      createdAt: "2024-01-19T14:20:00Z",
-    },
-  ];
+  // const mockNotifications = [
+  //   {
+  //     id: 1,
+  //     type: "like",
+  //     message: 'Sarah Johnson liked your post "Advanced React Patterns"',
+  //     link: "/blog/advanced-react-patterns",
+  //     read: false,
+  //     createdAt: "2024-01-20T10:30:00Z",
+  //   },
+  //   {
+  //     id: 2,
+  //     type: "comment",
+  //     message: 'Mike Chen commented on your post "Building Scalable APIs"',
+  //     link: "/blog/building-scalable-apis",
+  //     read: false,
+  //     createdAt: "2024-01-20T09:15:00Z",
+  //   },
+  //   {
+  //     id: 3,
+  //     type: "follow",
+  //     message: "Emily Rodriguez started following you",
+  //     link: "/profile/emily-rodriguez",
+  //     read: true,
+  //     createdAt: "2024-01-19T16:45:00Z",
+  //   },
+  //   {
+  //     id: 4,
+  //     type: "like",
+  //     message: 'David Kim and 5 others liked your post "CSS Grid Guide"',
+  //     link: "/blog/css-grid-guide",
+  //     read: true,
+  //     createdAt: "2024-01-19T14:20:00Z",
+  //   },
+  // ];
 
-  const [notifications, setNotifications] = useState(mockNotifications);
+  const [notifications, setNotifications] = useState([]);
   const unreadCount = notifications.filter((n) => !n.read).length;
-
+  useEffect(() => {
+    const getNotify = async () => {
+      const notify = await notificationService.getNotification();
+      setNotifications(notify.data.items);
+    };
+    getNotify();
+  }, []);
   // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -115,6 +122,12 @@ const Header = () => {
   };
 
   const handleMarkAsRead = async (notificationId) => {
+    const notification = notifications.find(
+      (item) => item.id === notificationId
+    );
+    if (!notification.read) {
+      await notificationService.update(notificationId, { read_at: new Date() });
+    }
     setNotifications((prev) =>
       prev.map((notification) =>
         notification.id === notificationId

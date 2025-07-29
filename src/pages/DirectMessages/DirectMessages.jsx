@@ -9,6 +9,7 @@ import conversationService from "@/services/conversation/conversation.service";
 import messageService from "@/services/message/message.service";
 import { useSelector } from "react-redux";
 import InvitationMessageModal from "@/components/InvitationMessageModal/InvitationMessageModal";
+import markAsReadOnServer from "@/function/markAsReadOnServer";
 
 const DirectMessages = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -17,109 +18,17 @@ const DirectMessages = () => {
   const [selectedConversation, setSelectedConversation] = useState(null);
   const messagesEndRef = useRef(null);
   const cur_user = useSelector((state) => state.auth.currentUser);
-  // Mock data - in real app this would come from API
-  // const [conversations, setConversations] = useState([
-  //   {
-  //     id: 1,
-  //     users: {
-  //       id: 2,
-  //       name: "Sarah Chen",
-  //       username: "sarahc",
-  //       avatar:
-  //         "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=32&h=32&fit=crop&crop=face",
-  //     },
-  //     lastMessage: {
-  //       text: "Hey! Did you see the latest blog post about React hooks?",
-  //       timestamp: new Date(Date.now() - 30 * 60 * 1000), // 30 mins ago
-  //       senderId: 2,
-  //     },
-  //     unreadCount: 2,
-  //     isOnline: true,
-  //   },
-  //   {
-  //     id: 2,
-  //     users: {
-  //       id: 3,
-  //       name: "Alex Johnson",
-  //       username: "alexj",
-  //       avatar:
-  //         "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=32&h=32&fit=crop&crop=face",
-  //     },
-  //     lastMessage: {
-  //       text: "Thanks for the feedback on my article!",
-  //       timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000), // 2 hours ago
-  //       senderId: 1,
-  //     },
-  //     unreadCount: 0,
-  //     isOnline: false,
-  //   },
-  //   {
-  //     id: 3,
-  //     users: {
-  //       id: 4,
-  //       name: "Emily Davis",
-  //       username: "emilyd",
-  //       avatar:
-  //         "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=32&h=32&fit=crop&crop=face",
-  //     },
-  //     lastMessage: {
-  //       text: "Would love to collaborate on a project!",
-  //       timestamp: new Date(Date.now() - 24 * 60 * 60 * 1000), // 1 day ago
-  //       senderId: 4,
-  //     },
-  //     unreadCount: 1,
-  //     isOnline: true,
-  //   },
-  // ]);
-
-  // const [messages, setMessages] = useState({
-  //   1: [
-  //     {
-  //       id: 1,
-  //       text: "Hi! I really enjoyed your latest post about TypeScript best practices.",
-  //       senderId: 2,
-  //       timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000),
-  //     },
-  //     {
-  //       id: 2,
-  //       text: "Thank you! I'm glad you found it helpful. Are you using TypeScript in your projects?",
-  //       senderId: 1,
-  //       timestamp: new Date(Date.now() - 90 * 60 * 1000),
-  //     },
-  //     {
-  //       id: 3,
-  //       text: "Yes, we just migrated our entire React app to TypeScript. The type safety is amazing!",
-  //       senderId: 2,
-  //       timestamp: new Date(Date.now() - 60 * 60 * 1000),
-  //     },
-  //     {
-  //       id: 4,
-  //       text: "Hey! Did you see the latest blog post about React hooks?",
-  //       senderId: 2,
-  //       timestamp: new Date(Date.now() - 30 * 60 * 1000),
-  //     },
-  //   ],
-  //   2: [
-  //     {
-  //       id: 5,
-  //       text: "Thanks for the feedback on my article!",
-  //       senderId: 1,
-  //       timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000),
-  //     },
-  //   ],
-  //   3: [
-  //     {
-  //       id: 6,
-  //       text: "Would love to collaborate on a project!",
-  //       senderId: 4,
-  //       timestamp: new Date(Date.now() - 24 * 60 * 60 * 1000),
-  //     },
-  //   ],
-  // });
   const [conversations, setConversations] = useState([]);
   const [currentMessages, setCurrentMessages] = useState([]);
   // Get conversation ID from URL params
+  useEffect(() => {
+    if (!selectedConversation) return;
+    markAsReadOnServer(selectedConversation.id, currentMessages);
 
+    return () => {
+      markAsReadOnServer(selectedConversation.id, currentMessages);
+    };
+  }, [selectedConversation, currentMessages]);
   //Lấy hết các cuộc hội thoại mà 1 người tham gia
   useEffect(() => {
     const fetchConversations = async () => {
@@ -251,17 +160,29 @@ const DirectMessages = () => {
           newMessage.author = "other";
         }
 
-        // Nếu đang xem đúng conversation thì mới thêm vào
+        setConversations((prev) =>
+          prev.map((c) => {
+            if (c.id !== newMessage.conversation_id) return c;
+
+            if (selectedConversation?.id === c.id) {
+              return {
+                ...c,
+                lastMessage: newMessage,
+                unreadCount: 0,
+              };
+            }
+
+            return {
+              ...c,
+              lastMessage: newMessage,
+              unreadCount: (c.unreadCount || 0) + 1,
+            };
+          })
+        );
+
         if (selectedConversation?.id === conversation.id) {
           setCurrentMessages((prev) => [...prev, newMessage]);
         }
-        setConversations((prev) =>
-          prev.map((c) =>
-            c.id === newMessage.conversation_id
-              ? { ...c, lastMessage: newMessage }
-              : c
-          )
-        );
       });
     });
 
@@ -272,6 +193,7 @@ const DirectMessages = () => {
       });
     };
   }, [conversations, cur_user.id, selectedConversation?.id]);
+
   const [open, setOpen] = useState(false);
   return (
     <div className={styles.container}>

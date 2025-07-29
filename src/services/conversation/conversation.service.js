@@ -65,6 +65,19 @@ export const deleteConversation = async (id) => {
   }
 };
 
+export const markedRead = async (id, data) => {
+  try {
+    const res = await httpRequest.patch(
+      `/conversations/${id}/marked-read`,
+      data
+    );
+    return res.data;
+  } catch (err) {
+    console.error("Failed to delete conversation:", err);
+    throw err;
+  }
+};
+
 export default {
   createConversation,
   getOrCreateConversation,
@@ -72,4 +85,5 @@ export default {
   getConversationById,
   updateConversation,
   deleteConversation,
+  markedRead,
 };
