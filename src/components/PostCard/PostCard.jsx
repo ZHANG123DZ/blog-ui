@@ -1,13 +1,10 @@
-import { useState, memo, useEffect } from "react";
+import { useState, memo } from "react";
 import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
 import Card from "../Card/Card";
 import Badge from "../Badge/Badge";
 import FallbackImage from "../FallbackImage/FallbackImage";
 import styles from "./PostCard.module.scss";
-import likeService from "@/services/like/like.service";
-import { useSelector } from "react-redux";
-import bookmarkService from "@/services/bookmark/bookmark.service";
 
 const PostCard = ({
   title,
@@ -47,34 +44,6 @@ const PostCard = ({
       day: "numeric",
     });
   };
-  const cur_user = useSelector((state) => state.auth.currentUser);
-
-  const checkLike = async (postId) => {
-    if (!cur_user) {
-      return false;
-    }
-
-    const data = {
-      like_able_id: postId,
-      type: "post",
-    };
-
-    try {
-      const isLike = await likeService.check(data);
-      return isLike.data;
-    } catch (error) {
-      console.log(error);
-      return false;
-    }
-  };
-  useEffect(() => {
-    const fetchLikeState = async () => {
-      const result = await checkLike(postId);
-      setOptimisticLiked(result);
-    };
-
-    fetchLikeState();
-  }, [cur_user]);
 
   const handleLike = async () => {
     if (!onLike || likingInProgress) return;
@@ -98,33 +67,6 @@ const PostCard = ({
       setLikingInProgress(false);
     }
   };
-
-  const checkBookMark = async (postId) => {
-    if (!cur_user) {
-      return false;
-    }
-
-    const data = {
-      book_mark_able_id: postId,
-      type: "post",
-    };
-
-    try {
-      const isBookMark = await bookmarkService.check(data);
-      return isBookMark.data;
-    } catch (error) {
-      console.log(error);
-      return false;
-    }
-  };
-  useEffect(() => {
-    const fetchBookMarkState = async () => {
-      const result = await checkBookMark(postId);
-      setOptimisticBookmarked(result);
-    };
-
-    fetchBookMarkState();
-  }, [cur_user, postId]);
 
   const handleBookmark = async () => {
     if (!onBookmark || bookmarkingInProgress) return;

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import Button from "../../components/Button/Button";
 import PostCard from "../../components/PostCard/PostCard";
 import EmptyState from "../../components/EmptyState/EmptyState";
@@ -16,7 +16,8 @@ const MyPosts = () => {
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
-
+  const [searchParams] = useSearchParams();
+  const page = searchParams.get("page") || 1;
   // Mock data - trong thực tế sẽ fetch từ API
   // const mockPosts = [
   //     {
@@ -110,7 +111,6 @@ const MyPosts = () => {
       alert("Bạn chưa đăng nhập, vui lòng đăng nhập!");
       return;
     }
-
     try {
       const data = {
         book_mark_able_id: postId,
@@ -126,11 +126,16 @@ const MyPosts = () => {
       console.error(error);
     }
   };
+
   useEffect(() => {
     // Simulate API call
     const fetchPosts = async () => {
       setLoading(true);
-      const myPosts = await userService.getUserPosts(cur_user.username);
+      const myPosts = await userService.getUserPosts(
+        cur_user.username,
+        page,
+        6
+      );
       setPosts(myPosts.data);
       setLoading(false);
     };
@@ -289,6 +294,8 @@ const MyPosts = () => {
                     }
                     likes={Number(post.likes) || 0}
                     views={Number(post.views) || 0}
+                    isLiked={post.isLiked}
+                    isBookmarked={post.isBookMarked}
                   />
                   <div className={styles.postMeta}>
                     <div className={styles.postStatus}>

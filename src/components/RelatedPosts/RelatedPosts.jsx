@@ -109,6 +109,8 @@ const RelatedPosts = ({
             onBookmark={(postId, isBookmarked) =>
               handleBookmarkClick(postId, isBookmarked)
             }
+            isLiked={post.isLiked}
+            isBookmarked={post.isBookMarked}
           />
         ))}
       </div>

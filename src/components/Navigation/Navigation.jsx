@@ -9,7 +9,6 @@ const Navigation = () => {
     { path: "/", label: "Home" },
     { path: "/topics", label: "Topics" },
     { path: "/messages", label: "Messages" },
-    { path: "/friends", label: "Friends" },
   ];
 
   const isActive = (path) => {

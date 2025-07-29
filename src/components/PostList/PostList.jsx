@@ -106,6 +106,8 @@ const PostList = ({
                 onBookmark={(postId, isBookmarked) =>
                   handleBookmarkClick(postId, isBookmarked)
                 }
+                isLiked={post.isLiked}
+                isBookmarked={post.isBookMarked}
                 likes={Number(post.likes) || 0}
                 views={Number(post.views) || 0}
               />

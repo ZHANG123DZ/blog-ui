@@ -119,6 +119,8 @@ const FeaturedPosts = ({
               featuredImage={post.featuredImage}
               showInteractions
               showViewCount
+              isLiked={post.isLiked}
+              isBookmarked={post.isBookMarked}
               likes={Number(post.likes) || 0}
               views={Number(post.views) || 0}
               onLike={(postId, isLiked) => handleLikeClick(postId, isLiked)}

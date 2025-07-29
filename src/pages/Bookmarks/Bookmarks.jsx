@@ -352,6 +352,8 @@ const Bookmarks = () => {
                     onBookmark={(postId, isBookmarked) =>
                       handleBookmarkClick(postId, isBookmarked)
                     }
+                    isLiked={bookmark.isLiked}
+                    isBookmarked={bookmark.isBookmarked}
                   />
                   <div className={styles.bookmarkMeta}>
                     <div className={styles.bookmarkInfo}>
