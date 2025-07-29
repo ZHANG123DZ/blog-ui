@@ -4,7 +4,11 @@ import Button from "../../components/Button/Button";
 import Input from "../../components/Input/Input";
 import FallbackImage from "../../components/FallbackImage/FallbackImage";
 import styles from "./DirectMessages.module.scss";
-import socketClient from "@/utils/socketClient";
+import socketClient from "@/configs/socketClient";
+import conversationService from "@/services/conversation/conversation.service";
+import messageService from "@/services/message/message.service";
+import { useSelector } from "react-redux";
+import InvitationMessageModal from "@/components/InvitationMessageModal/InvitationMessageModal";
 
 const DirectMessages = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -12,140 +16,145 @@ const DirectMessages = () => {
   const [newMessage, setNewMessage] = useState("");
   const [selectedConversation, setSelectedConversation] = useState(null);
   const messagesEndRef = useRef(null);
-
+  const cur_user = useSelector((state) => state.auth.currentUser);
   // Mock data - in real app this would come from API
-  const [conversations, setConversations] = useState([
-    {
-      id: 1,
-      participant: {
-        id: 2,
-        name: "Sarah Chen",
-        username: "sarahc",
-        avatar:
-          "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=32&h=32&fit=crop&crop=face",
-      },
-      lastMessage: {
-        text: "Hey! Did you see the latest blog post about React hooks?",
-        timestamp: new Date(Date.now() - 30 * 60 * 1000), // 30 mins ago
-        senderId: 2,
-      },
-      unreadCount: 2,
-      isOnline: true,
-    },
-    {
-      id: 2,
-      participant: {
-        id: 3,
-        name: "Alex Johnson",
-        username: "alexj",
-        avatar:
-          "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=32&h=32&fit=crop&crop=face",
-      },
-      lastMessage: {
-        text: "Thanks for the feedback on my article!",
-        timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000), // 2 hours ago
-        senderId: 1,
-      },
-      unreadCount: 0,
-      isOnline: false,
-    },
-    {
-      id: 3,
-      participant: {
-        id: 4,
-        name: "Emily Davis",
-        username: "emilyd",
-        avatar:
-          "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=32&h=32&fit=crop&crop=face",
-      },
-      lastMessage: {
-        text: "Would love to collaborate on a project!",
-        timestamp: new Date(Date.now() - 24 * 60 * 60 * 1000), // 1 day ago
-        senderId: 4,
-      },
-      unreadCount: 1,
-      isOnline: true,
-    },
-  ]);
+  // const [conversations, setConversations] = useState([
+  //   {
+  //     id: 1,
+  //     users: {
+  //       id: 2,
+  //       name: "Sarah Chen",
+  //       username: "sarahc",
+  //       avatar:
+  //         "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=32&h=32&fit=crop&crop=face",
+  //     },
+  //     lastMessage: {
+  //       text: "Hey! Did you see the latest blog post about React hooks?",
+  //       timestamp: new Date(Date.now() - 30 * 60 * 1000), // 30 mins ago
+  //       senderId: 2,
+  //     },
+  //     unreadCount: 2,
+  //     isOnline: true,
+  //   },
+  //   {
+  //     id: 2,
+  //     users: {
+  //       id: 3,
+  //       name: "Alex Johnson",
+  //       username: "alexj",
+  //       avatar:
+  //         "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=32&h=32&fit=crop&crop=face",
+  //     },
+  //     lastMessage: {
+  //       text: "Thanks for the feedback on my article!",
+  //       timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000), // 2 hours ago
+  //       senderId: 1,
+  //     },
+  //     unreadCount: 0,
+  //     isOnline: false,
+  //   },
+  //   {
+  //     id: 3,
+  //     users: {
+  //       id: 4,
+  //       name: "Emily Davis",
+  //       username: "emilyd",
+  //       avatar:
+  //         "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=32&h=32&fit=crop&crop=face",
+  //     },
+  //     lastMessage: {
+  //       text: "Would love to collaborate on a project!",
+  //       timestamp: new Date(Date.now() - 24 * 60 * 60 * 1000), // 1 day ago
+  //       senderId: 4,
+  //     },
+  //     unreadCount: 1,
+  //     isOnline: true,
+  //   },
+  // ]);
 
-  const [messages, setMessages] = useState({
-    1: [
-      {
-        id: 1,
-        text: "Hi! I really enjoyed your latest post about TypeScript best practices.",
-        senderId: 2,
-        timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000),
-      },
-      {
-        id: 2,
-        text: "Thank you! I'm glad you found it helpful. Are you using TypeScript in your projects?",
-        senderId: 1,
-        timestamp: new Date(Date.now() - 90 * 60 * 1000),
-      },
-      {
-        id: 3,
-        text: "Yes, we just migrated our entire React app to TypeScript. The type safety is amazing!",
-        senderId: 2,
-        timestamp: new Date(Date.now() - 60 * 60 * 1000),
-      },
-      {
-        id: 4,
-        text: "Hey! Did you see the latest blog post about React hooks?",
-        senderId: 2,
-        timestamp: new Date(Date.now() - 30 * 60 * 1000),
-      },
-    ],
-    2: [
-      {
-        id: 5,
-        text: "Thanks for the feedback on my article!",
-        senderId: 1,
-        timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000),
-      },
-    ],
-    3: [
-      {
-        id: 6,
-        text: "Would love to collaborate on a project!",
-        senderId: 4,
-        timestamp: new Date(Date.now() - 24 * 60 * 60 * 1000),
-      },
-    ],
-  });
-
+  // const [messages, setMessages] = useState({
+  //   1: [
+  //     {
+  //       id: 1,
+  //       text: "Hi! I really enjoyed your latest post about TypeScript best practices.",
+  //       senderId: 2,
+  //       timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000),
+  //     },
+  //     {
+  //       id: 2,
+  //       text: "Thank you! I'm glad you found it helpful. Are you using TypeScript in your projects?",
+  //       senderId: 1,
+  //       timestamp: new Date(Date.now() - 90 * 60 * 1000),
+  //     },
+  //     {
+  //       id: 3,
+  //       text: "Yes, we just migrated our entire React app to TypeScript. The type safety is amazing!",
+  //       senderId: 2,
+  //       timestamp: new Date(Date.now() - 60 * 60 * 1000),
+  //     },
+  //     {
+  //       id: 4,
+  //       text: "Hey! Did you see the latest blog post about React hooks?",
+  //       senderId: 2,
+  //       timestamp: new Date(Date.now() - 30 * 60 * 1000),
+  //     },
+  //   ],
+  //   2: [
+  //     {
+  //       id: 5,
+  //       text: "Thanks for the feedback on my article!",
+  //       senderId: 1,
+  //       timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000),
+  //     },
+  //   ],
+  //   3: [
+  //     {
+  //       id: 6,
+  //       text: "Would love to collaborate on a project!",
+  //       senderId: 4,
+  //       timestamp: new Date(Date.now() - 24 * 60 * 60 * 1000),
+  //     },
+  //   ],
+  // });
+  const [conversations, setConversations] = useState([]);
+  const [currentMessages, setCurrentMessages] = useState([]);
   // Get conversation ID from URL params
+
+  //Lấy hết các cuộc hội thoại mà 1 người tham gia
   useEffect(() => {
+    const fetchConversations = async () => {
+      const myConversations = await conversationService.getConversations();
+      setConversations(myConversations);
+    };
+    fetchConversations();
+  }, []);
+
+  const [initialized, setInitialized] = useState(false);
+
+  useEffect(() => {
+    if (initialized || conversations.length === 0) return;
+
     const conversationId = searchParams.get("conversation");
-    if (conversationId) {
-      const conversation = conversations.find(
-        (c) => c.id === parseInt(conversationId)
-      );
-      if (conversation) {
-        setSelectedConversation(conversation);
-        // Mark as read
-        markAsRead(conversation.id);
-      }
+
+    if (!conversationId) {
+      setSelectedConversation(null);
+      return;
     }
-  }, [searchParams]); // Remove conversations from dependency to avoid infinite loop
-  const [currentMessges, setCurrentMessages] = useState([]);
+
+    const found = conversations.find(
+      (c) => parseInt(c.id) === parseInt(conversationId)
+    );
+    setSelectedConversation(found || null);
+    if (found) markAsRead(found.id);
+    setInitialized(true);
+  }, [conversations, searchParams]);
+
+  // Remove conversations from dependency to avoid infinite loop
+
   // Auto-scroll to bottom when messages change
   useEffect(() => {
     scrollToBottom();
-  }, [messages, selectedConversation]);
-
-  useEffect(() => {
-    const chanelName = selectedConversation
-      ? `chat-${selectedConversation.id}`
-      : null;
-    if (!chanelName) return;
-    const chanel = socketClient.subscribe(chanelName);
-    chanel.bind("new-message", (data) => {
-      setCurrentMessages((prev) => [...prev, data]);
-    });
-    return () => {
-      socketClient.unsubscribe(chanelName);
-    };
-  }, [selectedConversation]);
+  }, [currentMessages, selectedConversation]);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -165,40 +174,34 @@ const DirectMessages = () => {
     markAsRead(conversation.id);
   };
 
-  const handleSendMessage = () => {
+  //Đoạn này lấy mes của conversation
+  useEffect(() => {
+    if (!selectedConversation) return;
+    const fetchMessages = async () => {
+      if (selectedConversation) {
+        const myMessages = await messageService.getMessagesByConversationId(
+          selectedConversation.id
+        );
+        setCurrentMessages(myMessages);
+      }
+    };
+    fetchMessages();
+  }, [conversations, selectedConversation]);
+
+  const handleSendMessage = async () => {
     if (!newMessage.trim() || !selectedConversation) return;
 
     const message = {
-      id: Date.now(),
-      text: newMessage.trim(),
-      senderId: 1, // Current user ID
-      timestamp: new Date(),
+      conversation_id: selectedConversation.id,
+      content: newMessage.trim(),
+      created_at: new Date().toISOString(),
     };
-
-    // Add message to conversation
-    setMessages((prev) => ({
-      ...prev,
-      [selectedConversation.id]: [
-        ...(prev[selectedConversation.id] || []),
-        message,
-      ],
-    }));
-
-    // Update last message in conversation
-    setConversations((prev) =>
-      prev.map((conv) =>
-        conv.id === selectedConversation.id
-          ? {
-              ...conv,
-              lastMessage: {
-                text: newMessage.trim(),
-                timestamp: new Date(),
-                senderId: 1,
-              },
-            }
-          : conv
-      )
-    );
+    try {
+      await messageService.createMessage(selectedConversation.id, message);
+      setNewMessage("");
+    } catch (error) {
+      console.log(error);
+    }
 
     setNewMessage("");
   };
@@ -211,6 +214,8 @@ const DirectMessages = () => {
   };
 
   const formatTime = (date) => {
+    if (!date) return "";
+    date = new Date(date);
     const now = new Date();
     const diff = now - date;
     const minutes = Math.floor(diff / (1000 * 60));
@@ -224,18 +229,50 @@ const DirectMessages = () => {
     return date.toLocaleDateString();
   };
 
-  const filteredConversations = conversations.filter(
-    (conv) =>
-      conv.participant.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      conv.participant.username
-        .toLowerCase()
-        .includes(searchQuery.toLowerCase())
+  const filteredConversations = conversations.filter((conv) =>
+    conv.name?.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const currentMessages = selectedConversation
-    ? messages[selectedConversation.id] || []
-    : [];
+  //Cái này gọi soketi
+  useEffect(() => {
+    if (!conversations) return;
 
+    const pusher = socketClient;
+    const channels = [];
+
+    conversations.forEach((conversation) => {
+      const channel = pusher.subscribe(`conversation-${conversation.id}`);
+      channels.push(channel);
+
+      channel.bind("new-message", (newMessage) => {
+        if (newMessage.user_id === cur_user.id) {
+          newMessage.author = "me";
+        } else {
+          newMessage.author = "other";
+        }
+
+        // Nếu đang xem đúng conversation thì mới thêm vào
+        if (selectedConversation?.id === conversation.id) {
+          setCurrentMessages((prev) => [...prev, newMessage]);
+        }
+        setConversations((prev) =>
+          prev.map((c) =>
+            c.id === newMessage.conversation_id
+              ? { ...c, lastMessage: newMessage }
+              : c
+          )
+        );
+      });
+    });
+
+    return () => {
+      channels.forEach((channel) => {
+        channel.unbind_all();
+        pusher.unsubscribe(channel.name);
+      });
+    };
+  }, [conversations, cur_user.id, selectedConversation?.id]);
+  const [open, setOpen] = useState(false);
   return (
     <div className={styles.container}>
       <div className={styles.layout}>
@@ -243,7 +280,13 @@ const DirectMessages = () => {
         <div className={styles.sidebar}>
           <div className={styles.sidebarHeader}>
             <h1 className={styles.title}>Messages</h1>
+            <InvitationMessageModal
+              isOpen={open}
+              onClose={() => setOpen(false)}
+              onSend={handleSendMessage}
+            />
             <Button
+              onClick={() => setOpen(!open)}
               variant="ghost"
               size="sm"
               className={styles.newMessageButton}
@@ -281,27 +324,27 @@ const DirectMessages = () => {
               >
                 <div className={styles.avatarContainer}>
                   <FallbackImage
-                    src={conversation.participant.avatar}
-                    alt={conversation.participant.name}
+                    src={conversation.avatar_url}
+                    alt={conversation.name}
                     className={styles.avatar}
                   />
-                  {conversation.participant.isOnline && (
+                  {conversation.users.isOnline && (
                     <div className={styles.onlineIndicator} />
                   )}
                 </div>
 
                 <div className={styles.conversationContent}>
                   <div className={styles.conversationHeader}>
-                    <span className={styles.participantName}>
-                      {conversation.participant.name}
+                    <span className={styles.usersName}>
+                      {conversation.name}
                     </span>
                     <span className={styles.timestamp}>
-                      {formatTime(conversation.lastMessage.timestamp)}
+                      {formatTime(conversation.lastMessage?.updated_at)}
                     </span>
                   </div>
                   <div className={styles.lastMessage}>
                     <span className={styles.messageText}>
-                      {conversation.lastMessage.text}
+                      {conversation.lastMessage?.content}
                     </span>
                     {conversation.unreadCount > 0 && (
                       <span className={styles.unreadBadge}>
@@ -321,18 +364,18 @@ const DirectMessages = () => {
             <>
               {/* Messages Header */}
               <div className={styles.messagesHeader}>
-                <div className={styles.participantInfo}>
+                <div className={styles.usersInfo}>
                   <FallbackImage
-                    src={selectedConversation.participant.avatar}
-                    alt={selectedConversation.participant.name}
+                    src={selectedConversation.avatar_url}
+                    alt={selectedConversation.name}
                     className={styles.headerAvatar}
                   />
                   <div>
-                    <h2 className={styles.participantName}>
-                      {selectedConversation.participant.name}
+                    <h2 className={styles.usersName}>
+                      {selectedConversation.name}
                     </h2>
-                    <span className={styles.participantStatus}>
-                      {selectedConversation.participant.isOnline
+                    <span className={styles.usersStatus}>
+                      {selectedConversation.users.isOnline
                         ? "Online"
                         : "Offline"}
                     </span>
@@ -346,13 +389,15 @@ const DirectMessages = () => {
                   <div
                     key={message.id}
                     className={`${styles.message} ${
-                      message.senderId === 1 ? styles.sent : styles.received
+                      message.author === "me" ? styles.sent : styles.received
                     }`}
                   >
                     <div className={styles.messageContent}>
-                      <span className={styles.messageText}>{message.text}</span>
+                      <span className={styles.messageText}>
+                        {message.content}
+                      </span>
                       <span className={styles.messageTime}>
-                        {formatTime(message.timestamp)}
+                        {formatTime(message?.updated_at)}
                       </span>
                     </div>
                   </div>
@@ -366,8 +411,8 @@ const DirectMessages = () => {
                   <textarea
                     value={newMessage}
                     onChange={(e) => setNewMessage(e.target.value)}
-                    onKeyPress={handleKeyPress}
-                    placeholder={`Message ${selectedConversation.participant.name}...`}
+                    onKeyDown={handleKeyPress}
+                    placeholder={`Message ${selectedConversation.name}...`}
                     className={styles.messageInput}
                     rows={1}
                   />

@@ -2,12 +2,12 @@ import { useState } from "react";
 import PropTypes from "prop-types";
 import CommentItem from "../CommentItem/CommentItem";
 import Button from "../Button/Button";
-import Input from "../Input/Input";
 import EmptyState from "../EmptyState/EmptyState";
 import styles from "./CommentSection.module.scss";
 
 const CommentSection = ({
   comments = [],
+  totalComment = 0,
   loading = false,
   onAddComment,
   onReplyComment,
@@ -76,7 +76,7 @@ const CommentSection = ({
       {...props}
     >
       <div className={styles.header}>
-        <h2 className={styles.title}>Comments ({comments.length})</h2>
+        <h2 className={styles.title}>Comments ({totalComment})</h2>
       </div>
 
       {/* Comment Form */}
@@ -167,6 +167,7 @@ CommentSection.propTypes = {
     })
   ),
   loading: PropTypes.bool,
+  totalComment: PropTypes.number,
   onAddComment: PropTypes.func,
   onReplyComment: PropTypes.func,
   onLikeComment: PropTypes.func,

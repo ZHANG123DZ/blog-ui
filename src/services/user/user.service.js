@@ -16,8 +16,10 @@ export const getUser = async (userName) => {
   return res;
 };
 
-export const getUserPosts = async (userName) => {
-  const res = await httpRequest.get(`/users/${userName}/posts`);
+export const getUserPosts = async (userName, page, limit) => {
+  const res = await httpRequest.get(
+    `/users/${userName}/posts?page=${page}&limit=${limit}`
+  );
   res.data = res.data.map((post) => ({
     ...post,
     id: Number(post.id),

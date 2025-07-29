@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { data, Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Input, Button } from "../../components";
 import styles from "./Login.module.scss";
 import authService from "@/services/auth/auth.service";
@@ -62,11 +62,8 @@ const Login = () => {
 
     try {
       // Simulate API call
-      const { rememberMe, ...data } = formData;
+      const { ...data } = formData;
       await authService.login(data);
-
-      // Mock successful login
-      console.log("Login successful:", formData);
 
       // Navigate to home or dashboard
       navigate("/", { replace: true });

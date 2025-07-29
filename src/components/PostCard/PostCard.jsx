@@ -88,7 +88,7 @@ const PostCard = ({
     );
 
     try {
-      await onLike(slug, !optimisticLiked);
+      await onLike(postId, optimisticLiked);
     } catch (error) {
       // Revert on error
       setOptimisticLiked(optimisticLiked);
@@ -124,7 +124,7 @@ const PostCard = ({
     };
 
     fetchBookMarkState();
-  }, [cur_user]);
+  }, [cur_user, postId]);
 
   const handleBookmark = async () => {
     if (!onBookmark || bookmarkingInProgress) return;
@@ -135,7 +135,7 @@ const PostCard = ({
     setOptimisticBookmarked(!optimisticBookmarked);
 
     try {
-      await onBookmark(slug, !optimisticBookmarked);
+      await onBookmark(postId, optimisticBookmarked);
     } catch (error) {
       // Revert on error
       setOptimisticBookmarked(optimisticBookmarked);

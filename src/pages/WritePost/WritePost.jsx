@@ -20,7 +20,6 @@ const WritePost = () => {
   const navigate = useNavigate();
   const isEditing = Boolean(slug);
 
-  const cur_user = useSelector((state) => state.auth.currentUser);
   const userSetting = useSelector((state) => state.auth.setting);
 
   const [formData, setFormData] = useState({
@@ -31,7 +30,7 @@ const WritePost = () => {
     thumbnail_url: "",
     topics: [],
     status: "draft",
-    visibility: userSetting.defaultPostVisibility,
+    visibility: userSetting?.defaultPostVisibility,
     meta_title: "",
     meta_description: "",
   });
@@ -67,7 +66,7 @@ const WritePost = () => {
     const fetchTopics = async () => {
       try {
         const topics = await topicService.getTopics();
-        setAvailableTopics(topics.data.map((topic) => topic.name));
+        setAvailableTopics(topics.data);
       } catch (error) {
         console.error("Error fetching topics:", error);
       }
@@ -127,24 +126,28 @@ const WritePost = () => {
     }
   };
 
-  const handleAddTopic = (topic) => {
-    if (topic && !selectedTopics.includes(topic)) {
-      const newTopics = [...selectedTopics, topic];
-      setSelectedTopics(newTopics);
-      setFormData((prev) => ({
-        ...prev,
-        topics: newTopics,
-      }));
-      setTopicInput("");
-    }
-  };
+  const handleAddTopic = (topicName) => {
+    const topicObj = availableTopics.find((t) => t.name === topicName);
+    if (!topicObj) return;
 
-  const handleRemoveTopic = (topicToRemove) => {
-    const newTopics = selectedTopics.filter((topic) => topic !== topicToRemove);
+    const isExist = selectedTopics.some((t) => t.id === topicObj.id);
+    if (isExist) return;
+
+    const newTopics = [...selectedTopics, topicObj];
+    setTopicInput("");
     setSelectedTopics(newTopics);
     setFormData((prev) => ({
       ...prev,
-      topics: newTopics,
+      topics: newTopics.map((t) => t.id),
+    }));
+  };
+
+  const handleRemoveTopic = (topicName) => {
+    const newTopics = selectedTopics.filter((t) => t.name !== topicName);
+    setSelectedTopics(newTopics);
+    setFormData((prev) => ({
+      ...prev,
+      topics: newTopics.map((t) => t.id),
     }));
   };
 
@@ -286,11 +289,13 @@ const WritePost = () => {
         }
       }
       formMediaData.folder = `post/content-images`;
-      const urls = await mediaService.uploadMultipleFiles(formMediaData);
-      urls.data.forEach((image, idx) => {
-        const base64 = base64ToReplace[idx];
-        postData.content = postData.content.replaceAll(base64, image.url);
-      });
+      if (Object.keys(formMediaData).some((k) => k !== "folder")) {
+        const urls = await mediaService.uploadMultipleFiles(formMediaData);
+        urls.data.forEach((image, idx) => {
+          const base64 = base64ToReplace[idx];
+          postData.content = postData.content.replaceAll(base64, image.url);
+        });
+      }
       postData.published_at = postData.publishDate || new Date().toISOString();
       const fileCover = await anyUrlToFile(postData.cover_url, "cover");
       const fileThumbnail = await anyUrlToFile(postData.cover_url, "thumbnail");
@@ -387,8 +392,8 @@ const WritePost = () => {
                 </p>
                 <div className={styles.previewTopics}>
                   {selectedTopics.map((topic) => (
-                    <Badge key={topic} variant="primary">
-                      {topic}
+                    <Badge key={topic.name} variant="primary">
+                      {topic.name}
                     </Badge>
                   ))}
                 </div>

@@ -95,8 +95,6 @@ const ResetPassword = () => {
 
       await authService.resetPassword({ password: formData.password, token });
 
-      // Mock successful password reset
-      console.log("Password reset successful");
       setIsSubmitted(true);
     } catch (error) {
       console.error("Password reset failed:", error);

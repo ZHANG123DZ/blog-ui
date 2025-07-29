@@ -46,6 +46,16 @@ export const settings = async (data) => {
   }
 };
 
+export const refreshToken = async () => {
+  try {
+    const res = await httpRequest.get("/auth/refresh-token");
+    return res;
+  } catch (err) {
+    console.error("Login thất bại:", err);
+    throw err;
+  }
+};
+
 export const login = async (data) => {
   try {
     const res = await httpRequest.post("/auth/login", data);
@@ -138,6 +148,7 @@ export const logout = async () => {
 
 export default {
   getCurrentUser,
+  refreshToken,
   login,
   register,
   editProfile,

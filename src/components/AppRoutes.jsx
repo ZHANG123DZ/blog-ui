@@ -11,6 +11,7 @@ import VerifyEmail from "@/pages/VerifyEmail";
 import { settingHandle } from "@/features/auth/settingAsync";
 import Following from "@/pages/Follwing/Following";
 import Follower from "@/pages/Follower/Follower";
+import InvitationMessageModal from "./InvitationMessageModal/InvitationMessageModal";
 
 // Lazy load pages for better performance
 const Home = lazy(() => import("../pages/Home/Home"));
@@ -63,6 +64,7 @@ const AppRoutes = () => {
             <Route path="settings" element={<Settings />} />
             <Route path="profile/:username/following" element={<Following />} />
             <Route path="profile/:username/follower" element={<Follower />} />
+            <Route path="invite" element={<InvitationMessageModal />} />
           </Route>
 
           {/* Fullscreen Layout Routes */}

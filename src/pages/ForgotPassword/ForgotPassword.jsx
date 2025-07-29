@@ -55,8 +55,6 @@ const ForgotPassword = () => {
       // Simulate API call
       await authService.forgotPassword(formData.email);
 
-      // Mock successful submission
-      console.log("Password reset email sent to:", formData.email);
       setIsSubmitted(true);
     } catch (error) {
       console.error("Failed to send reset email:", error);

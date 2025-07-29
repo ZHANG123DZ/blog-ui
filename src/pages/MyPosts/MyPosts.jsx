@@ -8,6 +8,8 @@ import Badge from "../../components/Badge/Badge";
 import styles from "./MyPosts.module.scss";
 import { useSelector } from "react-redux";
 import userService from "@/services/user/user.service";
+import bookmarkService from "@/services/bookmark/bookMark.service";
+import likeService from "@/services/like/like.service";
 
 const MyPosts = () => {
   const [posts, setPosts] = useState([]);
@@ -79,13 +81,56 @@ const MyPosts = () => {
   //         commentsCount: 23,
   //     },
   // ];
-  const currentUser = useSelector((state) => state.auth.currentUser);
+  const cur_user = useSelector((state) => state.auth.currentUser);
 
+  const handleLikeClick = async (postId, isLiked) => {
+    if (!cur_user) {
+      alert("Bạn chưa đăng nhập, vui lòng đăng nhập!");
+      return;
+    }
+
+    try {
+      const data = {
+        like_able_id: postId,
+        type: "post",
+      };
+
+      if (!isLiked) {
+        await likeService.like(data);
+      } else {
+        await likeService.unlike(data);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const handleBookmarkClick = async (postId, isBookmarked) => {
+    if (!cur_user) {
+      alert("Bạn chưa đăng nhập, vui lòng đăng nhập!");
+      return;
+    }
+
+    try {
+      const data = {
+        book_mark_able_id: postId,
+        type: "post",
+      };
+
+      if (!isBookmarked) {
+        await bookmarkService.bookmark(data);
+      } else {
+        await bookmarkService.unBookMark(data);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
   useEffect(() => {
     // Simulate API call
     const fetchPosts = async () => {
       setLoading(true);
-      const myPosts = await userService.getUserPosts(currentUser.username);
+      const myPosts = await userService.getUserPosts(cur_user.username);
       setPosts(myPosts.data);
       setLoading(false);
     };
@@ -236,6 +281,14 @@ const MyPosts = () => {
                     slug={post.slug}
                     topics={post.topics}
                     author={post.author}
+                    onLike={(postId, isLiked) =>
+                      handleLikeClick(postId, isLiked)
+                    }
+                    onBookmark={(postId, isBookmarked) =>
+                      handleBookmarkClick(postId, isBookmarked)
+                    }
+                    likes={Number(post.likes) || 0}
+                    views={Number(post.views) || 0}
                   />
                   <div className={styles.postMeta}>
                     <div className={styles.postStatus}>

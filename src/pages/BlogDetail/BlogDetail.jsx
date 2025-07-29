@@ -221,10 +221,12 @@ const BlogDetail = () => {
   // Like and bookmark states
   const [isLiked, setIsLiked] = useState(false);
   const [isBookmarked, setIsBookmarked] = useState(false);
-  const [likes, setLikes] = useState(45); // Mock initial likes
-  const [views, setViews] = useState(892); // Mock views
+  const [likes, setLikes] = useState(0);
+  const [views, setViews] = useState(0);
+  const [totalComment, setToTalComment] = useState(0);
   const [likingInProgress, setLikingInProgress] = useState(false);
   const [bookmarkingInProgress, setBookmarkingInProgress] = useState(false);
+  const [isPublished, setIsPublished] = useState(true);
 
   const cur_user = useSelector((state) => state.auth.currentUser);
   //Featch dữ liệu của post và comments
@@ -242,11 +244,17 @@ const BlogDetail = () => {
         const randomPost = randomArray(relatedPosts.data);
         setPost(postData);
         setRelatedPosts(randomPost);
-        console.log();
+        setIsPublished(
+          postData.status === "published" &&
+            new Date(postData.published_at) <= new Date()
+        );
+        setViews(Number(postData.views));
+        setLikes(Number(postData.likes));
         const commentsData = await commentService.getCommentsByPostId(
           postData.slug
         );
-        setComments(commentsData.data);
+        setToTalComment(commentsData.data.total);
+        setComments(commentsData.data.comments);
       } catch (error) {
         console.error("Failed to load post:", error);
       } finally {
@@ -256,6 +264,21 @@ const BlogDetail = () => {
 
     loadPost();
   }, [slug]);
+
+  //Views
+  useEffect(() => {
+    if (!post || !post?.id) return;
+    console.log(post.slug);
+    const readTimeMs = (Number(post.readTime) || 1) * 60 * 1000;
+    const timer = setTimeout(() => {
+      postService.updatePost(post.slug, {
+        view_count: Number(post.view_count) + 1,
+      });
+      setViews((prev) => prev + 1);
+    }, readTimeMs / 5);
+
+    return () => clearTimeout(timer);
+  }, [post, post?.id]);
 
   //xử lý check like của bài post
   const checkLike = async (postId) => {
@@ -377,33 +400,7 @@ const BlogDetail = () => {
       post_id: post.id,
     };
     const comments = await commentService.createComment(post.id, data);
-    const newComment = {
-      id: Date.now(),
-      author: {
-        name: "You",
-        avatar:
-          "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&h=150&fit=crop&crop=face",
-      },
-      content,
-      createdAt: new Date().toISOString(),
-      likes: 0,
-      isLiked: false,
-      replies: [],
-    };
-
-    setComments((prev) => [comments.data, ...prev]);
-  };
-
-  const handleReplyComment = async (parentId, content) => {
-    const data = {
-      content,
-      like_count: 0,
-      parent_id: parentId,
-      user_id: cur_user?.id,
-      post_id: post.id,
-    };
-    const newReply = await commentService.createComment(post.id, data);
-    // const newReply = {
+    // const newComment = {
     //   id: Date.now(),
     //   author: {
     //     name: "You",
@@ -416,17 +413,40 @@ const BlogDetail = () => {
     //   isLiked: false,
     //   replies: [],
     // };
+    setToTalComment((prev) => prev + 1);
+    setComments((prev) => [comments.data, ...prev]);
+  };
 
-    setComments((prev) =>
-      prev.map((comment) =>
-        comment.id === parentId
-          ? {
-              ...comment,
-              replies: [...(comment.replies || []), newReply.data],
-            }
-          : comment
-      )
-    );
+  const addReplyToComments = (comments, parentId, newReply) => {
+    return comments.map((comment) => {
+      if (comment.id === parentId) {
+        return {
+          ...comment,
+          replies: [...(comment.replies || []), newReply],
+        };
+      }
+      if (comment.replies && comment.replies.length > 0) {
+        return {
+          ...comment,
+          replies: addReplyToComments(comment.replies, parentId, newReply),
+        };
+      }
+      return comment;
+    });
+  };
+
+  const handleReplyComment = async (parentId, content) => {
+    const data = {
+      content,
+      like_count: 0,
+      parent_id: parentId,
+      user_id: cur_user?.id,
+      post_id: post.id,
+    };
+
+    const newReply = await commentService.createComment(post.id, data);
+    setToTalComment((prev) => prev + 1);
+    setComments((prev) => addReplyToComments(prev, parentId, newReply.data));
   };
 
   const handleLikeComment = async (commentId) => {
@@ -491,7 +511,6 @@ const BlogDetail = () => {
       };
 
       setComments((prev) => updateCommentRecursively(prev));
-      console.log("Comment edited:", commentId, newContent);
     } catch (error) {
       console.error("Failed to edit comment:", error);
     }
@@ -515,10 +534,8 @@ const BlogDetail = () => {
             return comment;
           });
       };
-
+      setToTalComment((prev) => prev - 1);
       setComments((prev) => deleteCommentRecursively(prev));
-
-      console.log("Comment deleted:", commentId);
     } catch (error) {
       console.error("Failed to delete comment:", error);
     }
@@ -686,17 +703,18 @@ const BlogDetail = () => {
       </div>
 
       {/* Related Posts */}
-      {post.status !== "draft" && (
+      {isPublished && (
         <div className={styles.contentSection}>
           <RelatedPosts posts={relatedPosts} />
         </div>
       )}
 
       {/* Comments */}
-      {post.status !== "draft" && (
+      {isPublished && (
         <div className={styles.contentSection}>
           <CommentSection
             comments={comments}
+            totalComment={totalComment}
             onAddComment={handleAddComment}
             onReplyComment={handleReplyComment}
             onLikeComment={handleLikeComment}

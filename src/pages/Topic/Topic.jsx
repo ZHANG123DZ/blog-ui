@@ -67,30 +67,30 @@ const Topic = () => {
   //     },
   //   };
 
-  const generateMockPosts = (topicName, page = 1) => {
-    const posts = [];
-    const startIndex = (page - 1) * postsPerPage;
+  // const generateMockPosts = (topicName, page = 1) => {
+  //   const posts = [];
+  //   const startIndex = (page - 1) * postsPerPage;
 
-    for (let i = 1; i <= postsPerPage; i++) {
-      const postIndex = startIndex + i;
-      posts.push({
-        id: `${slug}-${postIndex}`,
-        title: `${topicName} Tutorial ${postIndex}: Advanced Concepts and Best Practices`,
-        excerpt: `Learn advanced ${topicName} concepts in this comprehensive tutorial. We'll cover important topics, best practices, and real-world examples that will help you become a better developer.`,
-        slug: `${slug}-tutorial-${postIndex}`,
-        author: {
-          name: "John Doe",
-          avatar: `https://via.placeholder.com/32?text=JD`,
-        },
-        publishedAt: new Date(2024, 0, postIndex).toISOString(),
-        readTime: Math.floor(Math.random() * 10) + 3,
-        topic: topicName,
-        featuredImage: `https://via.placeholder.com/400x200?text=${topicName}+${postIndex}`,
-      });
-    }
+  //   for (let i = 1; i <= postsPerPage; i++) {
+  //     const postIndex = startIndex + i;
+  //     posts.push({
+  //       id: `${slug}-${postIndex}`,
+  //       title: `${topicName} Tutorial ${postIndex}: Advanced Concepts and Best Practices`,
+  //       excerpt: `Learn advanced ${topicName} concepts in this comprehensive tutorial. We'll cover important topics, best practices, and real-world examples that will help you become a better developer.`,
+  //       slug: `${slug}-tutorial-${postIndex}`,
+  //       author: {
+  //         name: "John Doe",
+  //         avatar: `https://via.placeholder.com/32?text=JD`,
+  //       },
+  //       publishedAt: new Date(2024, 0, postIndex).toISOString(),
+  //       readTime: Math.floor(Math.random() * 10) + 3,
+  //       topic: topicName,
+  //       featuredImage: `https://via.placeholder.com/400x200?text=${topicName}+${postIndex}`,
+  //     });
+  //   }
 
-    return posts;
-  };
+  //   return posts;
+  // };
 
   // Fetch topic data
   useEffect(() => {

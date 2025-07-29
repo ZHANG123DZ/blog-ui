@@ -4,9 +4,8 @@ import EmptyState from "../EmptyState/EmptyState";
 import Loading from "../Loading/Loading";
 import styles from "./FeaturedPosts.module.scss";
 import { useSelector } from "react-redux";
-import bookmarkService from "@/services/bookmark/bookmark.service";
+import bookmarkService from "@/services/bookmark/bookMark.service";
 import likeService from "@/services/like/like.service";
-import { useState } from "react";
 
 const FeaturedPosts = ({
   posts = [],
@@ -17,11 +16,9 @@ const FeaturedPosts = ({
   className,
   ...props
 }) => {
-  const [isLiked, setIsLiked] = useState(false);
-  const [isBookmarked, setIsBookmarked] = useState(false);
   const cur_user = useSelector((state) => state.auth.currentUser);
 
-  const handleLikeClick = async (postId) => {
+  const handleLikeClick = async (postId, isLiked) => {
     if (!cur_user) {
       alert("Bạn chưa đăng nhập, vui lòng đăng nhập!");
       return;
@@ -32,21 +29,18 @@ const FeaturedPosts = ({
         like_able_id: postId,
         type: "post",
       };
+
       if (!isLiked) {
         await likeService.like(data);
-        setIsLiked(true);
       } else {
         await likeService.unlike(data);
-        setIsLiked(false);
       }
     } catch (error) {
-      console.log(error);
-      return;
+      console.error(error);
     }
   };
 
-  //Book mark bài post
-  const handleBookmarkClick = async (postId) => {
+  const handleBookmarkClick = async (postId, isBookmarked) => {
     if (!cur_user) {
       alert("Bạn chưa đăng nhập, vui lòng đăng nhập!");
       return;
@@ -57,16 +51,14 @@ const FeaturedPosts = ({
         book_mark_able_id: postId,
         type: "post",
       };
+
       if (!isBookmarked) {
         await bookmarkService.bookmark(data);
-        setIsBookmarked(true);
       } else {
         await bookmarkService.unBookMark(data);
-        setIsBookmarked(false);
       }
     } catch (error) {
-      console.log(error);
-      return;
+      console.error(error);
     }
   };
 
@@ -99,7 +91,7 @@ const FeaturedPosts = ({
   }
 
   const displayPosts = posts.slice(0, maxPosts);
-  console.log(posts);
+
   return (
     <section
       className={`${styles.featuredPosts} ${className || ""}`}
@@ -127,10 +119,12 @@ const FeaturedPosts = ({
               featuredImage={post.featuredImage}
               showInteractions
               showViewCount
-              likes={Number(post.likes)}
-              views={Number(post.views)}
-              onLike={() => handleLikeClick(post.id)}
-              onBookmark={() => handleBookmarkClick(post.id)}
+              likes={Number(post.likes) || 0}
+              views={Number(post.views) || 0}
+              onLike={(postId, isLiked) => handleLikeClick(postId, isLiked)}
+              onBookmark={(postId, isBookmarked) =>
+                handleBookmarkClick(postId, isBookmarked)
+              }
             />
           </div>
         ))}

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import AuthorInfo from "../../components/AuthorInfo/AuthorInfo";
 import PostList from "../../components/PostList/PostList";
 import Button from "../../components/Button/Button";
@@ -27,11 +27,18 @@ const Profile = () => {
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [isChatMinimized, setIsChatMinimized] = useState(false);
 
+  //stus
+  const [follower, setFollower] = useState(0);
+  const [following, setFollowing] = useState(0);
+  const [totalLikes, setTotalLikes] = useState(0);
+  const [totalPost, setTotalPost] = useState(0);
   // Check if this is the user's own profile
   // In a real app, you'd get current user from auth context
   const cur_user = useSelector((state) => state.auth.currentUser);
   const currentUser = cur_user?.username || null; // Mock current user
   const isOwnProfile = currentUser === username;
+  const params = new URLSearchParams(window.location.search);
+  const page = params.get("page") || 1;
 
   // Mock profile data - trong thực tế sẽ fetch từ API
   // const mockProfile = {
@@ -125,11 +132,11 @@ const Profile = () => {
     const loadPosts = async () => {
       setPostsLoading(true);
       // Simulate API delay
-      const postsData = await userService.getUserPosts(username);
+      const postsData = await userService.getUserPosts(username, page, 6);
       // const newPosts = generatePosts(5);
-
       setPosts(postsData.data);
-      setTotalPages(Math.ceil(42 / 6)); // 42 total posts, 6 per page
+      setTotalPages(postsData.pagination.totalPages); // 42 total posts, 6 per page
+      setCurrentPage(postsData.pagination.page);
       setPostsLoading(false);
     };
 
@@ -138,9 +145,22 @@ const Profile = () => {
     }
   }, [profile, currentPage, activeTab]);
 
+  useEffect(() => {
+    setFollower(Number(profile?.stats.followers));
+    setFollowing(Number(profile?.stats.following));
+    setTotalLikes(Number(profile?.stats.likes));
+    setTotalPost(Number(profile?.stats.postsCount));
+  }, [
+    profile?.stats.followers,
+    profile?.stats.following,
+    profile?.stats.likes,
+    profile?.stats.postsCount,
+  ]);
+
   const handlePageChange = (page) => {
     setCurrentPage(page);
     window.scrollTo({ top: 0, behavior: "smooth" });
+    navigate(`/profile/${profile.username}?page=${page}`);
   };
 
   const formatDate = (dateString) => {
@@ -194,8 +214,10 @@ const Profile = () => {
       if (!follow) {
         await followService.follow(data);
         setFollow(true);
+        setFollower((follow) => follow + 1);
       } else {
         await followService.unfollow(data);
+        setFollower((follow) => follow - 1);
         setFollow(false);
       }
     } catch (error) {
@@ -320,19 +342,33 @@ const Profile = () => {
               <h3>Stats</h3>
               <div className={styles.stats}>
                 <div className={styles.stat}>
-                  <strong>{profile.stats.postsCount}</strong>
+                  <strong>{`${totalPost}`.toLocaleString()}</strong>
                   <span>Posts</span>
                 </div>
-                <div className={styles.stat}>
-                  <strong>{profile.stats.followers.toLocaleString()}</strong>
+                <div
+                  className={styles.stat}
+                  onClick={() =>
+                    navigate(`/profile/${profile.username}/follower`, {
+                      replace: true,
+                    })
+                  }
+                >
+                  <strong>{`${follower}`.toLocaleString()}</strong>
                   <span>Followers</span>
                 </div>
-                <div className={styles.stat}>
-                  <strong>{profile.stats.following}</strong>
+                <div
+                  className={styles.stat}
+                  onClick={() =>
+                    navigate(`/profile/${profile.username}/following`, {
+                      replace: true,
+                    })
+                  }
+                >
+                  <strong>{`${following}`.toLocaleString()}</strong>
                   <span>Following</span>
                 </div>
                 <div className={styles.stat}>
-                  <strong>{profile.stats.likes.toLocaleString()}</strong>
+                  <strong>{`${totalLikes}`.toLocaleString()}</strong>
                   <span>Likes</span>
                 </div>
               </div>
@@ -498,6 +534,7 @@ const Profile = () => {
       {!isOwnProfile && (
         <ChatWindow
           user={{
+            id: profile.id,
             name: profile.full_name,
             avatar: profile.avatar_url,
             username: profile.username,

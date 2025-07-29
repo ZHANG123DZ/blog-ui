@@ -26,6 +26,7 @@ const CommentItem = ({
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const dropdownRef = useRef(null);
   const currentUser = useSelector((state) => state.auth.currentUser);
+
   const {
     id,
     author,
@@ -122,7 +123,10 @@ const CommentItem = ({
   return (
     <div
       className={`${styles.commentItem} ${className || ""}`}
-      style={{ "--comment-indent": level > 0 ? `${level * 24}px` : "0" }}
+      style={{
+        "--comment-indent":
+          level > 0 && level < maxLevel ? `${level * 24}px` : "0",
+      }}
       {...props}
     >
       <div className={styles.comment}>
@@ -244,15 +248,13 @@ const CommentItem = ({
                 {likes > 0 && <span>{likes}</span>}
               </button>
 
-              {level < maxLevel && (
-                <button
-                  className={styles.replyButton}
-                  onClick={() => setShowReplyForm(!showReplyForm)}
-                  type="button"
-                >
-                  Reply
-                </button>
-              )}
+              <button
+                className={styles.replyButton}
+                onClick={() => setShowReplyForm(!showReplyForm)}
+                type="button"
+              >
+                Reply
+              </button>
             </div>
           )}
 
@@ -352,12 +354,16 @@ const CommentItem = ({
 
       {/* Replies */}
       {replies.length > 0 && (
-        <div className={styles.replies}>
+        <div
+          className={styles.replies}
+          aria-label={level}
+          style={{ paddingLeft: level >= maxLevel - 1 ? "0px" : "1.5rem" }}
+        >
           {replies.map((reply) => (
             <CommentItem
               key={reply.id}
               comment={reply}
-              level={level + 1}
+              level={level + 1 >= maxLevel ? level : level + 1}
               maxLevel={maxLevel}
               onReply={onReply}
               onLike={onLike}

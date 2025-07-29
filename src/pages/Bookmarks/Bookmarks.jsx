@@ -8,6 +8,7 @@ import Button from "../../components/Button/Button";
 import styles from "./Bookmarks.module.scss";
 import bookmarkService from "@/services/bookmark/bookmark.service";
 import { useSelector } from "react-redux";
+import likeService from "@/services/like/like.service";
 
 const Bookmarks = () => {
   const [bookmarks, setBookmarks] = useState([]);
@@ -137,6 +138,52 @@ const Bookmarks = () => {
   }, []);
 
   // Get all unique topics from bookmarks
+  const cur_user = useSelector((state) => state.auth.currentUser);
+
+  const handleLikeClick = async (postId, isLiked) => {
+    if (!cur_user) {
+      alert("Bạn chưa đăng nhập, vui lòng đăng nhập!");
+      return;
+    }
+
+    try {
+      const data = {
+        like_able_id: postId,
+        type: "post",
+      };
+
+      if (!isLiked) {
+        await likeService.like(data);
+      } else {
+        await likeService.unlike(data);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const handleBookmarkClick = async (postId, isBookmarked) => {
+    if (!cur_user) {
+      alert("Bạn chưa đăng nhập, vui lòng đăng nhập!");
+      return;
+    }
+
+    try {
+      const data = {
+        book_mark_able_id: postId,
+        type: "post",
+      };
+
+      if (!isBookmarked) {
+        await bookmarkService.bookmark(data);
+      } else {
+        await bookmarkService.unBookMark(data);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   const availableTopics = [
     ...new Set(bookmarks.flatMap((bookmark) => bookmark.topics)),
   ].sort();
@@ -297,6 +344,14 @@ const Bookmarks = () => {
                     slug={bookmark.slug}
                     topics={bookmark.topics}
                     author={bookmark.author}
+                    likes={Number(bookmark.likes) || 0}
+                    views={Number(bookmark.views) || 0}
+                    onLike={(postId, isLiked) =>
+                      handleLikeClick(postId, isLiked)
+                    }
+                    onBookmark={(postId, isBookmarked) =>
+                      handleBookmarkClick(postId, isBookmarked)
+                    }
                   />
                   <div className={styles.bookmarkMeta}>
                     <div className={styles.bookmarkInfo}>

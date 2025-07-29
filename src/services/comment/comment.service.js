@@ -52,7 +52,7 @@ export const getCommentsByPostId = async (slug) => {
       };
     };
 
-    res.data = res.data.map(normalizeCommentTree);
+    res.data.comments = res.data.comments.map(normalizeCommentTree);
     return res;
   } catch (error) {
     console.error("Failed to fetch comments:", error);

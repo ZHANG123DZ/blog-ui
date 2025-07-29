@@ -107,7 +107,15 @@ const Following = () => {
   };
 
   return (
-    <div className="max-w-2xl mx-auto px-4 py-6">
+    <div
+      className="max-w-2xl mx-auto px-4 py-6"
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center",
+      }}
+    >
       <h1 className="text-2xl font-semibold mb-6 text-center">
         <span
           style={{ color: "blue" }}
@@ -134,7 +142,7 @@ const Following = () => {
           chưa theo dõi ai cả.
         </p>
       ) : (
-        <div className="space-y-4" style={{ padding: "80px", gap: "20px" }}>
+        <div className="space-y-4">
           {followings.map((followedUser) => (
             <div
               key={followedUser.id}

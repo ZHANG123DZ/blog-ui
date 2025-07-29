@@ -4,10 +4,9 @@ import Pagination from "../Pagination/Pagination";
 import EmptyState from "../EmptyState/EmptyState";
 import Loading from "../Loading/Loading";
 import styles from "./PostList.module.scss";
-import { useState } from "react";
 import likeService from "@/services/like/like.service";
-import { useSelector } from "react-redux";
 import bookmarkService from "@/services/bookmark/bookmark.service";
+import { useSelector } from "react-redux";
 
 const PostList = ({
   posts = [],
@@ -20,10 +19,9 @@ const PostList = ({
   className,
   ...props
 }) => {
-  const [like, setLike] = useState(false);
   const cur_user = useSelector((state) => state.auth.currentUser);
 
-  const handleLikeClick = async (postId) => {
+  const handleLikeClick = async (postId, isLiked) => {
     if (!cur_user) {
       alert("Bạn chưa đăng nhập, vui lòng đăng nhập!");
       return;
@@ -34,21 +32,18 @@ const PostList = ({
         like_able_id: postId,
         type: "post",
       };
-      if (!like) {
+
+      if (!isLiked) {
         await likeService.like(data);
-        setLike(true);
       } else {
         await likeService.unlike(data);
-        setLike(false);
       }
     } catch (error) {
-      console.log(error);
-      return;
+      console.error(error);
     }
   };
 
-  const [bookmark, setBookMark] = useState(false);
-  const handleBookmarkClick = async (postId) => {
+  const handleBookmarkClick = async (postId, isBookmarked) => {
     if (!cur_user) {
       alert("Bạn chưa đăng nhập, vui lòng đăng nhập!");
       return;
@@ -59,16 +54,14 @@ const PostList = ({
         book_mark_able_id: postId,
         type: "post",
       };
-      if (!bookmark) {
+
+      if (!isBookmarked) {
         await bookmarkService.bookmark(data);
-        setBookMark(true);
       } else {
         await bookmarkService.unBookMark(data);
-        setBookMark(false);
       }
     } catch (error) {
-      console.log(error);
-      return;
+      console.error(error);
     }
   };
 
@@ -91,12 +84,15 @@ const PostList = ({
       </div>
     );
   }
+
   return (
     <div className={`${styles.postList} ${className || ""}`} {...props}>
       <div className={`${styles.postsContainer} ${styles[layout]}`}>
         {posts.map((post) => {
+          const postId = post.id;
+
           return (
-            <div key={post.id || post.slug} className={styles.postItem}>
+            <div key={postId || post.slug} className={styles.postItem}>
               <PostCard
                 title={post.title}
                 excerpt={post.description}
@@ -104,12 +100,12 @@ const PostList = ({
                 publishedAt={post.published_at}
                 readTime={post.reading_time}
                 slug={post.slug}
-                postId={Number(post.id)}
+                postId={Number(postId)}
                 featuredImage={post.cover_url}
-                onLike={() => handleLikeClick(post.id)}
-                onBookmark={() => handleBookmarkClick(post.id)}
-                isLiked={like}
-                isBookmarked={bookmark}
+                onLike={(postId, isLiked) => handleLikeClick(postId, isLiked)}
+                onBookmark={(postId, isBookmarked) =>
+                  handleBookmarkClick(postId, isBookmarked)
+                }
                 likes={Number(post.likes) || 0}
                 views={Number(post.views) || 0}
               />
@@ -141,7 +137,7 @@ PostList.propTypes = {
         name: PropTypes.string.isRequired,
         avatar: PropTypes.string,
       }).isRequired,
-      published_at: PropTypes.string,
+      published_at: PropTypes.string.isRequired,
       readTime: PropTypes.number,
       topic: PropTypes.string,
       slug: PropTypes.string.isRequired,

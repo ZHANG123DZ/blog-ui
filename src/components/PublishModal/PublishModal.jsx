@@ -106,7 +106,6 @@ const PublishModal = ({
               fullWidth
               maxLength={160}
               rows={3}
-              multiline
             />
           </div>
 
@@ -189,6 +188,7 @@ const PublishModal = ({
                     onChange={handleImageUpload}
                     className={styles.fileInput}
                     id="cover-upload-modal"
+                    name="cover"
                   />
                   <label
                     htmlFor="cover-upload-modal"
@@ -218,6 +218,7 @@ const PublishModal = ({
                   onChange={handleImageUpload}
                   className={styles.fileInput}
                   id="cover-upload-modal"
+                  name="cover"
                 />
                 <label
                   htmlFor="cover-upload-modal"
@@ -241,7 +242,9 @@ const PublishModal = ({
                 onChange={(e) => setTopicInput(e.target.value)}
                 onKeyPress={(e) => {
                   if (e.key === "Enter" && topicInput.trim()) {
+                    console.log(topicInput.trim());
                     e.preventDefault();
+
                     handleAddTopic(topicInput.trim());
                   }
                 }}
@@ -253,20 +256,20 @@ const PublishModal = ({
                   availableTopics
                     .filter(
                       (topic) =>
-                        topic
+                        topic.name
                           .toLowerCase()
                           .includes(topicInput.toLowerCase()) &&
-                        !selectedTopics.includes(topic)
+                        !selectedTopics.some((t) => t.name === topic.name)
                     )
                     .slice(0, 5)
                     .map((topic) => (
                       <button
-                        key={topic}
+                        key={topic.name}
                         type="button"
                         className={styles.suggestionItem}
-                        onClick={() => handleAddTopic(topic)}
+                        onClick={() => handleAddTopic(topic.name)}
                       >
-                        {topic}
+                        {topic.name}
                       </button>
                     ))}
               </div>
@@ -275,18 +278,20 @@ const PublishModal = ({
             <div className={styles.selectedTopics}>
               {selectedTopics.map((topic) => (
                 <Badge
-                  key={topic}
+                  key={topic.name}
                   variant="secondary"
                   className={styles.topicBadge}
                 >
-                  {topic}
-                  <button
-                    type="button"
-                    onClick={() => handleRemoveTopic(topic)}
-                    className={styles.removeTopic}
-                  >
-                    ×
-                  </button>
+                  <>
+                    {topic.name}
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveTopic(topic.name)}
+                      className={styles.removeTopic}
+                    >
+                      ×
+                    </button>
+                  </>
                 </Badge>
               ))}
             </div>

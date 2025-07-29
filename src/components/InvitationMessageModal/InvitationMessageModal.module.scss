@@ -1,0 +1,145 @@
+.wrapper {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal {
+  background: #fff;
+  border-radius: 16px;
+  padding: 24px;
+  width: 100%;
+  max-width: 800px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+  display: flex;
+  flex-direction: column;
+}
+
+.title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #1c1e21;
+  margin-bottom: 4px;
+}
+
+.subtitle {
+  font-size: 0.875rem;
+  color: #65676b;
+  margin-bottom: 16px;
+}
+
+.searchInput {
+  width: 100%;
+  padding: 10px 16px;
+  font-size: 0.875rem;
+  border: 1px solid #ccc;
+  border-radius: 9999px;
+  outline: none;
+  transition: border-color 0.2s;
+  margin-bottom: 16px;
+
+  &:focus {
+    border-color: #1877f2;
+    box-shadow: 0 0 0 2px rgba(24, 119, 242, 0.2);
+  }
+}
+
+.receiverList {
+  max-height: 300px;
+  overflow-y: auto;
+  margin-bottom: 16px;
+
+  .receiverItem {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding: 8px 12px;
+    margin-bottom: 6px;
+    border-radius: 10px;
+    transition: background-color 0.2s ease;
+    background-color: transparent;
+
+    &:hover {
+      background-color: #f0f2f5;
+    }
+
+    img {
+      width: 32px;
+      height: 32px;
+      border-radius: 9999px;
+      object-fit: cover;
+      margin-right: 12px;
+    }
+
+    span {
+      font-size: 0.875rem;
+      color: #050505;
+    }
+
+    .selectedText {
+      margin-left: auto;
+      font-size: 12px;
+      color: #1877f2;
+    }
+  }
+
+  // Khi receiver được chọn
+  button.selected {
+    background-color: #e7f3ff;
+  }
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 24px;
+  gap: 8px;
+
+  .cancel {
+    padding: 8px 16px;
+    font-size: 0.875rem;
+    border-radius: 9999px;
+    background-color: #f0f2f5;
+    color: #050505;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+
+    &:hover {
+      background-color: #e4e6eb;
+    }
+  }
+
+  .send {
+    padding: 8px 16px;
+    font-size: 0.875rem;
+    border-radius: 9999px;
+    color: white;
+    background-color: #1877f2;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+
+    &:hover {
+      background-color: #166fe5;
+    }
+
+    &:disabled {
+      background-color: #bcd1f6;
+      cursor: not-allowed;
+    }
+  }
+}
+.closeButton {
+  position: absolute;
+  top: 10px;
+  right: 14px;
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+}
