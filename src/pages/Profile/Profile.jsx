@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useParams, useNavigate, useSearchParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import AuthorInfo from "../../components/AuthorInfo/AuthorInfo";
 import PostList from "../../components/PostList/PostList";
 import Button from "../../components/Button/Button";
@@ -307,7 +307,7 @@ const Profile = () => {
                       size="md"
                       onClick={handleFollowClick}
                     >
-                      {!follow ? "Follow" : "Đã follow"}
+                      {!follow ? "Follow" : "Un Follow"}
                     </Button>
                     <Button
                       variant="ghost"

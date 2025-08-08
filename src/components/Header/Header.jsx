@@ -10,6 +10,7 @@ import { settingHandle } from "@/features/auth/settingAsync";
 import { getCurrentUser } from "@/features/auth/authAsync";
 import { logoutHandle } from "@/features/auth/logoutAsync";
 import notificationService from "@/services/notification/notification.service";
+import socketClient from "@/configs/socketClient";
 
 const Header = () => {
   // Mock authentication state - trong thực tế sẽ từ context/store
@@ -66,6 +67,7 @@ const Header = () => {
 
   const [notifications, setNotifications] = useState([]);
   const unreadCount = notifications.filter((n) => !n.read).length;
+  const [unReadCount, setUnReadCount] = useState(unreadCount);
   useEffect(() => {
     const getNotify = async () => {
       const notify = await notificationService.getNotification();
@@ -73,7 +75,21 @@ const Header = () => {
     };
     getNotify();
   }, []);
-  // Close dropdown when clicking outside
+
+  useEffect(() => {
+    const pusher = socketClient;
+
+    const channel = pusher.subscribe(`notifications-user-${user?.id}`);
+    channel.bind("new-notification", (newNotification) => {
+      setNotifications((prev) => [...prev, newNotification]);
+      setUnReadCount((prev) => prev + 1);
+    });
+    return () => {
+      channel.unbind_all();
+      channel.unsubscribe();
+    };
+  }, [user?.id]);
+  // Close  dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -123,11 +139,12 @@ const Header = () => {
 
   const handleMarkAsRead = async (notificationId) => {
     const notification = notifications.find(
-      (item) => item.id === notificationId
+      (item) => item?.id === notificationId
     );
     if (!notification.read) {
       await notificationService.update(notificationId, { read_at: new Date() });
     }
+    setUnReadCount((prev) => prev - 1);
     setNotifications((prev) =>
       prev.map((notification) =>
         notification.id === notificationId
@@ -138,6 +155,8 @@ const Header = () => {
   };
 
   const handleMarkAllAsRead = async () => {
+    await notificationService.readAll();
+    setUnReadCount(0);
     setNotifications((prev) =>
       prev.map((notification) => ({ ...notification, read: true }))
     );
@@ -172,7 +191,7 @@ const Header = () => {
                 <div ref={notificationRef}>
                   <NotificationDropdown
                     notifications={notifications}
-                    unreadCount={unreadCount}
+                    unreadCount={unReadCount}
                     isOpen={isNotificationOpen}
                     onToggle={handleNotificationToggle}
                     onMarkAsRead={handleMarkAsRead}

@@ -45,9 +45,23 @@ export const deleteMessage = async (slug, id) => {
   }
 };
 
+export const chatAI = async (slug, data) => {
+  try {
+    const res = await httpRequest.post(
+      `/conversations/${slug}/messages/chat-bot`,
+      data
+    );
+    return res;
+  } catch (error) {
+    console.error("Failed to response message:", error);
+    throw error;
+  }
+};
+
 export default {
   getMessagesByConversationId,
   createMessage,
   updateMessage,
   deleteMessage,
+  chatAI,
 };

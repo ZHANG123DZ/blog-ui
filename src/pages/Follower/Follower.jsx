@@ -204,7 +204,7 @@ const Follower = () => {
                     onClick={() => toggleFollow(followedUser.id)}
                   >
                     <Button size="sm" variant="primary">
-                      {followStates[followedUser.id] ? "Đã follow" : "Follow"}
+                      {followStates[followedUser.id] ? "Un Follow" : "Follow"}
                     </Button>
                   </div>
                 )}

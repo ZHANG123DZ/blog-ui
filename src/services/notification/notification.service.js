@@ -20,7 +20,18 @@ export const update = async (notificationId, data) => {
   }
 };
 
+export const readAll = async () => {
+  try {
+    const res = httpRequest.patch(`/notifications/read-all`, {});
+    return res;
+  } catch (err) {
+    console.error("Failed to get notifications:", err);
+    throw err;
+  }
+};
+
 export default {
   getNotification,
   update,
+  readAll,
 };

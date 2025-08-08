@@ -259,7 +259,7 @@ const BlogDetail = () => {
     channel.bind("delete-comment", (commentId) => {
       const deleteCommentRecursively = (comments) => {
         return comments
-          .filter((comment) => comment.id !== commentId)
+          .filter((comment) => Number(comment.id) !== Number(commentId))
           .map((comment) => {
             if (comment.replies && comment.replies.length > 0) {
               return {

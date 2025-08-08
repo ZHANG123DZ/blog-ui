@@ -9,6 +9,7 @@ import { getCurrentUser } from "@/features/auth/authAsync";
 import { useDispatch } from "react-redux";
 import VerifyEmail from "@/pages/VerifyEmail";
 import { settingHandle } from "@/features/auth/settingAsync";
+import socketClient from "@/configs/socketClient";
 
 // Lazy load pages for better performance
 const Home = lazy(() => import("../pages/Home/Home"));

@@ -7,11 +7,11 @@ export const getBookMarks = async (data) => {
   return res;
 };
 
-export const getBookMarkedUserId = async (data) => {
+export const getBookMarkedUserId = async (page, limit, data) => {
   const res = await httpRequest.get(
-    `/book-marks/list/${data.type}/${data.userId}`
+    `/book-marks/list/${data.type}/${data.userId}?page=${page}&limit=${limit}`
   );
-  const bookMarks = res.data.bookMarks.map((bookmark) => ({
+  const bookMarks = res.data.map((bookmark) => ({
     ...bookmark,
     id: Number(bookmark.id),
     featuredImage: bookmark.thumbnail_url,
@@ -27,7 +27,7 @@ export const getBookMarkedUserId = async (data) => {
       avatar: bookmark.author.avatar_url,
     },
   }));
-  res.data.bookMarks = bookMarks;
+  res.data = bookMarks;
   return res;
 };
 

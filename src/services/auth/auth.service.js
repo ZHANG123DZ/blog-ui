@@ -118,6 +118,7 @@ export const forgotPassword = async (email) => {
 
 export const changePassword = async (data) => {
   try {
+    console.log(data);
     const res = await httpRequest.post(`/auth/change-password`, data);
     return res;
   } catch (err) {

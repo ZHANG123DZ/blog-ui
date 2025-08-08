@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import PostCard from "../../components/PostCard/PostCard";
 import EmptyState from "../../components/EmptyState/EmptyState";
 import Loading from "../../components/Loading/Loading";
@@ -9,15 +9,19 @@ import styles from "./Bookmarks.module.scss";
 import bookmarkService from "@/services/bookmark/bookmark.service";
 import { useSelector } from "react-redux";
 import likeService from "@/services/like/like.service";
+import { Pagination } from "@/components";
 
 const Bookmarks = () => {
   const [bookmarks, setBookmarks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedTopic, setSelectedTopic] = useState("all");
-
+  const params = new URLSearchParams(window.location.search);
+  const page = params?.get("page") || 1;
+  const [currentPage, setCurrentPage] = useState(page);
+  const [totalPages, setTotalPages] = useState(1);
   const currentUser = useSelector((state) => state.auth.currentUser);
-
+  const navigate = useNavigate();
   // Mock bookmarked posts data
   //   const mockBookmarks = [
   //     {
@@ -121,21 +125,32 @@ const Bookmarks = () => {
   //       commentsCount: 31,
   //     },
   //   ];
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    navigate(`/bookmarks?page=${page}`);
+  };
 
   useEffect(() => {
     // Simulate API call
     const fetchBookmarks = async () => {
       setLoading(true);
-      const mockBookmarks = await bookmarkService.getBookMarkedUserId({
-        userId: currentUser.id,
-        type: "post",
-      });
-      setBookmarks(mockBookmarks.data.bookMarks);
+      const mockBookmarks = await bookmarkService.getBookMarkedUserId(
+        currentPage,
+        6,
+        {
+          userId: currentUser.id,
+          type: "post",
+        }
+      );
+      setBookmarks(mockBookmarks.data);
+      setTotalPages(mockBookmarks.pagination.totalPages);
+      setCurrentPage(mockBookmarks.pagination.page);
       setLoading(false);
     };
 
     fetchBookmarks();
-  }, []);
+  }, [currentPage, currentUser.id]);
 
   // Get all unique topics from bookmarks
   const cur_user = useSelector((state) => state.auth.currentUser);
@@ -331,49 +346,98 @@ const Bookmarks = () => {
               //   }
             />
           ) : (
-            <div className={styles.bookmarksGrid}>
-              {filteredBookmarks.map((bookmark) => (
-                <div key={bookmark.id} className={styles.bookmarkItem}>
-                  <PostCard
-                    postId={bookmark.id}
-                    title={bookmark.title}
-                    excerpt={bookmark.excerpt}
-                    featuredImage={bookmark.featuredImage}
-                    readTime={bookmark.readingTime}
-                    publishedAt={bookmark.publishedAt}
-                    slug={bookmark.slug}
-                    topics={bookmark.topics}
-                    author={bookmark.author}
-                    likes={Number(bookmark.likes) || 0}
-                    views={Number(bookmark.views) || 0}
-                    onLike={(postId, isLiked) =>
-                      handleLikeClick(postId, isLiked)
-                    }
-                    onBookmark={(postId, isBookmarked) =>
-                      handleBookmarkClick(postId, isBookmarked)
-                    }
-                    isLiked={bookmark.isLiked}
-                    isBookmarked={bookmark.isBookmarked}
-                  />
-                  <div className={styles.bookmarkMeta}>
-                    <div className={styles.bookmarkInfo}>
-                      <span className={styles.bookmarkedDate}>
-                        <svg
-                          width="14"
-                          height="14"
-                          viewBox="0 0 16 16"
-                          fill="none"
+            <>
+              <div className={styles.bookmarksGrid}>
+                {filteredBookmarks.map((bookmark) => (
+                  <div key={bookmark.id} className={styles.bookmarkItem}>
+                    <PostCard
+                      postId={bookmark.id}
+                      title={bookmark.title}
+                      excerpt={bookmark.excerpt}
+                      featuredImage={bookmark.featuredImage}
+                      readTime={bookmark.readingTime}
+                      publishedAt={bookmark.publishedAt}
+                      slug={bookmark.slug}
+                      topics={bookmark.topics}
+                      author={bookmark.author}
+                      likes={Number(bookmark.likes) || 0}
+                      views={Number(bookmark.views) || 0}
+                      onLike={(postId, isLiked) =>
+                        handleLikeClick(postId, isLiked)
+                      }
+                      onBookmark={(postId, isBookmarked) =>
+                        handleBookmarkClick(postId, isBookmarked)
+                      }
+                      isLiked={bookmark.isLiked}
+                      isBookmarked={bookmark.isBookMarked}
+                    />
+                    <div className={styles.bookmarkMeta}>
+                      <div className={styles.bookmarkInfo}>
+                        <span className={styles.bookmarkedDate}>
+                          <svg
+                            width="14"
+                            height="14"
+                            viewBox="0 0 16 16"
+                            fill="none"
+                          >
+                            <path
+                              d="M3 1C2.45 1 2 1.45 2 2V15L8 12L14 15V2C14 1.45 13.55 1 13 1H3Z"
+                              fill="currentColor"
+                            />
+                          </svg>
+                          Saved{" "}
+                          {new Date(bookmark.bookmarkedAt).toLocaleDateString()}
+                        </span>
+                        <div className={styles.postStats}>
+                          <span className={styles.stat}>
+                            <svg
+                              width="14"
+                              height="14"
+                              viewBox="0 0 16 16"
+                              fill="none"
+                            >
+                              <path
+                                d="M1 8s3-5 7-5 7 5 7 5-3 5-7 5-7-5-7-5z"
+                                stroke="currentColor"
+                                strokeWidth="1.5"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                              />
+                              <circle
+                                cx="8"
+                                cy="8"
+                                r="2"
+                                stroke="currentColor"
+                                strokeWidth="1.5"
+                              />
+                            </svg>
+                            {bookmark.viewsCount}
+                          </span>
+                          <span className={styles.stat}>
+                            <svg
+                              width="14"
+                              height="14"
+                              viewBox="0 0 16 16"
+                              fill="none"
+                            >
+                              <path
+                                d="M14 6.5c0 4.8-5.25 7.5-6 7.5s-6-2.7-6-7.5C2 3.8 4.8 1 8 1s6 2.8 6 5.5z"
+                                stroke="currentColor"
+                                strokeWidth="1.5"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                              />
+                            </svg>
+                            {bookmark.likesCount}
+                          </span>
+                        </div>
+                      </div>
+                      <div className={styles.bookmarkActions}>
+                        <Link
+                          to={`/blog/${bookmark.slug}`}
+                          className={styles.actionButton}
+                          title="Read article"
                         >
-                          <path
-                            d="M3 1C2.45 1 2 1.45 2 2V15L8 12L14 15V2C14 1.45 13.55 1 13 1H3Z"
-                            fill="currentColor"
-                          />
-                        </svg>
-                        Saved{" "}
-                        {new Date(bookmark.bookmarkedAt).toLocaleDateString()}
-                      </span>
-                      <div className={styles.postStats}>
-                        <span className={styles.stat}>
                           <svg
                             width="14"
                             height="14"
@@ -381,23 +445,19 @@ const Bookmarks = () => {
                             fill="none"
                           >
                             <path
-                              d="M1 8s3-5 7-5 7 5 7 5-3 5-7 5-7-5-7-5z"
+                              d="M6 12l6-6-6-6"
                               stroke="currentColor"
                               strokeWidth="1.5"
                               strokeLinecap="round"
                               strokeLinejoin="round"
                             />
-                            <circle
-                              cx="8"
-                              cy="8"
-                              r="2"
-                              stroke="currentColor"
-                              strokeWidth="1.5"
-                            />
                           </svg>
-                          {bookmark.viewsCount}
-                        </span>
-                        <span className={styles.stat}>
+                        </Link>
+                        <button
+                          onClick={() => handleRemoveBookmark(bookmark.id)}
+                          className={`${styles.actionButton} ${styles.removeButton}`}
+                          title="Remove bookmark"
+                        >
                           <svg
                             width="14"
                             height="14"
@@ -405,63 +465,29 @@ const Bookmarks = () => {
                             fill="none"
                           >
                             <path
-                              d="M14 6.5c0 4.8-5.25 7.5-6 7.5s-6-2.7-6-7.5C2 3.8 4.8 1 8 1s6 2.8 6 5.5z"
+                              d="M12 4L4 12M4 4l8 8"
                               stroke="currentColor"
                               strokeWidth="1.5"
                               strokeLinecap="round"
                               strokeLinejoin="round"
                             />
                           </svg>
-                          {bookmark.likesCount}
-                        </span>
+                        </button>
                       </div>
                     </div>
-                    <div className={styles.bookmarkActions}>
-                      <Link
-                        to={`/blog/${bookmark.slug}`}
-                        className={styles.actionButton}
-                        title="Read article"
-                      >
-                        <svg
-                          width="14"
-                          height="14"
-                          viewBox="0 0 16 16"
-                          fill="none"
-                        >
-                          <path
-                            d="M6 12l6-6-6-6"
-                            stroke="currentColor"
-                            strokeWidth="1.5"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                          />
-                        </svg>
-                      </Link>
-                      <button
-                        onClick={() => handleRemoveBookmark(bookmark.id)}
-                        className={`${styles.actionButton} ${styles.removeButton}`}
-                        title="Remove bookmark"
-                      >
-                        <svg
-                          width="14"
-                          height="14"
-                          viewBox="0 0 16 16"
-                          fill="none"
-                        >
-                          <path
-                            d="M12 4L4 12M4 4l8 8"
-                            stroke="currentColor"
-                            strokeWidth="1.5"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                          />
-                        </svg>
-                      </button>
-                    </div>
                   </div>
+                ))}
+              </div>
+              {totalPages > 1 && (
+                <div className={styles.paginationContainer}>
+                  <Pagination
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    onPageChange={handlePageChange}
+                  />
                 </div>
-              ))}
-            </div>
+              )}
+            </>
           )}
         </div>
 

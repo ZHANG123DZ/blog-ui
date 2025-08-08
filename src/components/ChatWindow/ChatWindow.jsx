@@ -208,6 +208,7 @@ const ChatWindow = ({
       channel.unsubscribe();
     };
   }, [conversationId]);
+
   // Additional scroll when window first opens
   const [isAtBottom, setIsAtBottom] = useState(true);
   const [showScrollToBottomBtn, setShowScrollToBottomBtn] = useState(false);

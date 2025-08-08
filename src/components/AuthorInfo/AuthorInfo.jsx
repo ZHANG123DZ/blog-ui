@@ -19,6 +19,8 @@ const AuthorInfo = ({
   const navigate = useNavigate();
   const cur_user = useSelector((state) => state.auth.currentUser);
   const [follow, setFollow] = useState(false);
+  const [follows, setFollows] = useState(author.followers);
+
   const checkFollow = async () => {
     if (!cur_user) {
       return false;
@@ -60,9 +62,11 @@ const AuthorInfo = ({
       if (!follow) {
         await followService.follow(data);
         setFollow(true);
+        setFollows((prev) => prev + 1);
       } else {
         await followService.unfollow(data);
         setFollow(false);
+        setFollows((prev) => prev - 1);
       }
     } catch (error) {
       console.log(error);
@@ -127,7 +131,7 @@ const AuthorInfo = ({
                 <strong>{postsCount}</strong> Posts
               </span>
             )}
-            {followers !== undefined && (
+            {follows !== undefined && (
               <>
                 <span
                   className={styles.stat}
@@ -137,7 +141,7 @@ const AuthorInfo = ({
                     })
                   }
                 >
-                  <strong>{followers}</strong> Followers
+                  <strong>{follows}</strong> Followers
                 </span>
               </>
             )}
@@ -159,7 +163,7 @@ const AuthorInfo = ({
         {showFollowButton && cur_user?.username !== author.username && (
           <div className={styles.action} onClick={handleFollowClick}>
             <Button size="sm" variant="primary">
-              {follow ? "Đã follow" : "Follow"}
+              {follow ? "Un Follow" : "Follow"}
             </Button>
           </div>
         )}

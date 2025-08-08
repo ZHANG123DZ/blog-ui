@@ -243,7 +243,7 @@ const Home = () => {
     const loadRecentPosts = async () => {
       setLoading(true);
       // Simulate API delay
-      const recentPosts = await postService.getFeaturedPost();
+      const recentPosts = await postService.getLatestPost();
       recentPosts.data = recentPosts.data.map((post) => ({
         ...post,
         author: {

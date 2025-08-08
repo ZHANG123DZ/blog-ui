@@ -20,55 +20,38 @@ const DirectMessages = () => {
   const cur_user = useSelector((state) => state.auth.currentUser);
   const [conversations, setConversations] = useState([]);
   const [currentMessages, setCurrentMessages] = useState([]);
-  // Get conversation ID from URL params
-  useEffect(() => {
-    if (!selectedConversation) return;
-    markAsReadOnServer(selectedConversation.id, currentMessages);
+  const [open, setOpen] = useState(false);
+  const [hasMarkedRead, setHasMarkedRead] = useState(false);
 
-    return () => {
-      markAsReadOnServer(selectedConversation.id, currentMessages);
-    };
-  }, [selectedConversation, currentMessages]);
-  //Lấy hết các cuộc hội thoại mà 1 người tham gia
+  // Lấy tất cả conversations
   useEffect(() => {
     const fetchConversations = async () => {
       const myConversations = await conversationService.getConversations();
-      setConversations(myConversations);
+      const priorityConversations = [...myConversations].sort((a, b) => {
+        const timeA = new Date(a.lastMessage?.created_at || 0).getTime();
+        const timeB = new Date(b.lastMessage?.created_at || 0).getTime();
+        return timeB - timeA;
+      });
+      setConversations(priorityConversations);
     };
     fetchConversations();
   }, []);
 
-  const [initialized, setInitialized] = useState(false);
-
+  // Chọn conversation từ URL nếu có
   useEffect(() => {
-    if (initialized || conversations.length === 0) return;
-
     const conversationId = searchParams.get("conversation");
-
     if (!conversationId) {
       setSelectedConversation(null);
       return;
     }
-
     const found = conversations.find(
       (c) => parseInt(c.id) === parseInt(conversationId)
     );
-    setSelectedConversation(found || null);
-    if (found) markAsRead(found.id);
-    setInitialized(true);
+    if (found) {
+      setSelectedConversation(found);
+    }
   }, [conversations, searchParams]);
-
-  // Remove conversations from dependency to avoid infinite loop
-
-  // Auto-scroll to bottom when messages change
-  useEffect(() => {
-    scrollToBottom();
-  }, [currentMessages, selectedConversation]);
-
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
-
+  // Cập nhật unreadCount ở FE
   const markAsRead = (conversationId) => {
     setConversations((prev) =>
       prev.map((conv) =>
@@ -76,30 +59,71 @@ const DirectMessages = () => {
       )
     );
   };
+  // Hàm gọi API mark-as-read
+  const doMarkAsRead = async (conversation, messages) => {
+    if (!conversation) return;
+    const lastFromOther = [...(messages || currentMessages)]
+      .sort((a, b) => b.id - a.id) // newest first
+      .find((m) => m.user_id !== cur_user.id);
+
+    if (lastFromOther) {
+      await markAsReadOnServer(conversation.id, lastFromOther.id, new Date());
+      markAsRead(conversation.id);
+    }
+  };
+
+  // Khi mở conversation → fetch messages + mark 1 lần
+  useEffect(() => {
+    if (!selectedConversation) return;
+
+    const fetchMessages = async () => {
+      const myMessages = await messageService.getMessagesByConversationId(
+        selectedConversation.id
+      );
+      setCurrentMessages(myMessages);
+
+      // Mark khi mở lần đầu
+      if (!hasMarkedRead) {
+        await doMarkAsRead(selectedConversation, myMessages);
+        setHasMarkedRead(false);
+      }
+    };
+
+    fetchMessages();
+    setConversations((prev) =>
+      prev.map((c) =>
+        c.id === selectedConversation?.id ? { ...c, unreadCount: 0 } : c
+      )
+    );
+  }, [selectedConversation?.id]);
+
+  // Khi rời conversation → mark lại nếu cần
+  useEffect(() => {
+    return () => {
+      if (selectedConversation && currentMessages.length) {
+        doMarkAsRead(selectedConversation, currentMessages);
+      }
+      setHasMarkedRead(false);
+    };
+  }, [selectedConversation?.id]);
+
+  // Auto-scroll khi tin nhắn thay đổi
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [currentMessages]);
 
   const handleConversationSelect = (conversation) => {
     setSelectedConversation(conversation);
+    setConversations((prev) =>
+      prev.map((c) =>
+        c.id === conversation?.id ? { ...c, unreadCount: 0 } : c
+      )
+    );
     setSearchParams({ conversation: conversation.id.toString() });
-    markAsRead(conversation.id);
   };
-
-  //Đoạn này lấy mes của conversation
-  useEffect(() => {
-    if (!selectedConversation) return;
-    const fetchMessages = async () => {
-      if (selectedConversation) {
-        const myMessages = await messageService.getMessagesByConversationId(
-          selectedConversation.id
-        );
-        setCurrentMessages(myMessages);
-      }
-    };
-    fetchMessages();
-  }, [conversations, selectedConversation]);
 
   const handleSendMessage = async () => {
     if (!newMessage.trim() || !selectedConversation) return;
-
     const message = {
       conversation_id: selectedConversation.id,
       content: newMessage.trim(),
@@ -108,11 +132,19 @@ const DirectMessages = () => {
     try {
       await messageService.createMessage(selectedConversation.id, message);
       setNewMessage("");
+      const botUser = selectedConversation.users.find(
+        (user) => user.role === "bot"
+      );
+
+      if (botUser && botUser?.id) {
+        await messageService.chatAI(selectedConversation.id, {
+          input: message.content,
+          botId: botUser.id,
+        });
+      }
     } catch (error) {
       console.log(error);
     }
-
-    setNewMessage("");
   };
 
   const handleKeyPress = (e) => {
@@ -130,7 +162,6 @@ const DirectMessages = () => {
     const minutes = Math.floor(diff / (1000 * 60));
     const hours = Math.floor(diff / (1000 * 60 * 60));
     const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-
     if (minutes < 1) return "now";
     if (minutes < 60) return `${minutes}m`;
     if (hours < 24) return `${hours}h`;
@@ -142,10 +173,9 @@ const DirectMessages = () => {
     conv.name?.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  //Cái này gọi soketi
+  // Socket: nghe tin nhắn mới
   useEffect(() => {
-    if (!conversations) return;
-
+    if (!conversations.length) return;
     const pusher = socketClient;
     const channels = [];
 
@@ -153,33 +183,50 @@ const DirectMessages = () => {
       const channel = pusher.subscribe(`conversation-${conversation.id}`);
       channels.push(channel);
 
-      channel.bind("new-message", (newMessage) => {
+      channel.bind("new-message", async (newMessage) => {
         if (newMessage.user_id === cur_user.id) {
           newMessage.author = "me";
         } else {
           newMessage.author = "other";
         }
 
-        setConversations((prev) =>
-          prev.map((c) => {
+        // Nếu đang mở conversation và tin nhắn là của người kia → mark read
+        if (
+          selectedConversation?.id === newMessage.conversation_id &&
+          newMessage.user_id !== cur_user.id
+        ) {
+          await markAsReadOnServer(
+            newMessage.conversation_id,
+            newMessage.id,
+            new Date()
+          );
+          markAsRead(newMessage.conversation_id);
+        }
+
+        // Update danh sách conversation
+        setConversations((prev) => {
+          // Cập nhật conversation
+          const updated = prev.map((c) => {
             if (c.id !== newMessage.conversation_id) return c;
-
-            if (selectedConversation?.id === c.id) {
-              return {
-                ...c,
-                lastMessage: newMessage,
-                unreadCount: 0,
-              };
-            }
-
             return {
               ...c,
               lastMessage: newMessage,
-              unreadCount: (c.unreadCount || 0) + 1,
+              unreadCount:
+                selectedConversation?.id === c.id
+                  ? 0
+                  : (c.unreadCount || 0) + 1,
             };
-          })
-        );
+          });
 
+          // Đưa conversation vừa có tin nhắn mới lên đầu
+          return updated.sort((a, b) => {
+            if (a.id === newMessage.conversation_id) return -1; // a lên trước
+            if (b.id === newMessage.conversation_id) return 1; // b lên trước
+            return 0; // giữ nguyên thứ tự cũ
+          });
+        });
+
+        // Nếu đang mở thì thêm vào messages
         if (selectedConversation?.id === conversation.id) {
           setCurrentMessages((prev) => [...prev, newMessage]);
         }
@@ -194,11 +241,10 @@ const DirectMessages = () => {
     };
   }, [conversations, cur_user.id, selectedConversation?.id]);
 
-  const [open, setOpen] = useState(false);
   return (
     <div className={styles.container}>
       <div className={styles.layout}>
-        {/* Conversations Sidebar */}
+        {/* Sidebar */}
         <div className={styles.sidebar}>
           <div className={styles.sidebarHeader}>
             <h1 className={styles.title}>Messages</h1>
@@ -254,7 +300,6 @@ const DirectMessages = () => {
                     <div className={styles.onlineIndicator} />
                   )}
                 </div>
-
                 <div className={styles.conversationContent}>
                   <div className={styles.conversationHeader}>
                     <span className={styles.usersName}>
@@ -280,11 +325,10 @@ const DirectMessages = () => {
           </div>
         </div>
 
-        {/* Messages Area */}
+        {/* Messages */}
         <div className={styles.messagesArea}>
           {selectedConversation ? (
             <>
-              {/* Messages Header */}
               <div className={styles.messagesHeader}>
                 <div className={styles.usersInfo}>
                   <FallbackImage
@@ -305,7 +349,6 @@ const DirectMessages = () => {
                 </div>
               </div>
 
-              {/* Messages Thread */}
               <div className={styles.messagesThread}>
                 {currentMessages.map((message) => (
                   <div
@@ -327,7 +370,6 @@ const DirectMessages = () => {
                 <div ref={messagesEndRef} />
               </div>
 
-              {/* Message Input */}
               <div className={styles.messageInputContainer}>
                 <div className={styles.messageInputWrapper}>
                   <textarea

@@ -1,5 +1,4 @@
 import PusherJS from "pusher-js";
-PusherJS.logToConsole = true;
 
 const socketClient = new PusherJS(import.meta.env.VITE_SOKETI_KEY, {
   cluster: "",
