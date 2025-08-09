@@ -39,4 +39,19 @@ export const getUserPosts = async (userName, page, limit) => {
   return res;
 };
 
-export default { getUser, getUserPosts };
+export const online = async (data) => {
+  const res = await httpRequest.post(`/users/online`, data);
+  return res;
+};
+
+export const offline = async (data) => {
+  const res = await httpRequest.post(`/users/offline`, data);
+  return res;
+};
+
+export const getUserStatus = async (userName) => {
+  const res = await httpRequest.get(`/users/status/${userName}`);
+  return res;
+};
+
+export default { getUser, getUserPosts, online, offline, getUserStatus };

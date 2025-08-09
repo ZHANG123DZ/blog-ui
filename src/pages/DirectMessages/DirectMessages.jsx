@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import Button from "../../components/Button/Button";
 import Input from "../../components/Input/Input";
 import FallbackImage from "../../components/FallbackImage/FallbackImage";
@@ -10,8 +10,11 @@ import messageService from "@/services/message/message.service";
 import { useSelector } from "react-redux";
 import InvitationMessageModal from "@/components/InvitationMessageModal/InvitationMessageModal";
 import markAsReadOnServer from "@/function/markAsReadOnServer";
+import { useOnlineUsers } from "@/stores/useOnlineUsers";
 
 const DirectMessages = () => {
+  const navigate = useNavigate();
+
   const [searchParams, setSearchParams] = useSearchParams();
   const [searchQuery, setSearchQuery] = useState("");
   const [newMessage, setNewMessage] = useState("");
@@ -22,6 +25,7 @@ const DirectMessages = () => {
   const [currentMessages, setCurrentMessages] = useState([]);
   const [open, setOpen] = useState(false);
   const [hasMarkedRead, setHasMarkedRead] = useState(false);
+  const onlineUsers = useOnlineUsers((s) => s.onlineUsers);
 
   // Lấy tất cả conversations
   useEffect(() => {
@@ -172,7 +176,12 @@ const DirectMessages = () => {
   const filteredConversations = conversations.filter((conv) =>
     conv.name?.toLowerCase().includes(searchQuery.toLowerCase())
   );
-
+  const gotoProfile = () => {
+    const other = selectedConversation.users.find(
+      (user) => user.username !== cur_user.username
+    );
+    navigate(`/profile/${other.username}`);
+  };
   // Socket: nghe tin nhắn mới
   useEffect(() => {
     if (!conversations.length) return;
@@ -296,9 +305,9 @@ const DirectMessages = () => {
                     alt={conversation.name}
                     className={styles.avatar}
                   />
-                  {conversation.users.isOnline && (
-                    <div className={styles.onlineIndicator} />
-                  )}
+                  {conversation.users.find(
+                    (user) => onlineUsers[user.id] && user.id !== cur_user.id
+                  ) && <div className={styles.onlineIndicator} />}
                 </div>
                 <div className={styles.conversationContent}>
                   <div className={styles.conversationHeader}>
@@ -337,11 +346,22 @@ const DirectMessages = () => {
                     className={styles.headerAvatar}
                   />
                   <div>
-                    <h2 className={styles.usersName}>
+                    <h2
+                      className={styles.usersName}
+                      onClick={() => {
+                        if (selectedConversation.users.length === 2) {
+                          gotoProfile();
+                        }
+                      }}
+                      style={{ cursor: "pointer" }}
+                    >
                       {selectedConversation.name}
                     </h2>
                     <span className={styles.usersStatus}>
-                      {selectedConversation.users.isOnline
+                      {selectedConversation.users.find(
+                        (user) =>
+                          onlineUsers[user.id] && user.id !== cur_user.id
+                      )
                         ? "Online"
                         : "Offline"}
                     </span>

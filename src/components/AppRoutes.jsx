@@ -9,7 +9,9 @@ import { getCurrentUser } from "@/features/auth/authAsync";
 import { useDispatch } from "react-redux";
 import VerifyEmail from "@/pages/VerifyEmail";
 import { settingHandle } from "@/features/auth/settingAsync";
+import ProtectedRoute from "./ProtectedRoute/ProtectedRoute";
 import socketClient from "@/configs/socketClient";
+import { usePresenceChannel } from "@/stores/usePresenceChannel";
 
 // Lazy load pages for better performance
 const Home = lazy(() => import("../pages/Home/Home"));
@@ -47,6 +49,8 @@ const AppRoutes = () => {
     dispatch(settingHandle());
   }, [dispatch]);
 
+  usePresenceChannel();
+
   return (
     <ErrorBoundary>
       <Suspense fallback={<Loading fullscreen />}>
@@ -58,19 +62,68 @@ const AppRoutes = () => {
             <Route path="topics/:slug" element={<Topic />} />
             <Route path="blog/:slug" element={<BlogDetail />} />
             <Route path="profile/:username" element={<Profile />} />
-            <Route path="profile/:username/edit" element={<EditProfile />} />
-            <Route path="my-posts" element={<MyPosts />} />
-            <Route path="bookmarks" element={<Bookmarks />} />
-            <Route path="settings" element={<Settings />} />
+            <Route
+              path="profile/:username/edit"
+              element={
+                <ProtectedRoute>
+                  <EditProfile />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="my-posts"
+              element={
+                <ProtectedRoute>
+                  <MyPosts />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="bookmarks"
+              element={
+                <ProtectedRoute>
+                  <Bookmarks />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="settings"
+              element={
+                <ProtectedRoute>
+                  <Settings />
+                </ProtectedRoute>
+              }
+            />
             <Route path="profile/:username/following" element={<Following />} />
             <Route path="profile/:username/follower" element={<Follower />} />
           </Route>
 
           {/* Fullscreen Layout Routes */}
           <Route path="/" element={<FullscreenLayout />}>
-            <Route path="write" element={<WritePost />} />
-            <Route path="write/:slug" element={<WritePost />} />
-            <Route path="messages" element={<DirectMessages />} />
+            <Route
+              path="write"
+              element={
+                <ProtectedRoute>
+                  <WritePost />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="write/:slug"
+              element={
+                <ProtectedRoute>
+                  <WritePost />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="messages"
+              element={
+                <ProtectedRoute>
+                  <DirectMessages />
+                </ProtectedRoute>
+              }
+            />
           </Route>
 
           {/* Auth Routes */}

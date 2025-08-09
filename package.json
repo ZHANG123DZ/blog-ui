@@ -32,7 +32,8 @@
     "redux-persist": "^6.0.0",
     "sass": "^1.89.2",
     "tailwind-variants": "^2.0.1",
-    "tailwindcss-animate": "^1.0.7"
+    "tailwindcss-animate": "^1.0.7",
+    "zustand": "^5.0.7"
   },
   "devDependencies": {
     "@types/react": "^18.2.66",

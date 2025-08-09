@@ -97,7 +97,7 @@ const PostList = ({
                 title={post.title}
                 excerpt={post.description}
                 author={post.author}
-                publishedAt={post.published_at}
+                publishedAt={post?.published_at}
                 readTime={post.reading_time}
                 slug={post.slug}
                 postId={Number(postId)}
@@ -139,7 +139,7 @@ PostList.propTypes = {
         name: PropTypes.string.isRequired,
         avatar: PropTypes.string,
       }).isRequired,
-      published_at: PropTypes.string.isRequired,
+      published_at: PropTypes.string,
       readTime: PropTypes.number,
       topic: PropTypes.string,
       slug: PropTypes.string.isRequired,

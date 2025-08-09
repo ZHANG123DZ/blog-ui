@@ -8,6 +8,8 @@ import messageService from "@/services/message/message.service";
 import conversationService from "@/services/conversation/conversation.service";
 import socketClient from "@/configs/socketClient";
 import { useSelector } from "react-redux";
+import { useOnlineUsers } from "@/stores/useOnlineUsers";
+import userService from "@/services/user/user.service";
 
 const ChatWindow = ({
   user,
@@ -24,118 +26,59 @@ const ChatWindow = ({
   const messagesEndRef = useRef(null);
   const menuRef = useRef(null);
   const cur_user = useSelector((state) => state.auth.currentUser);
-  // Mock messages for demonstration
-  // const mockMessages = [
-  //   {
-  //     id: 1,
-  //     content: "Hey! How are you doing?",
-  //     author: "other",
-  //     created_at: new Date(Date.now() - 25 * 60 * 1000).toISOString(), // 25 minutes ago
-  //   },
-  //   {
-  //     id: 2,
-  //     content: "I'm good, thanks! Just working on some new blog posts.",
-  //     author: "me",
-  //     created_at: new Date(Date.now() - 23 * 60 * 1000).toISOString(), // 23 minutes ago
-  //   },
-  //   {
-  //     id: 3,
-  //     content: "That sounds interesting! What topics are you covering?",
-  //     author: "other",
-  //     created_at: new Date(Date.now() - 21 * 60 * 1000).toISOString(), // 21 minutes ago
-  //   },
-  //   {
-  //     id: 4,
-  //     content:
-  //       "I'm writing about React performance optimization and JavaScript best practices.",
-  //     author: "me",
-  //     created_at: new Date(Date.now() - 19 * 60 * 1000).toISOString(), // 19 minutes ago
-  //   },
-  //   {
-  //     id: 5,
-  //     content: "Wow, those are really hot topics right now! 🔥",
-  //     author: "other",
-  //     created_at: new Date(Date.now() - 17 * 60 * 1000).toISOString(), // 17 minutes ago
-  //   },
-  //   {
-  //     id: 6,
-  //     content:
-  //       "Yeah, I've been getting a lot of requests for those topics from readers.",
-  //     author: "me",
-  //     created_at: new Date(Date.now() - 15 * 60 * 1000).toISOString(), // 15 minutes ago
-  //   },
-  //   {
-  //     id: 7,
-  //     content: "Have you considered doing a series on advanced React patterns?",
-  //     author: "other",
-  //     created_at: new Date(Date.now() - 13 * 60 * 1000).toISOString(), // 13 minutes ago
-  //   },
-  //   {
-  //     id: 8,
-  //     content:
-  //       "That's actually a great idea! I could cover hooks, concontent, custom hooks, and performance patterns.",
-  //     author: "me",
-  //     created_at: new Date(Date.now() - 11 * 60 * 1000).toISOString(), // 11 minutes ago
-  //   },
-  //   {
-  //     id: 9,
-  //     content:
-  //       "Perfect! I'd love to read that series. When are you planning to publish?",
-  //     author: "other",
-  //     created_at: new Date(Date.now() - 9 * 60 * 1000).toISOString(), // 9 minutes ago
-  //   },
-  //   {
-  //     id: 10,
-  //     content:
-  //       "I'm thinking of starting next week. Want to make sure I have solid examples.",
-  //     author: "me",
-  //     created_at: new Date(Date.now() - 7 * 60 * 1000).toISOString(), // 7 minutes ago
-  //   },
-  //   {
-  //     id: 11,
-  //     content:
-  //       "Smart approach! Quality content takes time. Looking forward to it! 👍",
-  //     author: "other",
-  //     created_at: new Date(Date.now() - 5 * 60 * 1000).toISOString(), // 5 minutes ago
-  //   },
-  //   {
-  //     id: 12,
-  //     content:
-  //       "Thanks for the encouragement! It really helps to have supportive readers like you.",
-  //     author: "me",
-  //     created_at: new Date(Date.now() - 3 * 60 * 1000).toISOString(), // 3 minutes ago
-  //   },
-  //   {
-  //     id: 13,
-  //     content:
-  //       "Always happy to support great content creators! Keep up the amazing work! ✨",
-  //     author: "other",
-  //     created_at: new Date(Date.now() - 1 * 60 * 1000).toISOString(), // 1 minute ago
-  //   },
-  // ];
+
   const [conversationId, setConversationId] = useState(null);
+  const [users, setUsers] = useState([]);
+  const onlineUsers = useOnlineUsers((s) => s.onlineUsers);
+  const [status, setStatus] = useState(false);
 
   const fetchMessages = async () => {
     try {
       const conversation = await conversationService.getOrCreateConversation(
-        user.id
+        user?.id
       );
       setConversationId(conversation?.id);
-      const msgs = await conversationService.getConversationById(
+      const data = await conversationService.getConversationById(
         conversation?.id
       );
-      setMessages(msgs.messages);
-      if (conversation && msgs) {
-        const data = {
-          messageId: msgs.messages[0].id,
+      setUsers(data.users);
+      setMessages(data.messages.reverse());
+      if (conversation && data) {
+        const dataRead = {
+          messageId: data.messages[0].id,
           readAt: new Date(),
         };
-        await conversationService.markedRead(conversation.id, data);
+        await conversationService.markedRead(conversation?.id, dataRead);
       }
     } catch (err) {
       console.error("Error loading conversation:", err);
     }
   };
+
+  useEffect(() => {
+    if (users && users.length > 0) {
+      const getStatus = async () => {
+        const user = users.find(
+          (user) =>
+            (onlineUsers[user.id] && user.id !== cur_user.id) ||
+            user.id !== cur_user.id
+        );
+        if (!user) return;
+
+        const status = await userService.getUserStatus(user.username);
+        setStatus(status);
+        return status;
+      };
+
+      getStatus();
+
+      const intervalId = setInterval(() => {
+        getStatus();
+      }, 60000);
+
+      return () => clearInterval(intervalId);
+    }
+  }, [cur_user.id, onlineUsers, users]);
 
   useEffect(() => {
     if (isOpen) {
@@ -296,6 +239,20 @@ const ChatWindow = ({
     });
   };
 
+  const formatDateTime = (date) => {
+    if (!date) return "";
+    date = new Date(date);
+    const now = new Date();
+    const diff = now - date;
+    const minutes = Math.floor(diff / (1000 * 60));
+    const hours = Math.floor(diff / (1000 * 60 * 60));
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+    if (minutes < 60) return `${minutes} phút`;
+    if (hours < 24) return `${hours} giờ`;
+    if (days < 7) return `${days} ngày`;
+    return date.toLocaleDateString();
+  };
+
   if (!isOpen) return null;
 
   if (isMinimized) {
@@ -316,14 +273,21 @@ const ChatWindow = ({
       {/* Header */}
       <div className={styles.header}>
         <div className={styles.userInfo}>
-          <FallbackImage
-            src={user?.avatar}
-            alt={user?.name}
-            className={styles.avatar}
-          />
+          <div className={styles.avatarContainer}>
+            <FallbackImage
+              src={user?.avatar}
+              alt={user?.name}
+              className={styles.avatar}
+            />
+            {status.online && <div className={styles.onlineIndicator}></div>}
+          </div>
           <div className={styles.userDetails}>
             <span className={styles.name}>{user?.name}</span>
-            <span className={styles.status}>Hoạt động 5 phút trước</span>
+            <span className={styles.status}>
+              {status.online
+                ? "Online"
+                : `Hoạt động ${formatDateTime(status.last_seen)} trước`}
+            </span>
           </div>
         </div>
 

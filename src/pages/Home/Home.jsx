@@ -4,7 +4,6 @@ import { TopicList, FeaturedPosts, PostList, Button } from "../../components";
 import styles from "./Home.module.scss";
 import topicService from "@/services/topic/topic.service";
 import postService from "@/services/posts/post.service";
-import { useSelector } from "react-redux";
 
 const Home = () => {
   const [recentPosts, setRecentPosts] = useState([]);
