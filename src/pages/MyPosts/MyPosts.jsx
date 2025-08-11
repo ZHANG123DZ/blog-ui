@@ -8,7 +8,7 @@ import Badge from "../../components/Badge/Badge";
 import styles from "./MyPosts.module.scss";
 import { useSelector } from "react-redux";
 import userService from "@/services/user/user.service";
-import bookmarkService from "@/services/bookmark/bookMark.service";
+import bookmarkService from "@/services/bookMark/bookMark.service";
 import likeService from "@/services/like/like.service";
 
 const MyPosts = () => {

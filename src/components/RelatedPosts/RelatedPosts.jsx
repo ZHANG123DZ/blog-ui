@@ -2,9 +2,8 @@ import PropTypes from "prop-types";
 import PostCard from "../PostCard/PostCard";
 import EmptyState from "../EmptyState/EmptyState";
 import styles from "./RelatedPosts.module.scss";
-import bookmarkService from "@/services/bookmark/bookmark.service";
+import bookmarkService from "@/services/bookMark/bookMark.service";
 import likeService from "@/services/like/like.service";
-import { useState } from "react";
 import { useSelector } from "react-redux";
 
 const RelatedPosts = ({

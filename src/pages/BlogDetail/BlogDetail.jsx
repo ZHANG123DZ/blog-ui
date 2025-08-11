@@ -11,7 +11,7 @@ import styles from "./BlogDetail.module.scss";
 import { useSelector } from "react-redux";
 import postService from "@/services/posts/post.service";
 import commentService from "@/services/comment/comment.service";
-import bookmarkService from "@/services/bookmark/bookmark.service";
+import bookMarkService from "@/services/bookMark/bookMark.service";
 import likeService from "@/services/like/like.service";
 import findCommentById from "@/function/findCommentById";
 import randomArray from "@/utils/randomArray";
@@ -128,7 +128,7 @@ const BlogDetail = () => {
     };
 
     try {
-      const isBookMark = await bookmarkService.check(data);
+      const isBookMark = await bookMarkService.check(data);
       return isBookMark.data;
     } catch (error) {
       console.log(error);
@@ -184,11 +184,11 @@ const BlogDetail = () => {
         type: "post",
       };
       if (!isBookmarked) {
-        await bookmarkService.bookmark(data);
+        await bookMarkService.bookmark(data);
         setIsBookmarked(true);
         return true;
       } else {
-        await bookmarkService.unBookMark(data);
+        await bookMarkService.unBookMark(data);
         setIsBookmarked(false);
         return true;
       }

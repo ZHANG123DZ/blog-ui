@@ -5,7 +5,7 @@ import EmptyState from "../EmptyState/EmptyState";
 import Loading from "../Loading/Loading";
 import styles from "./PostList.module.scss";
 import likeService from "@/services/like/like.service";
-import bookmarkService from "@/services/bookmark/bookmark.service";
+import bookmarkService from "@/services/bookMark/bookMark.service";
 import { useSelector } from "react-redux";
 
 const PostList = ({

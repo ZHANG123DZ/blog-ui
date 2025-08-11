@@ -6,7 +6,7 @@ import Loading from "../../components/Loading/Loading";
 import Badge from "../../components/Badge/Badge";
 import Button from "../../components/Button/Button";
 import styles from "./Bookmarks.module.scss";
-import bookmarkService from "@/services/bookmark/bookmark.service";
+import bookmarkService from "@/services/bookMark/bookMark.service";
 import { useSelector } from "react-redux";
 import likeService from "@/services/like/like.service";
 import { Pagination } from "@/components";

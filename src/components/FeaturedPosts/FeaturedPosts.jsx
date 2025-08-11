@@ -4,8 +4,9 @@ import EmptyState from "../EmptyState/EmptyState";
 import Loading from "../Loading/Loading";
 import styles from "./FeaturedPosts.module.scss";
 import { useSelector } from "react-redux";
-import bookmarkService from "@/services/bookmark/bookMark.service";
+
 import likeService from "@/services/like/like.service";
+import bookMarkService from "@/services/bookMark/bookMark.service";
 
 const FeaturedPosts = ({
   posts = [],
@@ -53,9 +54,9 @@ const FeaturedPosts = ({
       };
 
       if (!isBookmarked) {
-        await bookmarkService.bookmark(data);
+        await bookMarkService.bookmark(data);
       } else {
-        await bookmarkService.unBookMark(data);
+        await bookMarkService.unBookMark(data);
       }
     } catch (error) {
       console.error(error);
