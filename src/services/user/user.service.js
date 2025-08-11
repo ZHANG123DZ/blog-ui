@@ -1,5 +1,10 @@
 import httpRequest from "../../utils/httpRequest";
 
+export const getUsers = async (page, limit) => {
+  const res = await httpRequest.get(`/users?page=${page}&limit=${limit}`);
+  return res;
+};
+
 export const getUser = async (userName) => {
   const res = await httpRequest.get(`/users/${userName}`);
   const data = res.data;
@@ -54,4 +59,11 @@ export const getUserStatus = async (userName) => {
   return res;
 };
 
-export default { getUser, getUserPosts, online, offline, getUserStatus };
+export default {
+  getUsers,
+  getUser,
+  getUserPosts,
+  online,
+  offline,
+  getUserStatus,
+};

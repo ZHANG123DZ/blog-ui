@@ -146,11 +146,42 @@ export const getLatestPost = async () => {
   }
 };
 
+export const getUserPostForEdit = async (slug) => {
+  try {
+    const res = await httpRequest.get(`/posts/edit/${slug}`);
+    const data = res.data;
+    const author = data.author || {};
+
+    return {
+      ...res,
+      data: {
+        ...data,
+        author: {
+          ...author,
+          id: author.id,
+          name: author.full_name,
+          avatar: author.avatar_url,
+          username: author.username,
+        },
+        topics: data.topics?.map((topic) => topic.name) || [],
+        tags: data.tags?.map((tag) => tag.name) || [],
+        publishedAt: data.published_at,
+        readTime: data.reading_time,
+        featuredImage: data.cover_url,
+      },
+    };
+  } catch (error) {
+    console.error("Failed to fetch post:", error);
+    return null;
+  }
+};
+
 export default {
   createPost,
   updatePost,
   deletePost,
   getPosts,
+  getUserPostForEdit,
   getPost,
   getRelatedPost,
   getFeaturedPost,

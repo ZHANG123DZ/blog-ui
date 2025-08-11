@@ -1,0 +1,27 @@
+@use "../../styles/variables" as *;
+@use "../../styles/mixins" as *;
+
+.avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: $radius-full;
+  object-fit: cover;
+}
+.avatarContainer {
+  position: relative;
+  margin-right: $spacing-3;
+  flex-shrink: 0;
+}
+.avatarGroup {
+  border-radius: $radius-full;
+  object-fit: cover;
+  width: 100%;
+  height: 100%;
+}
+.headerAvatar {
+  width: 36px;
+  height: 36px;
+  border-radius: $radius-full;
+  object-fit: cover;
+  margin-right: $spacing-3;
+}

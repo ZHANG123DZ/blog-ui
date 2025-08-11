@@ -10,7 +10,6 @@ import { useDispatch } from "react-redux";
 import VerifyEmail from "@/pages/VerifyEmail";
 import { settingHandle } from "@/features/auth/settingAsync";
 import ProtectedRoute from "./ProtectedRoute/ProtectedRoute";
-import socketClient from "@/configs/socketClient";
 import { usePresenceChannel } from "@/stores/usePresenceChannel";
 
 // Lazy load pages for better performance
@@ -159,7 +158,6 @@ const AppRoutes = () => {
               </AuthLayout>
             }
           />
-
           <Route
             path="/verify-email"
             element={

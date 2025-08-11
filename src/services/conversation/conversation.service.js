@@ -3,7 +3,7 @@ import httpRequest from "@/utils/httpRequest";
 export const createConversation = async (otherUserId, data = {}) => {
   try {
     const res = httpRequest.post("/conversations", {
-      participant_id: otherUserId,
+      participantsId: otherUserId,
       ...data,
     });
     return res.data;
@@ -78,6 +78,26 @@ export const markedRead = async (id, data) => {
   }
 };
 
+export const joinGroup = async (id, data) => {
+  try {
+    const res = await httpRequest.post(`/conversations/${id}/join`, data);
+    return res.data;
+  } catch (err) {
+    console.error("Failed to join group:", err);
+    throw err;
+  }
+};
+
+export const leaveGroup = async (id) => {
+  try {
+    const res = await httpRequest.del(`/conversations/${id}/leave`);
+    return res.data;
+  } catch (err) {
+    console.error("Failed to leave group:", err);
+    throw err;
+  }
+};
+
 export default {
   createConversation,
   getOrCreateConversation,
@@ -86,4 +106,6 @@ export default {
   updateConversation,
   deleteConversation,
   markedRead,
+  joinGroup,
+  leaveGroup,
 };

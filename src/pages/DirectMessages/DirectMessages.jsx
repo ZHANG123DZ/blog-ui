@@ -2,7 +2,6 @@ import { useState, useEffect, useRef } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import Button from "../../components/Button/Button";
 import Input from "../../components/Input/Input";
-import FallbackImage from "../../components/FallbackImage/FallbackImage";
 import styles from "./DirectMessages.module.scss";
 import socketClient from "@/configs/socketClient";
 import conversationService from "@/services/conversation/conversation.service";
@@ -11,6 +10,8 @@ import { useSelector } from "react-redux";
 import InvitationMessageModal from "@/components/InvitationMessageModal/InvitationMessageModal";
 import markAsReadOnServer from "@/function/markAsReadOnServer";
 import { useOnlineUsers } from "@/stores/useOnlineUsers";
+import ChatSettingsModal from "@/components/ChatSettingsModal/ChatSettingsModal";
+import AvatarConversation from "@/components/AvatarConversation/AvatarConversation";
 
 const DirectMessages = () => {
   const navigate = useNavigate();
@@ -24,6 +25,7 @@ const DirectMessages = () => {
   const [conversations, setConversations] = useState([]);
   const [currentMessages, setCurrentMessages] = useState([]);
   const [open, setOpen] = useState(false);
+  const [openSetting, setOpenSetting] = useState(false);
   const [hasMarkedRead, setHasMarkedRead] = useState(false);
   const onlineUsers = useOnlineUsers((s) => s.onlineUsers);
 
@@ -116,6 +118,10 @@ const DirectMessages = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [currentMessages]);
 
+  const handleCreateGroup = async (data) => {
+    await conversationService.createConversation(data.receiverIds);
+  };
+
   const handleConversationSelect = (conversation) => {
     setSelectedConversation(conversation);
     setConversations((prev) =>
@@ -184,6 +190,35 @@ const DirectMessages = () => {
   };
   // Socket: nghe tin nhắn mới
   useEffect(() => {
+    if (!cur_user?.id) return;
+    const pusher = socketClient;
+
+    const channelOfUser = pusher.subscribe(`conversation-of-${cur_user.id}`);
+    channelOfUser.bind("new-conversation", async (newConversation) => {
+      setConversations((prev) => {
+        return [newConversation, ...prev];
+      });
+    });
+
+    channelOfUser.bind("update-conversation", async (updatedConversation) => {
+      setConversations((prev) => {
+        return prev.map((c) =>
+          c.id === updatedConversation.id ? updatedConversation : c
+        );
+      });
+    });
+
+    channelOfUser.bind("delete-conversation", async (conversationId) => {
+      setConversations((prev) => prev.filter((c) => c.id !== conversationId));
+    });
+
+    return () => {
+      channelOfUser.unbind_all();
+      pusher.unsubscribe(channelOfUser.name);
+    };
+  }, [cur_user.id]);
+
+  useEffect(() => {
     if (!conversations.length) return;
     const pusher = socketClient;
     const channels = [];
@@ -248,7 +283,7 @@ const DirectMessages = () => {
         pusher.unsubscribe(channel.name);
       });
     };
-  }, [conversations, cur_user.id, selectedConversation?.id]);
+  }, [conversations, selectedConversation?.id, cur_user.id]);
 
   return (
     <div className={styles.container}>
@@ -260,7 +295,7 @@ const DirectMessages = () => {
             <InvitationMessageModal
               isOpen={open}
               onClose={() => setOpen(false)}
-              onSend={handleSendMessage}
+              onSend={handleCreateGroup}
             />
             <Button
               onClick={() => setOpen(!open)}
@@ -300,11 +335,7 @@ const DirectMessages = () => {
                 onClick={() => handleConversationSelect(conversation)}
               >
                 <div className={styles.avatarContainer}>
-                  <FallbackImage
-                    src={conversation.avatar_url}
-                    alt={conversation.name}
-                    className={styles.avatar}
-                  />
+                  <AvatarConversation conversation={conversation} />
                   {conversation.users.find(
                     (user) => onlineUsers[user.id] && user.id !== cur_user.id
                   ) && <div className={styles.onlineIndicator} />}
@@ -340,20 +371,16 @@ const DirectMessages = () => {
             <>
               <div className={styles.messagesHeader}>
                 <div className={styles.usersInfo}>
-                  <FallbackImage
-                    src={selectedConversation.avatar_url}
-                    alt={selectedConversation.name}
-                    className={styles.headerAvatar}
+                  <AvatarConversation conversation={selectedConversation} />
+                  <ChatSettingsModal
+                    isOpen={openSetting}
+                    onClose={() => setOpenSetting(false)}
+                    conversationData={selectedConversation}
                   />
                   <div>
                     <h2
                       className={styles.usersName}
-                      onClick={() => {
-                        if (selectedConversation.users.length === 2) {
-                          gotoProfile();
-                        }
-                      }}
-                      style={{ cursor: "pointer" }}
+                      style={{ maxWidth: "400px" }}
                     >
                       {selectedConversation.name}
                     </h2>
@@ -367,6 +394,21 @@ const DirectMessages = () => {
                     </span>
                   </div>
                 </div>
+                <Button
+                  onClick={() => setOpenSetting(true)}
+                  className={styles.sendButton}
+                  size="sm"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                  >
+                    <path d="M19.14,12.94c.04-.31.06-.63.06-.94s-.02-.63-.06-.94l2.03-1.58a.5.5 0 0 0 .12-.65l-1.92-3.32a.5.5 0 0 0-.61-.22l-2.39.96a7.14,7.14,0,0,0-1.63-.94L14.5,2.5a.5.5 0 0 0-.5-.5h-4a.5.5 0 0 0-.5.5l-.38,2.45a7.14,7.14,0,0,0-1.63.94l-2.39-.96a.5.5 0 0 0-.61.22L2.57,8.83a.5.5 0 0 0 .12.65l2.03,1.58c-.04.31-.06.63-.06.94s.02.63.06.94l-2.03,1.58a.5.5 0 0 0-.12.65l1.92,3.32a.5.5 0 0 0 .61.22l2.39-.96c.49.39,1.04.71,1.63.94l.38,2.45a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5l.38-2.45c.59-.23,1.14-.55,1.63-.94l2.39.96a.5.5 0 0 0 .61-.22l1.92-3.32a.5.5 0 0 0-.12-.65ZM12,15.5A3.5,3.5 0 1 1 15.5,12 3.5,3.5 0 0 1 12,15.5Z" />
+                  </svg>
+                </Button>
               </div>
 
               <div className={styles.messagesThread}>

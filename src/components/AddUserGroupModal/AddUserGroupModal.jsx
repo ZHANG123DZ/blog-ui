@@ -2,7 +2,6 @@ import { useState, useEffect, useRef } from "react";
 import styles from "./InvitationMessageModal.module.scss";
 import userService from "@/services/user/user.service";
 import InfiniteScroll from "react-infinite-scroll-component";
-import { useSelector } from "react-redux";
 
 export default function InvitationMessageModal({ isOpen, onClose, onSend }) {
   const [searchTerm, setSearchTerm] = useState("");
@@ -14,7 +13,6 @@ export default function InvitationMessageModal({ isOpen, onClose, onSend }) {
   const [hasMore, setHasMore] = useState(true);
   const timeoutRef = useRef(null);
   const modalRef = useRef(null);
-  const cur_user = useSelector((state) => state.auth.currentUser);
 
   // Load users page đầu hoặc load thêm page
   const loadUsers = async (pageToLoad) => {

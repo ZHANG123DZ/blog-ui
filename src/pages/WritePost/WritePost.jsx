@@ -45,20 +45,6 @@ const WritePost = () => {
 
   const headerRef = useRef(null);
   const quillRef = useRef();
-  // const availableTopics = [
-  //     "React",
-  //     "JavaScript",
-  //     "TypeScript",
-  //     "Node.js",
-  //     "CSS",
-  //     "HTML",
-  //     "Python",
-  //     "Vue.js",
-  //     "Angular",
-  //     "Backend",
-  //     "Frontend",
-  //     "DevOps",
-  // ];
 
   const [availableTopics, setAvailableTopics] = useState([]);
 
@@ -78,23 +64,14 @@ const WritePost = () => {
 
   useEffect(() => {
     if (isEditing) {
-      // Mock existing post data
-      const mockPost = {
-        title: "Getting Started with React Hooks",
-        excerpt:
-          "Learn the fundamentals of React Hooks and how they can simplify your component logic.",
-        content:
-          "# Getting Started with React Hooks\n\nReact Hooks revolutionized how we write components...",
-        cover_url: "https://via.placeholder.com/800x400?text=React+Hooks",
-        topics: ["React", "JavaScript"],
-        status: "draft",
-        visibility: "public",
-        meta_title: "Getting Started with React Hooks - Complete Guide",
-        meta_description:
-          "Comprehensive guide to React Hooks, covering useState, useEffect, and custom hooks with practical examples and best practices.",
+      const getPostEdit = async () => {
+        const post = await postService.getUserPostForEdit(slug);
+        const data = post.data;
+        setFormData(data);
+        setSelectedTopics(data.topics);
+        return;
       };
-      setFormData(mockPost);
-      setSelectedTopics(mockPost.topics);
+      getPostEdit();
     }
   }, [isEditing]);
 
@@ -221,7 +198,11 @@ const WritePost = () => {
 
       postData.published_at = null;
 
-      await postService.createPost(postData);
+      if (isEditing) {
+        await postService.updatePost(postData.slug, postData);
+      } else {
+        await postService.createPost(postData);
+      }
       navigate("/my-posts");
     } catch (error) {
       console.log(error);
@@ -309,7 +290,12 @@ const WritePost = () => {
       });
       postData.cover_url = coverUrl.data.url;
       postData.thumbnail_url = thumbnailUrl.data.url;
-      await postService.createPost(postData);
+      console.log(isEditing);
+      if (isEditing) {
+        await postService.updatePost(postData.slug, postData);
+      } else {
+        await postService.createPost(postData);
+      }
       setShowPublishModal(false);
 
       navigate("/my-posts");
